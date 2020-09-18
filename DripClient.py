@@ -456,8 +456,10 @@ def sendMsgToServer( values ):
 #---------------------------------------------
 length = int(len(sys.argv))
 if length == 1 :
-    print('Run a DRIP Script ')
-    print('Useage: python DripClient.py /f filename /i ip_address /l num_loops /b binding_address /o outfn')
+    print('Purpose: Run a DRIP Script ')
+    print('         This Drip Client program can be used in automated testing.')
+    print('         Note: Requires Python installed on machine.')
+    print('Useage:  python DripClient.py /f filename /i ip_address /l num_loops /b binding_address /o outfn')
     print('  where filename is any DRIP script file recorded by the DRIP_Client program')
     print('        ip_address is of the form 192.168.1.56 and is the ip address of the box')
     print('        num_loops is the number of loops (1 by default)')
