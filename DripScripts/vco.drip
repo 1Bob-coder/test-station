@@ -1,0 +1,23 @@
+# Filename:  vco.drip
+# Purpose:  DripPy script file for sending VCO.
+
+# Get Diagnostics A data.  The code will save the XYZ and VCT_ID values.  Needed
+# for the VCO test.  (1 second wait before sending.)
+wait:1000; diag:A
+
+# SetEnableApps and SetEnableSeverity commands.
+wait:1000; sea:sf,si
+wait:1000; ses:3
+
+# Enable unsolicited messages through Drip.
+wait:1000; send:1,53
+
+# Perform VCO for 30 seconds on channel 66, override with chan 166.
+# For channel 166 --> Source_ID=64869 (fd65), Transponder=2, ServiceNum=788
+# Example:  wait:1000; vco:30,66,64869,2,788
+wait:1000; vco:30,66,64869,2,788
+
+# Perform a wait for 32 seconds.  After that, VCO should be finished.
+wait:32000; sea:all
+
+# Test is finished.  Close DripPy program by exiting script.
