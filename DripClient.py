@@ -7,6 +7,8 @@ import binascii
 import struct
 import zlib
 import random
+import converts
+
 
 # Initialized variables
 global xyz_needed
@@ -19,175 +21,6 @@ vctid_needed = True
 vctid_value = 0
 outfname = 'none'
 crc32 = [0, 0, 0, 0]  # crc32 padding of 4 bytes
-
-# Function convertStatusToString()
-# Purpose: Converts Status hex value to string.
-# Input: Status hex value
-# Output: String
-#---------------------------------------------
-def convertStatusToString(x):
-    return {
-        '0000' : 'OK',
-        '0100' : 'BAD_CRC',
-        '0200' : 'BAD_LENGTH',
-        '0300' : 'BAD_IP_MSG',
-        '0400' : 'NO_MATCH_UA',
-        '0500' : 'BAD_TID',
-        '0600' : 'NA'
-        }[x]
-
-
-# Function convertMsgTypeToString()
-# Purpose: Converts MsgType value to string.
-# Input: Number from 1-12
-# Output: String
-#---------------------------------------------
-def convertMsgTypeToString(x):
-    return {
-        1 : 'RMT',
-        2 : 'DIAG',
-        3 : 'IP_ADDR',
-        4 : 'MSP_MSG',
-        5 : 'REBOOT',
-        6 : 'BOOT_PARAMS',
-        7 : 'FRONT_PANEL',
-        8 : 'LAST_REPORT',
-        9 : 'MSG_TYPE_STATS',
-        10 : 'MSG_TYPE_DEBUG',
-        11 : 'NEPTUNE_TEST',
-        12 : 'UNSOLICITED'
-    }[x]
-
-
-# Function convertRemoteKey()
-# Purpose: Converts int to Remote Key command.
-# Input: An int from 1 to 53
-# Output: A string for the key
-#---------------------------------------------
-def convertRemoteKey(x):
-    return {
-	      1: 'ARROW_RIGHT',
-	      2: 'MUTE',
-	      3: 'RED',
-	      4: 'VOL_DOWN',
-	      5: 'EXIT',
-	      6: 'POWER',
-	      7: 'VOL_UP',
-	      8: 'GREEN',
-	      9: 'DIGIT8',
-	      10: 'DIGIT7',
-	      11: 'CHAN_UP',
-	      12: 'YELLOW',
-	      13: 'PPV',
-	      14: 'DIGIT9',
-	      15: 'DIGIT1',
-	      16: 'CHAN_DOWN',
-	      17: 'DIGIT2',
-	      18 :'DIGIT3',
-	      19: 'BLUE',
-	      20: 'OPTIONS',
-	      21: 'LIST',
-	      22: 'GO_BACK',
-	      23: 'DIGIT4',
-	      24: 'LAST_CHAN',
-	      25: 'DIGIT5',
-	      26: 'INTERESTS',
-	      27: 'DIGIT6',
-	      28: 'ENTER',
-	      29: 'ARROW_LEFT',
-	      30: 'GUIDE',
-	      31: 'HELP',
-	      32: 'ARROW_DOWN',
-	      33: 'BROWSE',
-	      34: 'FAVOURITES',
-	      35: 'ARROW_UP',
-	      36: 'DIGIT0',
-	      37: 'SOURCE',
-	      38: 'SELECT',
-	      39: 'INFO',
-	      40: 'FAST_FWD',
-	      41: 'REWIND',
-	      42: 'RECORD',
-	      43: 'LOCKS',
-	      44: 'PAUSE',
-	      45: 'STOP',
-	      46: 'PLAY',
-	      47: 'SKIP_AHEAD',
-	      48: 'SKIP_BACK',
-	      49: 'ASPECT',
-	      52: 'INTERACTIVE',
-	      53: 'DEBUG_LOGS'
-          }[x]
-
-
-# Function convertDiagCommand()
-# Purpose: Converts string to value.
-# Input: Diag Screen Name
-# Output: Diag Screen value
-#---------------------------------------------
-def convertDiagCommand(x):
-    return {
-            'A' : 1,
-            'B' : 2,
-            'C' : 3,
-            'D' : 4,
-            'D2' : 5,
-            'E1' : 6,
-            'E2' : 7,
-            'F' : 8,
-            'R' : 9,
-            'A2' : 10,
-            'CS' : 11,
-            'D3' : 12
-          }[x]
-
-# Function convertSeaCommand()
-# Purpose: Converts string to hex value.
-# Input: String for the debug module.
-# Output: Hex value for the debug module.
-#---------------------------------------------
-def convertSeaCommand(x):
-    return {
-            'none' : 0,
-            'ts' : 0x00000001,
-            'ni' : 0x00000002,   # Network Interface
-            'dm' : 0x00000004,   # Demux & HAL Demux
-            'sf' : 0x00000008,   # Section Filter
-
-            'ca' : 0x00000010,   # Conditional Access
-            'sp' : 0x00000020,   # Secure Processor
-            'cp' : 0x00000040,   # Component Presenter
-            'rm' : 0x00000080,   # Resource Manager
-
-            'si' : 0x00000100,   # System Information
-            'fm' : 0x00000200,   # File Manager
-            'ut' : 0x00000400,   # Utilities
-            'sys' : 0x00000800,  # System
-
-            'mp' : 0x00001000,   # Message Parser
-            'dl' : 0x00002000,   # Download
-            'os' : 0x00004000,   # Operating System - RTOS
-            'tu' : 0x00008000,   # Tuner
-
-            'spi' : 0x00010000,  # Serial Peripheral Interface
-            'vi' : 0x00020000,   # Video
-            'au' : 0x00040000,   # Audio
-            'fp' : 0x00080000,   # Front Panel
-
-            'dvr' : 0x00100000,  # Digital Video Recording
-            'cc' : 0x00200000,   # Close Captions
-            'st' : 0x00400000,   # Streamer
-            'sc' : 0x00800000,   # System Control
-
-            'osd' : 0x01000000,  # On Screen Display
-            'ply' : 0x02000000,  # Player
-            'init' : 0x04000000, # Initialization
-            'cm' : 0x08000000,   # Content Manager
-
-            'hwc' : 0x10000000,  # Hardware Config
-            'hls' : 0x20000000,  # HLS
-            'all' : 0x3fffffff
-          }[x]
 
 
 
@@ -219,14 +52,14 @@ def handleCommand( wordStr ):
    # cs   : 8 bits (simple two's complement of the sum of bytes)
 
    # msp command, e.g., msp:96,00,0c,00,02,80,33,ff,ff,ff,01
-   # sends --> 0 4 0 0 0 f 96 00 0c 00 02 80 33 ff ff ff 01 cs 
+   # sends --> 0 4 0 0 0 f 96 00 0c 00 02 80 33 ff ff ff 01 cs
    elif 'msp' in wordlist:
-     print(' '.join(wordlist)) 
+     print(' '.join(wordlist))
      msgValues = [0, 0, 0, 0, 0, 0]
      msgValues[1] = 4                      # MSP_MSG
 
      # convert message strings to ints, skip first string in wordlist
-     body = map(lambda x: int(x,16), wordlist[1:])  
+     body = map(lambda x: int(x,16), wordlist[1:])
      msgValues[5] = len(body) + 4  # message length of body + crc32
      msgValues.extend(body)
      msgValues.extend(crc32)
@@ -235,7 +68,7 @@ def handleCommand( wordStr ):
    # sea command, e.g., sea:sys,si,osd
    # sends --> 0 a 0 0 0 5 1 1 0 9 0 cs (len=5, type=1, body=01 00 09 00)
    elif 'sea' in wordlist:
-     print(' '.join(wordlist)) 
+     print(' '.join(wordlist))
      msgValues = [0, 0, 0, 0, 0, 0]
      msgValues[1] = 0xa                    # MSG_TYPE_DEBUG
      msgValues[5] = 5                      # message length of body
@@ -249,18 +82,18 @@ def handleCommand( wordStr ):
    # ses command, e.g., ses:3
    # sends --> 0 a 0 0 0 2 2 3 cs (len=2, type=2, body=3)
    elif 'ses' in wordlist:
-     print(' '.join(wordlist)) 
+     print(' '.join(wordlist))
      msgValues = [0, 0, 0, 0, 0, 0]
      msgValues[1] = 0xa                    # MSG_TYPE_DEBUG
      msgValues[5] = 2                      # message length of body
      msgValues.append(2)                   # message type = 2 for ses
-     msgValues.append(int(wordlist[1]))    # severity 
+     msgValues.append(int(wordlist[1]))    # severity
      sendMsgToServer(msgValues)  # Send msg to Drip server
 
    # diag command, e.g., diag:A,1,1
    # sends --> 0 2 0 0 0 3 1 1 1 cs (len=3, A=1, line=1, item=1)
    elif 'diag' in wordlist:
-     print(' '.join(wordlist)) 
+     print(' '.join(wordlist))
      msgValues = [0, 0, 0, 0, 0, 0]
      msgValues[1] = 2                      # DIAG
      msgValues[5] = len(wordlist[1:])      # message length of body
@@ -271,21 +104,21 @@ def handleCommand( wordStr ):
    # vco command, e.g., vco:60,66,64109,2,784
    # Where: 60     duration in seconds
    #        66     the channel being redefined
-   #        64109  source ID 
+   #        64109  source ID
    #        2      transponder number
    #        784    service number
    # Note:  Immediate activation, circle test preamble included.
    #        Diag A must be called prior to get XYZ and VCT_ID values
    elif 'vco' in wordlist:
-     print(' '.join(wordlist)) 
+     print(' '.join(wordlist))
      msgValues = [0, 0, 0, 0, 0, 0]
      msgValues[1] = 4                      # MSP_MSG
 
      # convert message strings to ints, skip first string in wordlist
-     body = map(lambda x: int(x), wordlist[1:])  
+     body = map(lambda x: int(x), wordlist[1:])
 
      # The following are for VCO's with circle test, radius 0x19.
-     msgValues.extend([0x92, 0x00, 0x34, 0x20, 0x16, 0x00, 0x00, 0x13, 0x0e, 
+     msgValues.extend([0x92, 0x00, 0x34, 0x20, 0x16, 0x00, 0x00, 0x13, 0x0e,
          0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0x01, 0x40, 0x19])
      global xyz_values
      global vctid_value
@@ -346,9 +179,9 @@ def handleCommand( wordStr ):
        msgValues[1] = 2        # DIAG
        msgValues[5] = 2        # Body length = 2
        msgValues.append(1)     # Diag Screen A
-       if secondInt == 14:  
+       if secondInt == 14:
            msgValues.append(1) # Diag screen line 1
-       elif secondInt == 15:  
+       elif secondInt == 15:
            msgValues.append(2) # Diag screen line 2
        sendMsgToServer(msgValues)  # Send msg to Drip server
    return
@@ -387,7 +220,7 @@ def recvLoop( ):
 
 
 # Function getXYZ()
-# Purpose: Looks for the XYZ coordinates in the message body and saves them if 
+# Purpose: Looks for the XYZ coordinates in the message body and saves them if
 #          found.
 # Input: The received message from the Drip server.  This is a list of bytes.
 #---------------------------------------------
@@ -422,7 +255,7 @@ def getVCT_ID( dataList ):
         global vctid_value
         global vctid_needed
         # Data will be of the form
-        # VCT_ID = 4188, 
+        # VCT_ID = 4188,
         # Skip 2 values ('VCT_ID' and '=') and get the next value.
         vctidIndex = wordstr.index('VCT_ID')
         vctid_value = wordstr[vctidIndex+2:vctidIndex+3]
@@ -479,10 +312,10 @@ else:
 
     while x < length:
         if sys.argv[x] == '/f' or sys.argv[x] == '/F':
-            fname = sys.argv[x+1] 
+            fname = sys.argv[x+1]
             print 'Filename =', fname
         if sys.argv[x] == '/i' or sys.argv[x] == '/I':
-            UDP_IP = sys.argv[x+1] 
+            UDP_IP = sys.argv[x+1]
             print 'IP Address =', UDP_IP
         if sys.argv[x] == '/l' or sys.argv[x] == '/L':
             loops = int(sys.argv[x+1])
@@ -491,7 +324,7 @@ else:
             BIND_ADDR = sys.argv[x+1]
             print 'Bind Address =', BIND_ADDR
         if sys.argv[x] == '/o' or sys.argv[x] == '/O':
-            outfname = sys.argv[x+1] 
+            outfname = sys.argv[x+1]
             print 'Output Filename =', outfname
         x = x+1
 
@@ -500,7 +333,7 @@ else:
                          socket.SOCK_DGRAM) # UDP
 
     # Bind if needed.
-    if BIND_ADDR != ' ': 
+    if BIND_ADDR != ' ':
         sock.bind( (BIND_ADDR, 0) )
 
     # Launch recvLoop() in a separate thread because it blocks on recv().
