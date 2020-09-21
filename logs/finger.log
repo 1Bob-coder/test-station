@@ -1,0 +1,10 @@
+Sep 21 14:41:33 DSR830_0493309211 local1.warn : SYS:SYS:FinObserver.cpp:134:handleSysTaskMsg:activation_time = 0x33ffffff
+Sep 21 14:41:33 DSR830_0493309211 local1.warn : SYS:SYS:FinObserver.cpp:178:displayUA:UnitAddress = 0x0 0x1d674d1b
+Sep 21 14:41:34 DSR830_0493309211 local1.warn : SYS:SYS:FinObserver.cpp:133:handleSysTaskMsg:fingerprint_format = 0
+Sep 21 14:41:34 DSR830_0493309211 local1.warn : SYS:SYS:FinObserver.cpp:134:handleSysTaskMsg:activation_time = 0x33ffffff
+Sep 21 14:41:34 DSR830_0493309211 local1.warn : SYS:SYS:FinObserver.cpp:135:handleSysTaskMsg:display_duration = 1
+Sep 21 14:41:34 DSR830_0493309211 local1.warn : SYS:SYS:FinObserver.cpp:142:handleSysTaskMsg:Immediate activation, duration = 1
+Sep 21 14:41:34 DSR830_0493309211 local1.warn : SYS:SYS:FinObserver.cpp:178:displayUA:UnitAddress = 0x0 0x1d674d1b
+Sep 21 14:41:36 DSR830_0493309211 local1.warn : SYS:SI:FinObserver.cpp:60:update:Got NEW_FINGERPRINT_MSG
+Sep 21 14:41:36 DSR830_0493309211 local1.warn : SYS:SI:FinObserver.cpp:60:update:Got NEW_FINGERPRINT_MSG
+Sep 21 14:41:36 DSR830_0493309211 local1.warn : SYS:SYS:FinObserver.cpp:178:displayUA:UnitAddress = 0x0 0x1d674d1b

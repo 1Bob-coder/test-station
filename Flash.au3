@@ -30,7 +30,8 @@ GUISetState(@SW_SHOW)
 $sBindAddr = "192.168.1.156"  ; Binding address for the NIC card. Used for DRIP.
 
 ; Location of files
-$sTestCenter = "C:\Users\dsr\Documents\TestCenter"
+; $sTestCenter = "C:\Users\dsr\Documents\TestCenter"
+$sTestCenter = "."
 $sTeraTerm = "c:\Program Files (x86)\teraterm\ttermpro.exe "   ; TeraTerm exe file
 $sPython = "C:\Python27\python.exe "                           ; Python exe file
 
