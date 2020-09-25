@@ -12,10 +12,15 @@ wait:1000; ses:3
 # Enable unsolicited messages through Drip.
 wait:1000; send:1,53
 
+# Change to channel 66
+wait:1000: rmt:DIGIT0
+wait:1000: rmt:DIGIT6
+wait:1000: rmt:DIGIT6
+
 # Perform VCO for 30 seconds on channel 66, override with chan 166.
 # For channel 166 --> Source_ID=64869 (fd65), Transponder=2, ServiceNum=788
-# Example:  wait:1000; vco:30,66,64869,2,788
-wait:1000; vco:30,66,64869,2,788
+# Example:  wait:6000; vco:30,66,64869,2,788
+wait:6000; vco:30,66,64869,2,788
 
 # Perform a wait for 32 seconds.  After that, VCO should be finished.
 wait:32000; sea:all

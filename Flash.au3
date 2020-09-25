@@ -6,9 +6,9 @@
 #include <ColorConstants.au3>
 
 #Region ### START Koda GUI section ### Form=
-$Form1_1 = GUICreate("Flash Boxes", 431, 313, 192, 124)
+$Form1_1 = GUICreate("Flash Boxes", 442, 375, 192, 124)
 $FlashAllBoxes = GUICtrlCreateButton("Flash All Boxes", 24, 24, 99, 25)
-$idComboBox = GUICtrlCreateCombo("Which Box", 24, 64, 135, 25)
+$idComboBox = GUICtrlCreateCombo("Which Box", 24, 64, 135, 25, BitOR($CBS_DROPDOWN,$CBS_AUTOHSCROLL))
 $FlashBox = GUICtrlCreateButton("Flash Box", 184, 64, 75, 25)
 $SummarizeResults = GUICtrlCreateButton("Summarize Flash Results", 24, 104, 187, 25)
 $HdmiSwitch = GUICtrlCreateGroup("HDMI Switch", 24, 152, 385, 57)
@@ -24,6 +24,8 @@ $Fingerprint = GUICtrlCreateButton("Fingerprint", 24, 216, 75, 25)
 $VCO = GUICtrlCreateButton("VCO", 24, 248, 75, 25)
 $FP_TestResults = GUICtrlCreateLabel("Fingerprint Test Results", 128, 224, 171, 17)
 $VCO_TestResults = GUICtrlCreateLabel("VCO Test Results", 128, 256, 176, 17)
+$ChUpDn = GUICtrlCreateButton("Channel Up Down", 24, 288, 99, 25)
+$TrickPlay = GUICtrlCreateButton("Trick Play", 24, 328, 99, 25)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -35,7 +37,7 @@ $sTestCenter = "."
 $sTeraTerm = "c:\Program Files (x86)\teraterm\ttermpro.exe "   ; TeraTerm exe file
 $sPython = "C:\Python27\python.exe "                           ; Python exe file
 
-$sFlashTTL = $sTestCenter & "\flash.ttl"         ; ttl file for flashing
+$sFlashTTL = $sTestCenter & "\ttl\flash.ttl"         ; ttl file for flashing
 $sLogDir = $sTestCenter & "\logs\"               ; log directory
 $sDripScripts = $sTestCenter & "\DripScripts\"    ; DRIP scripts directory
 
@@ -179,6 +181,10 @@ While 1
 				GUICtrlSetData($VCO_TestResults, "Failed")
 				GUICtrlSetColor($VCO_TestResults, $COLOR_Red)
 			EndIf
+
+		Case $ChUpDn
+			RunTest("chupdn")
+
 
 		Case $GUI_EVENT_CLOSE
 			Exit
