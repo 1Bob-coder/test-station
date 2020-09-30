@@ -39,8 +39,6 @@ $sPython = "C:\Python27\python.exe "                           ; Python exe file
 $sLogDir = $sTestCenter & "\logs\"               ; log directory
 $sDripScripts = $sTestCenter & "\DripScripts\"    ; DRIP scripts directory
 
-$sAllVerLogs = $sLogDir & "*_ver_*.log"     ; log files for 'ver' command
-$sAllFinLogs = $sLogDir & "*_fin_*.log"     ; log files for fingerprint command
 $sAstTTL = $sTestCenter & "\ttl\ast.ttl"    ; ttl file for running the ast command
 $sAstLog = $sTestCenter & "\logs\ast.log"   ; log file
 
@@ -73,7 +71,8 @@ While 1
 	Switch $nMsg
 
 		Case $HdmiBox1
-			SwitchHdmiInput("sw i01" & @CRLF)
+			;SwitchHdmiInput("sw i01" & @CRLF)
+			RunWait(@ComSpec & " /c " & "echo sw i01 > COM1")
 		Case $HdmiBox2
 			SwitchHdmiInput("sw i02" & @CRLF)
 		Case $HdmiBox3
@@ -104,37 +103,18 @@ While 1
 
 		Case $RunTests
 			If FindBox() Then
+				$sTestSummary = "Test Summary" & @CRLF
+				GUICtrlSetData($TestSummary, $sTestSummary)
+
 				RunTestCriteria("finger", "displayUA", "Fingerprint", $Fingerprint)
 				RunTestCriteria("vco", "SEND LIVE PMT_CHANGED_EVENT (SVC NUM  = 788, CHANNEL = 166)", "VCO entry/exit", $VCO)
 				If RunTestCriteria("chupdn", "SEND VIDEO_COMPONENT_START_SUCCESS", "Video", $ChannelChange) Then
 					TestForString("SEND AUDIO_COMPONENT_START_SUCCESS", "chupdn", "Audio")
 				EndIf
-				If RunTestCriteria("cc", "Closed Captions", "Closed Captions", $ClosedCaptions) Then
-					Local $sRunTTL = $sTeraTerm & " /C=" & $aTestBoxes[$iBoxNum][2] & " /W=" & "Box" & $iBoxNum + 1 & " /M=" & $sAstTTL & " /L=" & $sAstLog
 
-					; Run the cc stats command to check if captions are on or off.
-					MakeAstTtl("ast cc", 10)  ; make the 'ast cc' command
-					RunWait($sRunTTL)         ; Run TeraTerm with the 'ast cc' command and collect the log data
-
-					If FindStringInFile("Captions are off", "ast") Then
-						; Captions were off.  Need to turn them on.
-						; Run the HELP + Yellow button to toggle the captions back on again.
-						RunTestCriteria("cc", "Closed Captions", "Closed Captions", $ClosedCaptions)
-					EndIf
-
-					; Run the cc stats command to check for the counter increasing.
-					MakeAstTtl("ast cc", 10)  ; make the 'ast cc' command
-					RunWait($sRunTTL)         ; Run TeraTerm with the 'ast cc' command and collect the log data
-					$sCcCounter1 = FindNextStringInFile("CC counter =", "ast")  ; Get the 'CC counter' value
-					ConsoleWrite("Counter1 = " & $sCcCounter1)
-
-					; Run the cc stats command again to see if the value incremented.
-					MakeAstTtl("ast cc", 10)  ; make the 'ast cc' command
-					RunWait($sRunTTL)
-					$sCcCounter2 = FindNextStringInFile("CC counter =", "ast")
-					ConsoleWrite("Counter2 = " & $sCcCounter2 & @CRLF)
+				If _IsChecked($ClosedCaptions) Then  ; If the closed captions box is checked
+					ClosedCaptionTest()              ; then run the closed captions test
 				EndIf
-
 
 			Else
 				MsgBox($MB_SYSTEMMODAL, "", "Which box not specified.")
@@ -210,7 +190,8 @@ Func RunTest($whichTest)
 	Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $aTestBoxes[$iBoxNum][0] & _
 			" /f " & $sTestFile & " /o " & $sLogFile
 	ConsoleWrite($sTestCommand & @CRLF)
-	RunWait(@ComSpec & " /c " & "del " & $sLogFile)  ; Delete the log file.
+	;RunWait(@ComSpec & " /c " & "del " & $sLogFile)  ; Delete the log file.
+	FileDelete($sAstLog)  ; Delete the log file.
 	RunWait($sTestCommand)                           ; Run the test.
 EndFunc   ;==>RunTest
 
@@ -250,6 +231,7 @@ Func FindNextStringInFile($whichString, $whichTest)
 			EndIf
 		EndIf
 	EndIf
+	ConsoleWrite($sNextWord & @CRLF)
 	Return $sNextWord
 EndFunc   ;==>FindNextStringInFile
 
@@ -263,7 +245,6 @@ EndFunc   ;==>_IsChecked
 ; Creates ast.ttl file to be run.
 Func MakeAstTtl($whichString, $timeout)
 	FileDelete($sAstLog)  ; Delete the log file.
-
 	; Open file - deleting any existing content
 	$hFilehandle = FileOpen($sAstTTL, $FO_OVERWRITE)
 	If FileExists($sAstTTL) Then
@@ -282,10 +263,50 @@ Func MakeAstTtl($whichString, $timeout)
 EndFunc   ;==>MakeAstTtl
 
 
-Func GetIpAddress()
-	$sAstTTL = $sTestCenter & "\ttl\ast.ttl"         ; ttl file for running the ast command
-	$iComNum = 7
-	$sBoxNum = 3
-	$sRunTTL = $sTeraTerm & " /C=" & $iComNum & " /W=" & "Box" & $sBoxNum & " /M=" & $sAstTTL & " /L=" & "temp.log"
-	Run($sRunTTL)
-EndFunc   ;==>GetIpAddress
+Func RunAstTtl()
+	FileDelete($sAstLog)  ; Delete the log file.
+	RunWait($sTeraTerm & " /C=" & $aTestBoxes[$iBoxNum][2] & " /W=" & "Box" & $iBoxNum & " /M=" & $sAstTTL & " /L=" & $sAstLog)
+EndFunc   ;==>RunAstTtl
+
+
+; Purpose:  To test closed captioning processing.
+; Note:  This only tests if closed captions are being processed.  It does not
+; First, test if cc is enabled.  Then turn on if needed.
+; Finally, get counter data from two different timeperiods and compare them.
+Func ClosedCaptionTest()
+	ConsoleWrite("Running the Closed Caption Test" & @CRLF)
+
+	Local $sCcCounter1 = ""
+	Local $sCcCounter2 = ""
+	GUICtrlSetData($TestSummary, $sTestSummary & @CRLF & "Closed Captions: Running ...")    ; Display test is running
+
+	; Run the cc stats command to check if captions are on or off.
+	MakeAstTtl("ast cc", 10)                            ; make the 'ast cc' command
+	RunAstTtl()                                         ; run the 'ast cc' command and collect the log
+	If FindStringInFile("Captions are off", "ast") Then
+		ConsoleWrite("Captions are off, need to turn on" & @CRLF)
+		; If captions were off, need to turn them on.  Run "cc.drip" to toggle captions on.
+		RunTest("cc")
+		RunAstTtl()                               ; Run TeraTerm with the 'ast cc' command and collect the log data
+	Else
+		ConsoleWrite("Captions are on" & @CRLF)
+	EndIf
+
+	$sCcCounter1 = FindNextStringInFile("CC counter =", "ast")    ; Get the 'CC counter' value
+	ConsoleWrite("Counter1 = " & $sCcCounter1 & @CRLF)
+
+	Sleep(5000)                     ; sleep for 5 seconds
+
+	; Run the same 'cc stats' command again to see if the value incremented.
+	RunAstTtl()
+
+	$sCcCounter2 = FindNextStringInFile("CC counter =", "ast")
+	ConsoleWrite("Counter2 = " & $sCcCounter2 & @CRLF)
+	If $sCcCounter1 <> $sCcCounter2 Then
+		; Counter changed. Test passed.
+		$sTestSummary = $sTestSummary & @CRLF & "cc: Passed"
+	Else
+		$sTestSummary = $sTestSummary & @CRLF & "cc: Failed.  Check if captions on this channel, or change channel."
+	EndIf
+	GUICtrlSetData($TestSummary, $sTestSummary)
+EndFunc   ;==>ClosedCaptionTest
