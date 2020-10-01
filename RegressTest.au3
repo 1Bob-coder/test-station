@@ -6,15 +6,15 @@
 #include <ColorConstants.au3>
 
 #Region ### START Koda GUI section ### Form=
-$Form1_1 = GUICreate("Regression Tests", 446, 379, 192, 124)
-$HdmiSwitch = GUICtrlCreateGroup("HDMI Switch", 24, 8, 385, 57)
-$HdmiBox1 = GUICtrlCreateRadio("Box1", 40, 32, 49, 17)
-$HdmiBox2 = GUICtrlCreateRadio("Box2", 92, 32, 49, 17)
-$HdmiBox3 = GUICtrlCreateRadio("Box3", 144, 32, 49, 17)
-$HdmiBox4 = GUICtrlCreateRadio("Box4", 196, 32, 49, 17)
-$HdmiBox5 = GUICtrlCreateRadio("Box5", 248, 32, 49, 17)
-$HdmiBox6 = GUICtrlCreateRadio("Box6", 300, 32, 49, 17)
-$HdmiBox7 = GUICtrlCreateRadio("Box7", 352, 32, 49, 17)
+$Form1_1 = GUICreate("Regression Tests", 447, 380, 192, 124)
+$HdmiSwitch = GUICtrlCreateGroup("HDMI Switch", 24, 24, 385, 57)
+$HdmiBox1 = GUICtrlCreateRadio("Box1", 40, 48, 49, 17)
+$HdmiBox2 = GUICtrlCreateRadio("Box2", 92, 48, 49, 17)
+$HdmiBox3 = GUICtrlCreateRadio("Box3", 144, 48, 49, 17)
+$HdmiBox4 = GUICtrlCreateRadio("Box4", 196, 48, 49, 17)
+$HdmiBox5 = GUICtrlCreateRadio("Box5", 248, 48, 49, 17)
+$HdmiBox6 = GUICtrlCreateRadio("Box6", 300, 48, 49, 17)
+$HdmiBox7 = GUICtrlCreateRadio("Box7", 352, 48, 49, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $AllTests = GUICtrlCreateCheckbox("All Tests", 32, 88, 73, 17)
 $Fingerprint = GUICtrlCreateCheckbox("Fingerprint", 32, 128, 81, 17)
@@ -24,7 +24,8 @@ $ClosedCaptions = GUICtrlCreateCheckbox("Closed Captions", 32, 200, 97, 17)
 $TrickPlay = GUICtrlCreateCheckbox("Trick Play", 32, 224, 97, 17)
 $TestSummary = GUICtrlCreateLabel("Test Summary", 192, 96, 199, 257)
 $RunTests = GUICtrlCreateButton("Run Tests", 32, 256, 75, 25)
-$IP_Address = GUICtrlCreateLabel(" ", 208, 72, 7, 17)
+$IP_Address = GUICtrlCreateLabel("", 208, 72, 7, 17)
+$BoxIPAddress = GUICtrlCreateLabel("IP Address of Box", 160, 8, 88, 17)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -32,7 +33,6 @@ $sBindAddr = "192.168.1.156"  ; Binding address for the NIC card. Used for DRIP.
 
 ; Location of files
 $sTestCenter = "C:\Users\dsr\Documents\GitHub\test-station"
-;$sTestCenter = "."
 $sTeraTerm = "c:\Program Files (x86)\teraterm\ttermpro.exe "   ; TeraTerm exe file
 $sPython = "C:\Python27\python.exe "                           ; Python exe file
 
@@ -45,22 +45,14 @@ $sAstLog = $sTestCenter & "\logs\ast.log"   ; log file
 $sPyDrip = $sTestCenter & "\DripClient.py"       ; Python DRIP Client program
 
 $sTestSummary = "Test Summary" & @CRLF
+$sIpAddress = ""
 
 $iComStart = 4  ; first com port
 $iNumBoxes = 7
 $iBoxNum = 0
 
-$iHdmiCom = 1  ; Com port 1 for HDMI controller.
-
-; Box IP Address, HDMI selector, and com port for test boxes on Test Rack 2
-Global $aTestBoxes[7][3] = [ _
-		["192.168.1.159", $HdmiBox1, 9], _
-		["192.168.1.162", $HdmiBox2, 5], _
-		["192.168.1.163", $HdmiBox3, 7], _
-		["192.168.1.161", $HdmiBox4, 4], _
-		["192.168.1.157", $HdmiBox5, 6], _
-		["192.168.1.160", $HdmiBox6, 10], _
-		["192.168.1.164", $HdmiBox7, 8]]
+; Box com port for test boxes on Test Rack 2
+Global $aTestBoxes[7] = [9,5,7,4,6,10,8]
 
 ; Binding address
 $iBindAddr = "192.168.1.156"
@@ -71,20 +63,34 @@ While 1
 	Switch $nMsg
 
 		Case $HdmiBox1
-			;SwitchHdmiInput("sw i01" & @CRLF)
+			; The HDMI switch can be controlled using COM1 with the 'sw i##' command
 			RunWait(@ComSpec & " /c " & "echo sw i01 > COM1")
+			$iBoxNum = 0
+			FindBoxIPAddress()
 		Case $HdmiBox2
-			SwitchHdmiInput("sw i02" & @CRLF)
+			RunWait(@ComSpec & " /c " & "echo sw i02 > COM1")
+			$iBoxNum = 1
+			FindBoxIPAddress()
 		Case $HdmiBox3
-			SwitchHdmiInput("sw i03" & @CRLF)
+			RunWait(@ComSpec & " /c " & "echo sw i03 > COM1")
+			$iBoxNum = 2
+			FindBoxIPAddress()
 		Case $HdmiBox4
-			SwitchHdmiInput("sw i04" & @CRLF)
+			RunWait(@ComSpec & " /c " & "echo sw i04 > COM1")
+			$iBoxNum = 3
+			FindBoxIPAddress()
 		Case $HdmiBox5
-			SwitchHdmiInput("sw i05" & @CRLF)
+			RunWait(@ComSpec & " /c " & "echo sw i05 > COM1")
+			$iBoxNum = 4
+			FindBoxIPAddress()
 		Case $HdmiBox6
-			SwitchHdmiInput("sw i06" & @CRLF)
+			RunWait(@ComSpec & " /c " & "echo sw i06 > COM1")
+			$iBoxNum = 5
+			FindBoxIPAddress()
 		Case $HdmiBox7
-			SwitchHdmiInput("sw i07" & @CRLF)
+			RunWait(@ComSpec & " /c " & "echo sw i07 > COM1")
+			$iBoxNum = 6
+			FindBoxIPAddress()
 
 		Case $AllTests
 			If _IsChecked($AllTests) Then
@@ -102,23 +108,20 @@ While 1
 			EndIf
 
 		Case $RunTests
-			If FindBox() Then
-				$sTestSummary = "Test Summary" & @CRLF
-				GUICtrlSetData($TestSummary, $sTestSummary)
+			$sTestSummary = "Test Summary" & @CRLF
+			GUICtrlSetData($TestSummary, $sTestSummary)
 
-				RunTestCriteria("finger", "displayUA", "Fingerprint", $Fingerprint)
-				RunTestCriteria("vco", "SEND LIVE PMT_CHANGED_EVENT (SVC NUM  = 788, CHANNEL = 166)", "VCO entry/exit", $VCO)
-				If RunTestCriteria("chupdn", "SEND VIDEO_COMPONENT_START_SUCCESS", "Video", $ChannelChange) Then
-					TestForString("SEND AUDIO_COMPONENT_START_SUCCESS", "chupdn", "Audio")
-				EndIf
-
-				If _IsChecked($ClosedCaptions) Then  ; If the closed captions box is checked
-					ClosedCaptionTest()              ; then run the closed captions test
-				EndIf
-
-			Else
-				MsgBox($MB_SYSTEMMODAL, "", "Which box not specified.")
+			RunTestCriteria("finger", "displayUA", "Fingerprint", $Fingerprint)
+			RunTestCriteria("vco", "SEND LIVE PMT_CHANGED_EVENT (SVC NUM  = 788, CHANNEL = 166)", "VCO entry/exit", $VCO)
+			If RunTestCriteria("chupdn", "SEND VIDEO_COMPONENT_START_SUCCESS", "Video", $ChannelChange) Then
+				TestForString("SEND AUDIO_COMPONENT_START_SUCCESS", "chupdn", "Audio")
 			EndIf
+
+			If _IsChecked($ClosedCaptions) Then      ; If the closed captions box is checked
+				ClosedCaptionTest()                  ; then run the closed captions test
+			EndIf
+
+
 
 		Case $GUI_EVENT_CLOSE
 			Exit
@@ -146,6 +149,7 @@ Func RunTestCriteria($sWhichTest, $sWhichString, $sTestTitle, $hTestBox)
 EndFunc   ;==>RunTestCriteria
 
 
+; Purpose:  If the given string is found, put "passed" in the test summary.
 Func TestForString($sWhichString, $sWhichTest, $sTestTitle)
 	If FindStringInFile($sWhichString, $sWhichTest) Then
 		$sTestSummary = $sTestSummary & @CRLF & $sTestTitle & ": Passed"
@@ -157,29 +161,14 @@ EndFunc   ;==>TestForString
 
 
 
-; Purpose: Send command to control the HDMI switch.
-Func SwitchHdmiInput($whichHdmiInput)
-	If WinActivate("[CLASS:TMobaXtermForm]", "") Then
-		If WinActivate("HDMISwitch", "") Then
-			Send($whichHdmiInput)
-		EndIf
-	EndIf
-EndFunc   ;==>SwitchHdmiInput
-
-
-; Purpose: Find the marked HDMI input and save.
-; Return:  True if found, False if not found.
-Func FindBox()
-	Local $bFoundIt = False
-	For $i = 0 To $iNumBoxes - 1 Step 1
-		If GUICtrlRead($aTestBoxes[$i][1]) == 1 Then
-			$bFoundIt = True
-			$iBoxNum = $i
-			ExitLoop
-		EndIf
-	Next
-	Return $bFoundIt
-EndFunc   ;==>FindBox
+; Purpose:  Run 'ifconfig', and get the ip address.
+Func FindBoxIPAddress()
+	MakeAstTtl("ifconfig", 1)
+	RunAstTtl()
+	$sIpAddress = FindNextStringInFile("inet addr", "ast")
+	ConsoleWrite("IpAddress = " & $sIpAddress & @CRLF)
+	GUICtrlSetData($BoxIPAddress, $sIpAddress)
+EndFunc   ;==>FindBoxIPAddress
 
 
 ; Purpose:  Run the Drip test on the specified box.
@@ -187,7 +176,7 @@ Func RunTest($whichTest)
 	; Run the specified test.
 	Local $sLogFile = $sLogDir & $whichTest & ".log"
 	Local $sTestFile = $sDripScripts & $whichTest & ".drip"
-	Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $aTestBoxes[$iBoxNum][0] & _
+	Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
 			" /f " & $sTestFile & " /o " & $sLogFile
 	ConsoleWrite($sTestCommand & @CRLF)
 	;RunWait(@ComSpec & " /c " & "del " & $sLogFile)  ; Delete the log file.
@@ -224,7 +213,9 @@ Func FindNextStringInFile($whichString, $whichTest)
 		$iPosition = StringInStr($sRead, $whichString)
 		If $iPosition Then
 			$sChop = StringTrimLeft($sRead, $iPosition + StringLen($whichString))
-			$aSplit = StringSplit($sChop, @CRLF)
+			;$aSplit = StringSplit($sChop, @CRLF)
+			$aSplit = StringSplit($sChop, " :")
+
 			;ConsoleWrite("sChop = " & $sChop & ", aSplit[0] = " & $aSplit[0] & @CRLF)
 			If $aSplit[0] Then
 				$sNextWord = $aSplit[1]
@@ -265,7 +256,7 @@ EndFunc   ;==>MakeAstTtl
 
 Func RunAstTtl()
 	FileDelete($sAstLog)  ; Delete the log file.
-	RunWait($sTeraTerm & " /C=" & $aTestBoxes[$iBoxNum][2] & " /W=" & "Box" & $iBoxNum & " /M=" & $sAstTTL & " /L=" & $sAstLog)
+	RunWait($sTeraTerm & " /C=" & $aTestBoxes[$iBoxNum] & " /W=" & "Box" & $iBoxNum & " /M=" & $sAstTTL & " /L=" & $sAstLog)
 EndFunc   ;==>RunAstTtl
 
 
