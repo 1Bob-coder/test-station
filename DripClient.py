@@ -26,7 +26,7 @@ crc32 = [0, 0, 0, 0]  # crc32 padding of 4 bytes
 
 # Function handleCommand()
 # Purpose: Handles the 'wait' and 'send' commands from DRIP scripts.
-#          Also handles msp, sea and ses commands.
+#          Also handles diag, rmt, msp, sea and ses commands.
 # Input: A string of the following form (example):
 #        wait 3000  (for 3000 ms)
 #        send 1 23  (for remote, DRIP key 23)
