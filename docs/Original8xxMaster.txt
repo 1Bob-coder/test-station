@@ -1,0 +1,850 @@
+A/V Presentation.Audio:001-001	Audio setting menu and sanity test	P
+A/V Presentation.Audio:001-003	MP3  CBR VBR Decodewith bitrates from 32kbps up to 320kbps	B
+A/V Presentation.Audio:001-004	MP3 mono, stereo, independent channels	B
+A/V Presentation.Audio:001-005	MP3 to LPCM to SPDIF and HDMI and 2 channel to analog	B
+A/V Presentation.Audio:001-007	The product SHALL have MPEG-2 / MPEG-4 AAC-LC audio decoding,  CBR and VBR, 16 kbps up to 256kbps	B
+A/V Presentation.Audio:001-008	8, 16, 32, 44.1 and 48kHz sample rates for MPEG-2 / MPEG-4 AAC-LC Decoding	B
+A/V Presentation.Audio:001-009	MPEG-2 /MPEG-4 AAC-LC Audio Decode for mono, stereo, and two independent audio channels	B
+A/V Presentation.Audio:001-010	MPEG-2, 4 AAC-LC audio to LPCM to SPDIF and HDMI and 2 channel to analog	P
+A/V Presentation.Audio:001-011	MPEG-2 / MPEG-4 AAC-LC Audio Decoding mono to left and right outputs	B
+A/V Presentation.Audio:001-012	MPEG-4 HE AAC audio decoding, CBR/VBR, 16 kbps per channel up to 288 kbps per channel.	B
+A/V Presentation.Audio:001-013	16, 32, 44.1 and 48kHz sample rates for MPEG-4 HE AAC	B
+A/V Presentation.Audio:001-014	MPEG-4 HE-AAC Audio Decode for mono, stereo, and two independent audio channels.	B
+A/V Presentation.Audio:001-015	MPEG-4 HE AAC audio to LPCM to SPDIF and HDMI and 2 channel to analog	P
+A/V Presentation.Audio:001-016	MPEG-4 HE AAC Audio Decoding mono to left and right outputs	B
+A/V Presentation.Audio:001-017	AAC 5.1	P
+A/V Presentation.Audio:002-001	S/PDIF Digital Audio mute	B
+A/V Presentation.Audio:002-002	S/PDIF Digital Audio outputs PCM at 32kHz	P
+A/V Presentation.Audio:002-003	S/PDIF Digital Audio outputs PCM at 44.1kHz	P
+A/V Presentation.Audio:002-004	S/PDIF Digital Audio outputs PCM at 48kHz	P
+A/V Presentation.Audio:002-005	HDMI convert multi-channel AC-3 to two channel L-PCM	P
+A/V Presentation.Audio:002-006	L-PCM output select for HDMI	P
+A/V Presentation.Audio:002-007	HDMI provides two channel L-PCM	P
+A/V Presentation.Audio:002-008	HDMI Digital Audio  ouptuts PCM at 32kHz	P
+A/V Presentation.Audio:002-009	HDMI Digital Audio  outputs PCM at 44.1kHz	P
+A/V Presentation.Audio:002-010	HDMI Digital Audio  ouputs PCM at 48kHz	P
+A/V Presentation.Audio:002-011	HDMI Audio Passthrough and Auto mode	B
+A/V Presentation.Audio:002-012	S/PDIF default	P
+A/V Presentation.Audio:003-001	Dolby Digital 44.1kHz sample rate	P
+A/V Presentation.Audio:003-002	Dolby Digital 48kHz sample rate	P
+A/V Presentation.Audio:003-003	Dolby Digital Pass through to digital audio outputs and two channel to analog	P
+A/V Presentation.Audio:003-004	Independently configure output of digital audio outputs	P
+A/V Presentation.Audio:003-005	Dolby Digital decode to 2 channel LPCM to digital output and 2 channel to analog outputs	P
+A/V Presentation.Audio:003-006	Dolby Digital pass to one digital output, decode to LPCM to the other, and 2 channel analog output	P
+A/V Presentation.Audio:003-007	Dolby digital mono map to both left and right channels	P
+A/V Presentation.Audio:003-008	Acquire the first Dolby Digital audio component if no stream matches the preferred language.	F
+A/V Presentation.Audio:003-009	Acquire the first matching Dolby Digital audio component when there is more than one	P
+A/V Presentation.Audio:003-010	Max DD bit rate	P
+A/V Presentation.Audio:003-011	Dolby Digital 32kHz sample rate	P
+A/V Presentation.Audio:003-012	AC-3 preferred over AAC	F
+A/V Presentation.Audio:004-001	Dolby Digital Plus sample rates	P
+A/V Presentation.Audio:004-002	Dolby Digital Plus remap to Dolby Digital for Digital outputs and downmixed to Dolby Surround for analog	P
+A/V Presentation.Audio:004-003	Dolby Digital Plus decoded to LPCM for digital outputs and downmixed to Dolby Surround for analog	P
+A/V Presentation.Audio:004-004	Dolby Digital Plus remap to Dolby Digital for one Digital output, LPCM for the other, and baseband analog audio	P
+A/V Presentation.Audio:004-005	Dolby Digital Plus pass through to HDMI	P
+A/V Presentation.Audio:004-006	Dolby Digital Plus pass through to HDMI, decoded to LCPM for optical, plus baseband analog audio	P
+A/V Presentation.Audio:004-007	Dolby Digital Plus and Language Descriptor selection	B
+A/V Presentation.Audio:004-008	DD+ 7.1 at 1.5 Mbps	B
+A/V Presentation.Audio:005-001	Audio Setting Menu: HiFi is a user selectable	P
+A/V Presentation.Audio:005-002	Audio Setting menu: TV (Heavy) is a user selectable	P
+A/V Presentation.Audio:005-003	Audio setting menu: HiFi is a user selectable.	P
+A/V Presentation.Audio:005-004	Audio Setting menu: No Compression is a user selectable	P
+A/V Presentation.Audio:005-005	Audio Setting-Digital Audio: Dolby Digital is a user selectable (DSR605/630)	P
+A/V Presentation.Audio:005-006	Audio Setting - Digital Audio: LPCM is selectable.	P
+A/V Presentation.Audio:005-007	Dolby Digital and Dolby Digital Plus Compression level support	P
+A/V Presentation.Audio:005-008	Audio Downmixing	P
+A/V Presentation.Audio:005-009	Change audio PID	P
+A/V Presentation.Audio:006-001	AC-3 Passthrough to SPDIF	P
+A/V Presentation.Audio:006-002	Convert AC-3 to PCM for SPDIF	P
+A/V Presentation.Audio:006-003	AC-3 Passthrough to HDMI	P
+A/V Presentation.Audio:006-004	Convert AC-3 tp PCM for HDMI	P
+A/V Presentation.Audio:006-005	HDMI Passthrough AC-3 when EDID supports AC-3	F
+A/V Presentation.Audio:006-006	HDMI convert AC-3 to PCM when EDID does not support AC-3	P
+A/V Presentation.Audio:006-007	Convert DD+ to AC-3 for SPDIF	P
+A/V Presentation.Audio:006-008	Convert DD+ to PCM for SPDIF	P
+A/V Presentation.Audio:006-009	DD+ Passthrough to HDMI	P
+A/V Presentation.Audio:006-010	Convert DD+ to PCM for HDMI	P
+A/V Presentation.Audio:006-011	HDMI Convert DD+ to AC3 with HDMI Audio set to AUTO and EDID supports AC-3	F
+A/V Presentation.Audio:006-012	HDMI Passthrough DD+ with HDMI Audio set to Auto and EDID supports DD+	F
+A/V Presentation.Audio:006-013	HDMI Convert DD+ to PCM with HDMI Audio set to Auto and EDID does not support AC-3 or DD+	P
+A/V Presentation.Audio:006-014	Convert AAC-LC to AC-3 for SPDIF - Digital Audio set to Dolby Digital	P
+A/V Presentation.Audio:006-015	Convert AAC-LC to PCM for SPDIF - Digital Audio set to PCM	P
+A/V Presentation.Audio:006-016	HDMI convert AAC-LC to AC-3 - HDMI Audio set to PASS THROUGH	P
+A/V Presentation.Audio:006-017	HDMI convert AAC-LC to PCM - HDMI Audio set to PCM	P
+A/V Presentation.Audio:006-018	HDMI convert AAC-LC to AC-3 when EDID supports AC-3	P
+A/V Presentation.Audio:006-019	HDMI convert AAC-LC to PCM when EDID does not support AC-3	P
+A/V Presentation.Audio:006-020	Convert HE-AAC to AC-3 for SPDIF - Digital Audio set to Dolby Digital	P
+A/V Presentation.Audio:006-021	Convert HE-AAC to PCM for SPDIF - Digital Audio set to PCM	P
+A/V Presentation.Audio:006-022	HDMI convert HE-AAC to AC-3 - HDMI Audio set to PASS THROUGH	P
+A/V Presentation.Audio:006-023	HDMI convert HE-AAC to PCM - HDMI Audio set to PCM	P
+A/V Presentation.Audio:006-024	HDMI convert HE-AAC to AC-3 when EDID supports AC-3	P
+A/V Presentation.Audio:006-025	HDMI convert HE-AAC to PCM when EDID does not support AC-3	P
+A/V Presentation.Audio:006-026	HDMI convert AAC to PCM in PASSTHROUGH (7xx only)	P
+A/V Presentation.Audio:006-027	HDMI pass AAC in AUTO mode	P
+A/V Presentation.Audio:006-028	SPDIF in PCM mode	P
+A/V Presentation.Audio:007-001	Transcode stereo digital audio format to AC-3 Stereo	P
+A/V Presentation.Audio:007-002	Transcode multichannel digital audio format to AC-3_5.1	P
+A/V Presentation.Audio:008-001	MPEG-2 AAC-LC decoding supports 8 KHz sample rate	B
+A/V Presentation.Audio:008-002	MPEG-2 AAC-LC decoding supports 16 KHz sample rate	P
+A/V Presentation.Audio:008-003	MPEG-2 AAC-LC decoding supports 32 KHz sample rate	P
+A/V Presentation.Audio:008-004	MPEG-2 AAC-LC decoding supports 44.1 KHz sample rate	P
+A/V Presentation.Audio:008-005	MPEG-2 AAC-LC decoding supports 48 KHz sample rate	P
+A/V Presentation.Audio:008-006	MPEG-4 AAC-LC decoding supports 8 KHz sample rate	B
+A/V Presentation.Audio:008-007	MPEG-4 AAC-LC decoding supports 16 KHz sample rate	P
+A/V Presentation.Audio:008-008	MPEG-4 AAC-LC decoding supports 32 KHz sample rate	P
+A/V Presentation.Audio:008-009	MPEG-4 AAC-LC decoding supports 44.1 KHz sample rate	P
+A/V Presentation.Audio:008-010	MPEG-4 AAC-LC decoding supports 48 KHz sample rate	P
+A/V Presentation.Audio:008-011	MPEG-4 HE-AAC decoding supports 16 KHz sample rate	B
+A/V Presentation.Audio:008-012	MPEG-4 HE-AAC decoding supports 32 KHz sample rate	B
+A/V Presentation.Audio:008-013	MPEG-4 HE-AAC decoding supports 44.1 KHz sample rate	P
+A/V Presentation.Audio:008-014	MPEG-4 HE-AAC decoding supportw 48 KHz sample rate	P
+A/V Presentation.Audio:008-015	MPEG-2 AAC-LC decoding supports CBR encoded content at a minimum bitrate  of 16 Kbps	B
+A/V Presentation.Audio:008-016	MPEG-2 AAC-LC decoding supports CBR encoded content at an intermediate bitrate  of 128 Kbps	P
+A/V Presentation.Audio:008-017	MPEG-2 AAC-LC decoding supports CBR encoded content at a maximum bitrate  of 256 Kbps	B
+A/V Presentation.Audio:008-018	MPEG-2 AAC-LC decoding supports VBR encoded content with bitrates from 16 Kbps to 256 Kbps	B
+A/V Presentation.Audio:008-019	MPEG-4 AAC-LC decoding supports CBR encoded content at a minimum bitrate of 16 Kbps	B
+A/V Presentation.Audio:008-020	MPEG-4 AAC-LC decoding supports CBR encoded content at an intermediate bitrate of 128 Kbps	P
+A/V Presentation.Audio:008-021	MPEG-4 AAC-LC decoding supports CBR encoded content at a maximum bitrate of 256 Kbps	B
+A/V Presentation.Audio:008-022	MPEG-4 AAC-LC decoding supports VBR encoded content with bitrates from 16 Kbps to 256 Kbps	B
+A/V Presentation.Audio:008-023	MPEG-4 HE-AAC decoding supports CBR encoded content at a minimum bitrate of 16 Kbps	B
+A/V Presentation.Audio:008-024	MPEG-4 HE-AAC decoding supports CBR encoded content at an intermediate bitrate of 96 Kbps	P
+A/V Presentation.Audio:008-025	MPEG-4 HE-AAC decoding supports CBR encoded content at a maximum bitrate of 288 Kbps	B
+A/V Presentation.Audio:008-026	MPEG-4 HE-AAC decoding supports VBR encoded content with bitrates from 16 Kbps to 288 Kbps	B
+A/V Presentation.Audio:008-027	MPEG-2 & MPEG-4 ADTS	P
+A/V Presentation.Audio:008-028	MPEG-4 LATM/LOAS	F
+A/V Presentation.Audio:008-029	AAC at 384 kbps	P
+A/V Presentation.Audio:009-001	MPEG-1 Audio	D
+A/V Presentation.Audio:009-002	MPEG-1 at 32 kHz	D
+A/V Presentation.Audio:009-003	MPEG-1 at 44.1 kHz	D
+A/V Presentation.Audio:009-004	MPEG-1 at 48 kHz	D
+A/V Presentation.Audio:010-001	PCM audio bit rates	D
+A/V Presentation.Audio:010-002	PCM 5.1	D
+A/V Presentation.Audio:011-001	Audio Mixing	D
+A/V Presentation.DVS:001-001	DVS Enable/Disable	F
+A/V Presentation.DVS:001-002	DVS State after factory reset	P
+A/V Presentation.DVS:001-003	enm ISO639 language code	F
+A/V Presentation.DVS:001-004	frm ISO639 language code	F
+A/V Presentation.DVS:001-005	No DVS audio stream found	F
+A/V Presentation.DVS:001-006	DVS Disabled	F
+A/V Presentation.DVS:001-008	DVS Toggle Shortcut	F
+A/V Presentation.Video:001-001	Simultaneous video output	P
+A/V Presentation.Video:001-002	4:3 Stretch & Normal settings	P
+A/V Presentation.Video:001-003	Change output resolution after Stretch.	
+A/V Presentation.Video:001-004	4:3 Zoom setting	P
+A/V Presentation.Video:001-005	Change output resolution after Zoom.	
+A/V Presentation.Video:001-006	Convert interlace to progressive	
+A/V Presentation.Video:001-007	3:2 pulldown	P
+A/V Presentation.Video:001-008	Reverse 3:2 pulldown	
+A/V Presentation.Video:001-009	Generate full-screen OSD graphics in combination with the active scaling of the video service.	P
+A/V Presentation.Video:001-010	Maintain the native aspect ratio of the scaled video being displayed.	P
+A/V Presentation.Video:001-011	Full screen display of 4:3 content on 16:9 TVs.	P
+A/V Presentation.Video:001-012	4:3 Stretch mode order	P
+A/V Presentation.Video:001-013	Graphics Sanity Check	P
+A/V Presentation.Video:002-001	1080i format/resolution on the HDMI.	P
+A/V Presentation.Video:002-002	1080i format/resolution on the Component Video output.	
+A/V Presentation.Video:002-003	16:9 displayfrom 4:3 source using the pillarbox (sidebar) technique on 1080i HDMI output.	
+A/V Presentation.Video:002-005	720p format/resolution on the HDMI.	P
+A/V Presentation.Video:002-007	16:9 display from 4:3 source using the pillarbox (sidebar) technique on 720p HDMI output.	
+A/V Presentation.Video:002-009	480p format/resolution on the HDMI.	P
+A/V Presentation.Video:002-011	16:9 displayfrom 4:3 source using the pillarbox (sidebar) technique on 480p HDMI output.	
+A/V Presentation.Video:002-013	4:3 display from 16:9 source content using the letterbox technique on 480p HDMI output.	P
+A/V Presentation.Video:002-015	480i format/resolution on the HDMI.	F
+A/V Presentation.Video:002-017	4:3 display from 16:9 source content using the letterbox technique on 480i HDMI output.	
+A/V Presentation.Video:002-019	1080p format/resolution on the HDMI.	
+A/V Presentation.Video:002-022	HDMI output 720 by 480; 4:3; 29.97 fps; interlaced scan.	
+A/V Presentation.Video:002-023	HDMI output 720 by 480; 4:3; 30 fps; interlaced scan.	
+A/V Presentation.Video:002-028	HDMI output 720 by 480; 4:3; 59.94 fps; progressive scan.	
+A/V Presentation.Video:002-029	HDMI output 720 by 480; 4:3; 60 fps; progressive scan.	
+A/V Presentation.Video:002-030	HDMI output 720 by 480; 16:9; 59.94 fps; progressive scan.	
+A/V Presentation.Video:002-031	HDMI output 720 by 480; 16:9; 60 fps; progressive scan.	
+A/V Presentation.Video:002-034	HDMI output 1280 by 720; 16:9; 59.94 fps; progressive scan.	P
+A/V Presentation.Video:002-035	HDMI output 1280 by 720; 16:9; 60 fps; progressive scan.	
+A/V Presentation.Video:002-038	HDMI output 1920 by 1080; 16:9; 29.97 fps; interlaced scan.	
+A/V Presentation.Video:002-039	HDMI output 1920 by 1080; 16:9; 30 fps; interlaced scan.	
+A/V Presentation.Video:002-040	HDMI output 1920 by 1080; 16:9; 23.98 fps; progressive scan.	
+A/V Presentation.Video:002-041	HDMI output 1920 by 1080; 16:9; 24 fps; progressive scan.	
+A/V Presentation.Video:002-042	HDMI output 1920 by 1080; 16:9; 29.97 fps; progressive scan.	
+A/V Presentation.Video:002-043	HDMI output 1920 by 1080; 16:9; 30 fps; progressive scan.	
+A/V Presentation.Video:002-045	Disable component output when 3D content acquired	
+A/V Presentation.Video:004-003	MPEG-2 full resolution with B-frames	
+A/V Presentation.Video:004-004	MPEG-2 with progressive (i-slice) refresh.	
+A/V Presentation.Video:004-005	MPEG-2 1920 X 1080, 16:9, 23.976 fps, progressive scan.	P
+A/V Presentation.Video:004-006	MPEG-2 1920 X 1080, 16:9, 24 fps,  progressive scan.	P
+A/V Presentation.Video:004-007	MPEG-2 1920 X 1080, 16:9, 29.97 fps, progressive scan.	P
+A/V Presentation.Video:004-008	MPEG-2 1920 X 1080, 16:9, 30 fps,  progressive scan.	P
+A/V Presentation.Video:004-009	MPEG-2 1920 X 1080, 16:9, 29.97 fps, interlaced scan.	P
+A/V Presentation.Video:004-010	MPEG-2 1920 X 1080, 16:9, 30 fps, interlaced scan.	P
+A/V Presentation.Video:004-011	MPEG-2 1440 X 1080,  16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-012	MPEG-2 1440 X 1080, 16:9, 24 fps, progressive scan.	
+A/V Presentation.Video:004-013	MPEG-2 1440 X 1080, 16:9, 29.97 fps,  progressive scan.	
+A/V Presentation.Video:004-014	MPEG-2 1440 X 1080, 16:9, 30 fps, progressive scan.	P
+A/V Presentation.Video:004-015	MPEG-2 1440 X 1080, 16:9, 29.97 fps, interlaced scan.	P
+A/V Presentation.Video:004-016	MPEG-2 1440 X 1080, 16:9, 30 fps, interlaced scan.	P
+A/V Presentation.Video:004-017	MPEG-2 1280 X 1080, 16:9, 29.97 fps, progressive scan.	P
+A/V Presentation.Video:004-018	MPEG-2 1280 X 1080, 16:9, 30 fps, interlaced scan.	
+A/V Presentation.Video:004-019	MPEG-2 1280 X 720, 16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-020	MPEG-2 1280 X 720, 16:9, 24 fps, progressive scan.	P
+A/V Presentation.Video:004-021	MPEG-2 1280 X 720, 16:9, 29.97 fps, progressive scan.	P
+A/V Presentation.Video:004-022	MPEG-2 1280 X 720, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:004-023	MPEG-2 1280 x 720, 16:9, 59.94 fps, progressive scan.	P
+A/V Presentation.Video:004-024	MPEG-2 1280 X 720, 16:9, 60 fps, progressive scan.	
+A/V Presentation.Video:004-025	MPEG-2 960 X 540, 16:9, 59.94 fps, progressive scan.	
+A/V Presentation.Video:004-026	MPEG-2 960 X 540, 16:9, 60 fps, progressive scan.	
+A/V Presentation.Video:004-027	MPEG-2 720 X 480, 16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-028	MPEG-2 720 X 480, 16:9, 24 fps, progressive scan.	
+A/V Presentation.Video:004-029	MPEG-2 720 X 480, 16:9, 29.97 fps, progressive scan.	
+A/V Presentation.Video:004-030	MPEG-2 720 X 480, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:004-031	MPEG-2 720 X 480, 16:9, 59.94 fps, progressive scan.	
+A/V Presentation.Video:004-032	MPEG-2 720 X 480, 16:9, 60 fps, progressive scan.	
+A/V Presentation.Video:004-033	MPEG-2 720 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-034	MPEG-2 720 X 480, 4:3, 24 fps, progressive scan.	P
+A/V Presentation.Video:004-035	MPEG-2 720 X 480, 4:3, 29.97 fps, progressive scan.	
+A/V Presentation.Video:004-036	MPEG-2 720 X 480, 4:3, 30 fps, progressive scan.	
+A/V Presentation.Video:004-037	MPEG-2 720 X 480, 4:3, 59.94 fps, progressive scan.	
+A/V Presentation.Video:004-038	MPEG-2 720 X 480, 4:3, 60 fps, progressive scan.	
+A/V Presentation.Video:004-039	MPEG-2 720 X 480, 16:9, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:004-040	MPEG-2 720 X 480, 16:9, 30 fps, interlaced scan.	
+A/V Presentation.Video:004-041	MPEG-2 720 X 480, 4:3, 29.97 fps, interlaced scan.	P
+A/V Presentation.Video:004-042	MPEG-2 704 X 480, 16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-043	MPEG-2 704 X 480, 16:9, 24 fps, progressive scan.	
+A/V Presentation.Video:004-044	MPEG-2 704 X 480, 16:9, 29.97 fps, progressive scan.	
+A/V Presentation.Video:004-045	MPEG-2 704 X 480, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:004-046	MPEG-2 704 X 480, 16:9, 59.94 fps, progressive scan.	
+A/V Presentation.Video:004-047	MPEG-2 704 X 480, 16:9, 60 fps, progressive scan.	
+A/V Presentation.Video:004-048	MPEG-2 704 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-049	MPEG-2 704 X 480, 4:3, 24 fps, progressive scan.	
+A/V Presentation.Video:004-050	MPEG-2 704 X 480, 4:3, 29.97 fps, progressive scan.	P
+A/V Presentation.Video:004-051	MPEG-2 704 X 480, 4:3, 30 fps, progressive scan.	
+A/V Presentation.Video:004-052	MPEG-2 704 X 480, 4:3, 59.94 fps, progressive scan.	
+A/V Presentation.Video:004-053	MPEG-2 704 X 480, 4:3, 60 fps, progressive scan.	
+A/V Presentation.Video:004-054	MPEG-2 704 X 480, 16:9, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:004-055	MPEG-2 704 X 480, 16:9, 30 fps, interlaced scan.	
+A/V Presentation.Video:004-056	MPEG-2 704 X 480, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:004-057	MPEG-2 704 X 480, 4:3, 30 fps, interlaced scan.	
+A/V Presentation.Video:004-058	MPEG-2 640 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-059	MPEG-2 640 X 480, 4:3, 24 fps, progressive scan.	P
+A/V Presentation.Video:004-060	MPEG-2 640 X 480, 4:3, 29.97 fps, progressive scan.	P
+A/V Presentation.Video:004-061	MPEG-2 640 X 480, 4:3, 30 fps, progressive scan.	P
+A/V Presentation.Video:004-062	MPEG-2 640 X 480, 4:3, 59.94 fps, progressive scan.	
+A/V Presentation.Video:004-063	MPEG-2 640 X 480,  4:3, 60 fps, progressive scan.	
+A/V Presentation.Video:004-064	MPEG-2 640 X 480, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:004-065	MPEG-2 640 X 480, 4:3, 30 fps, interlaced scan.	
+A/V Presentation.Video:004-066	MPEG-2 544 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-067	MPEG-2 544 X 480, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:004-068	MPEG-2 528 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-069	MPEG-2 528 X 480, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:004-070	MPEG-2 480 X 480, 4:3, 30 fps, interlaced scan.	
+A/V Presentation.Video:004-071	MPEG-2 352 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-072	MPEG-2 352 X 480, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:004-073	MPEG-2 320 X 240, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-074	MPEG-2 320 X  240, 4:3, 29.97 fps, interlaced scan.	P
+A/V Presentation.Video:004-075	MPEG-2 160 X 120, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-076	MPEG-2 160 X 120, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:004-077	MPEG-2 720 X 480, 4:3, 30 fps, interlaced scan.	
+A/V Presentation.Video:004-078	MPEG-2 1280 X 1080, 16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:004-079	MPEG-2 1280 X 1080, 16:9, 24 fps, progressive scan.	
+A/V Presentation.Video:004-080	MPEG-2 1280 X 1080, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:004-081	MPEG-2 1280 X 1080, 16:9, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:004-082	MPEG-2 1920 X 1080, 16:9, 59.94 fps,  progressive scan.	B
+A/V Presentation.Video:004-083	MPEG-2 1920 X 1080, 16:9, 60 fps,  progressive scan.	B
+A/V Presentation.Video:005-001	Display MPEG-2 still images up to  960 x 540	B
+A/V Presentation.Video:005-002	Display MPEG-2 low bit rate streams up to 960 x 540  [Note low delay mode images correspond to those used in music services.]	D
+A/V Presentation.Video:005-003	Display MPEG-4 AVC still images  up to 960 x 540	B
+A/V Presentation.Video:005-004	Display MPEG-4 AVC low bit rate streams up to 960 x 540	D
+A/V Presentation.Video:005-005	JPEG images	P
+A/V Presentation.Video:005-006	PNG	
+A/V Presentation.Video:006-001	Set Output Format to NATIVE	
+A/V Presentation.Video:006-002	Set Output Format to HDMI	
+A/V Presentation.Video:006-003	Set 4x3 Over Ride to 480i	
+A/V Presentation.Video:006-004	Set 4x3 Over Ride to 480P	
+A/V Presentation.Video:006-005	Set 4x3 Over Ride to OFF	
+A/V Presentation.Video:006-006	Set TV Type to 16x9	
+A/V Presentation.Video:006-007	Set TV Type to 4x3 Letter box	
+A/V Presentation.Video:006-008	Set TV Type to 4x3 Pan/ Scan	
+A/V Presentation.Video:006-010	Set output Format to 1080i	
+A/V Presentation.Video:006-011	Set Out Format to 720P	
+A/V Presentation.Video:006-012	Set Output Format to 480P	
+A/V Presentation.Video:006-013	Set Output Format to 480i	
+A/V Presentation.Video:007-001	16:9 Zoom Modes	P
+A/V Presentation.Video:008-003	MPEG-4 AVC HP@L3 for standard definition at up to 10 Mbps.	
+A/V Presentation.Video:008-004	MPEG-4 AVC HP@L4 for high definition at up to 20 Mbps.	
+A/V Presentation.Video:008-005	MPEG-4 AVC 1920 X 1080, 16:9, 23.976 fps, progressive scan.	P
+A/V Presentation.Video:008-006	MPEG-4 AVC 1920 X 1080, 16:9, 24 fps, progressive scan.	P
+A/V Presentation.Video:008-007	MPEG-4 AVC 1920 X 1080, 16:9, 29.97 fps, progressive scan.	
+A/V Presentation.Video:008-008	MPEG-4 AVC 1920 X 1080, 16:9, 29.97 fps, interlaced scan.	P
+A/V Presentation.Video:008-009	MPEG-4 AVC 1920 X 1080, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:008-010	MPEG-4 AVC 1920 X 1080, 16:9, 30 fps, interlaced scan.	P
+A/V Presentation.Video:008-011	MPEG-4 AVC 1440 X 1080,  16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-012	MPEG-4 AVC 1440 X 1080, 16:9, 24 fps, progressive scan.	
+A/V Presentation.Video:008-013	MPEG-4 AVC 1440 X 1080, 16:9, 29.97 fps, progressive scan.	
+A/V Presentation.Video:008-014	MPEG-4 AVC 1440 X 1080, 16:9, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:008-015	MPEG-4 AVC 1440 X 1080, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:008-016	MPEG-4 AVC 1440 X 1080, 16:9, 30 fps, interlaced scan.	
+A/V Presentation.Video:008-017	MPEG-4 AVC 1280 X 1080, 16:9, 29.97 fps, progressive scan.	
+A/V Presentation.Video:008-018	MPEG-4 AVC 1280 X 720, 16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-019	MPEG-4 AVC 1280 X 720, 16:9, 24 fps, progressive scan.	
+A/V Presentation.Video:008-020	MPEG-4 AVC 1280 X 720, 16:9, 29.97 fps, progressive scan.	
+A/V Presentation.Video:008-021	MPEG-4 AVC 1280 X 720, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:008-022	MPEG-4 AVC 1280 X 720, 16:9, 59.94 fps, progressive scan.	P
+A/V Presentation.Video:008-023	MPEG-4 AVC 1280 X 720, 16:9, 60 fps, progressive scan.	P
+A/V Presentation.Video:008-024	MPEG-4 AVC 960 X 540, 16:9, 59.94 fps, progressive scan.	
+A/V Presentation.Video:008-025	MPEG-4 AVC 960 X 540, 16:9, 60 fps, progressive scan.	
+A/V Presentation.Video:008-026	MPEG-4 AVC 720 X 480, 16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-027	MPEG-4 AVC 720 X 480, 16:9, 24 fps, progressive scan.	
+A/V Presentation.Video:008-028	MPEG-4 AVC 720 X 480, 16:9, 29.97 fps, progressive scan.	
+A/V Presentation.Video:008-029	MPEG-4 AVC 720 X 480, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:008-030	MPEG-4 AVC 720 X 480, 16:9, 59.94 fps, progressive scan.	P
+A/V Presentation.Video:008-031	MPEG-4 AVC 720 X 480, 16:9, 60 fps, progressive scan.	P
+A/V Presentation.Video:008-032	MPEG-4 AVC 720 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-033	MPEG-4 AVC 720 X 480, 4:3, 24 fps, progressive scan.	P
+A/V Presentation.Video:008-034	MPEG-4 AVC 720 X 480, 4:3, 29.97 fps, progressive scan.	
+A/V Presentation.Video:008-035	MPEG-4 AVC 720 X 480, 4:3, 30 fps, progressive scan.	
+A/V Presentation.Video:008-036	MPEG-4 AVC 720 X 480, 4:3, 59.94 fps, progressive scan.	
+A/V Presentation.Video:008-037	MPEG-4 AVC 720X 480, 4:3, 60 fps, progressive scan.	
+A/V Presentation.Video:008-038	MPEG-4 AVC 720 X 480, 4:3, 29.97 fps, interlaced scan.	P
+A/V Presentation.Video:008-039	MPEG-4 AVC 720 X 480, 4:3, 30 fps, interlaced scan.	P
+A/V Presentation.Video:008-040	MPEG-4 AVC 720 X 480, 16:9, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:008-041	MPEG-4 AVC 720 X 480, 16:9, 30 fps, interlaced scan.	
+A/V Presentation.Video:008-042	MPEG-4 AVC 704 X 480, 16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-043	MPEG-4 AVC 704 X 480, 16:9, 24 fps, progressive scan.	
+A/V Presentation.Video:008-044	MPEG-4 AVC 704 X 480, 16:9, 29.97 fps, progressive scan.	
+A/V Presentation.Video:008-045	MPEG-4 AVC 704 X 480, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:008-046	MPEG-4 AVC 704 X 480, 16:9, 59.94 fps, progressive scan.	
+A/V Presentation.Video:008-047	MPEG-4 AVC 704 X 480, 16:9, 60 fps, progressive scan.	
+A/V Presentation.Video:008-048	MPEG-4 AVC 704 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-049	MPEG-4 AVC 704 X 480, 4:3, 24 fps, progressive scan.	
+A/V Presentation.Video:008-050	MPEG-4 AVC 704 X 480, 4:3, 29.97 fps, progressive scan.	
+A/V Presentation.Video:008-051	MPEG-4 AVC 704 X 480, 4:3, 30 fps, progressive scan.	
+A/V Presentation.Video:008-052	MPEG-4 AVC 704 X 480, 4:3, 59.94 fps, progressive scan.	
+A/V Presentation.Video:008-053	MPEG-4 AVC 704 X 480, 4:3, 60 fps, progressive scan.	
+A/V Presentation.Video:008-054	MPEG-4 AVC 704 X 480, 16:9, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:008-055	MPEG-4 AVC 704 X 480, 16:9, 30 fps, interlaced scan.	
+A/V Presentation.Video:008-056	MPEG-4 AVC 704 X 480, 4:3, 29.97 fps, interlaced scan.	P
+A/V Presentation.Video:008-057	MPEG-4 AVC 704 X 480, 4:3, 30 fps, interlaced scan.	P
+A/V Presentation.Video:008-058	MPEG-4 AVC 640 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-059	MPEG-4 AVC 640 X 480, 4:3, 24 fps, progressive scan.	
+A/V Presentation.Video:008-060	MPEG-4 AVC 640 X 480, 4:3, 29.97 fps, progressive scan.	
+A/V Presentation.Video:008-061	MPEG-4 AVC 640 X 480, 4:3, 30 fps, progressive scan.	
+A/V Presentation.Video:008-062	MPEG-4 AVC 640 X 480, 4:3, 59.94 fps, progressive scan.	
+A/V Presentation.Video:008-063	MPEG-4 AVC 640 X 480, 4:3, 60 fps, progressive scan.	
+A/V Presentation.Video:008-064	MPEG-4 AVC 640 X 480, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:008-065	MPEG-4 AVC 640 X 480, 4:3, 30 fps, interlaced scan.	
+A/V Presentation.Video:008-066	MPEG-4 AVC 544 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-067	MPEG-4 AVC 544 X 480, 4:3, 29.97 fps, interlaced scan.	P
+A/V Presentation.Video:008-069	MPEG-4 AVC 528 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-070	MPEG-4 AVC 528 X 480, 4:3, 29.97 fps, interlaced scan.	P
+A/V Presentation.Video:008-071	MPEG-4 AVC 480 X 480, 4:3, 30 fps, interlaced scan.	
+A/V Presentation.Video:008-072	MPEG-4 AVC 352 X 480, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-073	MPEG-4 AVC 352 X 480, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:008-074	MPEG-4 AVC 320 X 240, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-075	MPEG-4 AVC 320 X 240, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:008-076	MPEG-4 AVC 160 X 120, 4:3, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-077	MPEG-4 AVC 160 X 120, 4:3, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:008-078	MPEG-4 AVC 1280 X 1080, 16:9, 23.976 fps, progressive scan.	
+A/V Presentation.Video:008-079	MPEG-4 AVC 1280 X 1080, 16:9, 24 fps, progressive scan.	
+A/V Presentation.Video:008-080	MPEG-4 AVC 1280 X 1080, 16:9, 30 fps, progressive scan.	
+A/V Presentation.Video:008-081	MPEG-4 AVC 1280 X 1080, 16:9, 29.97 fps, interlaced scan.	
+A/V Presentation.Video:008-082	MPEG-4 AVC 1280 X 1080, 16:9, 30 fps, interlaced scan.	
+A/V Presentation.Video:009-001	HEVC MP@L4.1 1920x1080i 30fps	B
+A/V Presentation.Video:009-002	HEVC MP@L4.1 1920x1080i 29.97fps	B
+A/V Presentation.Video:009-003	HEVC MP@L4.1 1920x1080p 60fps	B
+A/V Presentation.Video:009-004	HEVC MP@L4.1 1920x1080p 59.94fps	P
+A/V Presentation.Video:009-005	HEVC MP@L4.1 1920x1080p 30fps	B
+A/V Presentation.Video:009-006	HEVC MP@L4.1 1920x1080p 29.97fps	B
+A/V Presentation.Video:009-007	HEVC MP@L4.1 1920x1080p 24fps	B
+A/V Presentation.Video:009-008	HEVC MP@L4.1 1920x1080p 23.976fps	B
+A/V Presentation.Video:009-009	HEVC MP@L4.1 1280x720p 60fps	B
+A/V Presentation.Video:009-010	HEVC MP@L4.1 1280x720p 59.94fps	P
+A/V Presentation.Video:009-011	HEVC MP@L4.1 1280x720p 30fps	B
+A/V Presentation.Video:009-012	HEVC MP@L4.1 1280x720p 29.97fps	B
+A/V Presentation.Video:009-013	HEVC MP@L4.1 1280x720p 24fps	B
+A/V Presentation.Video:009-014	HEVC MP@L4.1 1280x720p 23.976fps	B
+A/V Presentation.Video:009-015	HEVC MP@L4.1 1440x1080p 60fps	B
+A/V Presentation.Video:009-016	HEVC MP@L4.1 1440x1080p 59.94fps	P
+A/V Presentation.Video:009-017	HEVC MP@L4.0 1440x1080p 30fps	B
+A/V Presentation.Video:009-018	HEVC MP@L4.0 1440x1080p 29.97fps	B
+A/V Presentation.Video:009-019	HEVC MP@L4.0 1440x1080p 24fps	B
+A/V Presentation.Video:009-020	HEVC MP@L4.0 1440x1080p 23.976fps	B
+A/V Presentation.Video:009-021	HEVC MP@L3.0 720x480p 30fps	B
+Access Control:001-001	Full Encrypt, fixed key & 0 key	P
+Access Control:001-002	Full Encrypt	P
+Access Control:002-001	Authorization of  console tiers	P
+Access Control:002-002	De-authorization of tiers	P
+Access Control:002-005	Temporary tier authorization	P
+Access Control:002-006	Universal Access Tier	P
+Access Control:002-007	Subscription/temp tiers with PPV (CAPPV mode op)	F
+Access Control:002-008	Adding CAPPV tier to program in progress	P
+Access Control:003-001	2 Cat rekeys maintained	F
+Access Control:003-004	Programs encrypted under either key are decrypted	P
+Access Control:004-001	Display of programs with regional blackouts	P
+Access Control:004-002	Adjacent channels are not affected	P
+Access Control:005-001	Display of programs with circular blackouts	P
+Access Control:005-002	Adjacent channels unaffected	F
+Access Control:006-001	Display of programs with Spot Beam blackouts	P
+Access Control:006-002	Adjacent channels unaffected	P
+Access Control:007-001	EMM messages in standby	P
+Access Control:008-003	Factory reset	P
+Access Control:008-004	EMM discard after FR	P
+Access Control:008-005	EMM discard after UIM release msg	F
+Access Control:008-008	EMM Provider ID storage	P
+Closed Caption.608_708:001-001	Render CEA708 CC on its NTSC output, SCTE21 Syntax, 608 CC_type 00 and 708 CC_type 11	P
+Closed Caption.608_708:001-003	Render CEA708 CC on its digital output (HDMI or DVI), SCTE21 Syntax, 608 CC_type 00 and 708 CC_type 11	P
+Closed Caption.608_708:002-001	Render CEA-708 CC on its NTSC outputs, SCTE21 syntax, 608 CC_Type 00, 708 CC_Type 10	P
+Closed Caption.608_708:002-003	Render CEA-708 CC on its digital output (HDMI or DVI), SCTE21 syntax, 608 CC_Type 00, 708 CC_Type 10	P
+Closed Caption.608_708:003-001	Render CEA-708 captions on its NTSC outputs, SCTE21 syntax, 608 CC_Type 01, 708 CC_Type 11	P
+Closed Caption.608_708:003-003	Render CEA-708 captions on its digital output (HDMI or DVI), SCTE21 syntax, 608 CC_Type 01, 708 CC_Type 11	P
+Closed Caption.608_708:004-001	Render CEA-708 captions on its NTSC outputs, SCTE21 syntax, 608 CC_Type 01, 708 CC_Type 10	P
+Closed Caption.608_708:004-003	Render CEA-708 captions on its digital output (HDMI or DVI), SCTE21 syntax, 608 CC_Type 01, 708 CC_Type 10	P
+Closed Caption.608_708:005-001	Reconstruct L21, F1 /F2, of the VBI on its NTSC Outputs,both 608 &708 CC data are present, carried in the SCTE-21 syntax,cc_type 00  for the 608.	P
+Closed Caption.608_708:005-002	Reconstruct L21, F1 /F2, of the VBI on its NTSC Outputs,both 608 &708 CC data are present, carried in the SCTE-21 syntax,cc_type 01  for the 608.	P
+Closed Caption.CEA608:001-001	Render CC on its NTSC outputs per CEA608, SCTE21 Syntax and CC_Type 00	F
+Closed Caption.CEA608:001-003	Render CC on its it digital output (HDMI or DVI) per CEA-608, SCTE21 sysntax and CC_Type 00	F
+Closed Caption.CEA608:001-004	Reconstruct CC on the VBI L21, F1/ F2, on its NTSC Outputs per CEA608, SCTE21 syntax and CC_Type 00.	P
+Closed Caption.CEA608:002-001	Render CC on its NTSC output per CEA608, SCTE21 syntax, CC_Type 01	F
+Closed Caption.CEA608:002-003	Render CEA-608 closed captions on its digital output (HDMI or DVI) per CEA608, SCTE21 syntax, CC_Type 01	F
+Closed Caption.CEA608:002-005	Reconstruct CC L21, F1 and F2, of the VBI on its NTSC Outputs per per CEA608, SCTE21 syntax, CC_Type 01	P
+Closed Caption.CEA608:003-001	Reconstruct CC data on L21, F1 and F2, of the VBI on its NTSC Outputs per CEA608, SCTE-20 syntax	P
+Closed Caption.CEA608:003-002	Rendering CC data on its NTSC outputs per CEA608, SCTE-20 syntax	P
+Closed Caption.CEA608:003-004	Rendering CC data on its digital output (HDMI or DVI) per CEA608, SCTE-20 syntax.	P
+Closed Caption.CEA608:004-001	Reconstruct L21, F1/ F2, of the VBI on its NTSC Outputs using the CEA608 Caption data received in SCTE-20 syntax	P
+Closed Caption.CEA608:004-002	Render the CEA608 Caption data received in SCTE-20 syntax on its NTSC outputs	P
+Closed Caption.CEA608:004-004	Render the CEA608 Caption data that was received in SCTE-20 syntax on its Digital output (HDMI or DVI).	P
+Closed Caption.CEA708:001-001	Render on its NTSC outputs per CEA708, SCTE21 and CC_Type 10	P
+Closed Caption.CEA708:001-003	Render on its digital output (HDMI or DVI) per CEA708, SCTE21 and CC_Type 10	P
+Closed Caption.CEA708:002-001	Render on its NTSC outputs per CEA708, SCTE21 and CC_Type 11	P
+Closed Caption.CEA708:002-003	Render on its digital output (HDMI or DVI) per CEA708, SCTE21 and CC_Type 11	P
+Closed Caption.DVR:001-001	Reconstruct L21, F1 & F2 of the VBI during playback of Retained content (LOD) at Normal Speed.	
+Closed Caption.DVR:001-002	Disable the reconstruction of L21, F1 & F2 of the VBI if the selection to Slow FWD Retained content (LOD) is enabled.	
+Closed Caption.DVR:001-003	Begin reconstructing L21, F1 & F2 within 3 sec of a transition from Slow FWD to Normal Speed playback of Retained content (LOD).	
+Closed Caption.DVR:001-004	Disable the reconstruction of L21, F1 & F2 of the VBI if the selection to Fast FWD Retained content is enabled.	
+Closed Caption.DVR:001-005	Begin reconstructing L21 F1 & F2 of the VBI within 3 sec of a transition from Fast FWD to Normal Speed playback of Retained content.	
+Closed Caption.DVR:001-006	Disable the reconstruction of L21, F1 & F2 of the VBI if the selection to Slow Rewind Retained content (LOD) is enabled.	
+Closed Caption.DVR:001-007	Begin reconstructing L21, F1 & F2, of the VBI within 3 sec of a transition from Slow RWD to Normal Speed playback of Retained content.	
+Closed Caption.DVR:001-008	Disable the reconstruction of L21, F1 & 2 of the VBI if the selection to Fast RWD Retained content is enabled.	
+Closed Caption.DVR:001-009	Begin reconstructing L21, F1 & F2 of the VBI within 3 sec of a transition from Fast RWD to Normal Speed playback of Retained content.	
+Closed Caption.DVR:001-010	Disable the reconstruction of L21, F1 &F2 of the VBI if the selection to Pause Retained content (LOD) is enabled.	
+Closed Caption.DVR:001-011	Begin reconstructing L21, F1 & F2 of the VBI within 3 sec of a transition from Paused to Normal Speed playback of Retained content (LOD).	
+Closed Caption.DVR:002-001	Render closed captions during playback of Retained content at Normal Speed.	B
+Closed Caption.DVR:002-002	Disable the rendering of closed captions if the selection to Slow Forward Retained content is enabled.	B
+Closed Caption.DVR:002-003	Begin rendering CC data within 3 sec of a transition from Slow FWD to Normal Speed playback of Retained content.	B
+Closed Caption.DVR:002-004	Disable the rendering of CC if the selection to Fast FWD Retained content is enabled.	
+Closed Caption.DVR:002-005	Begin rendering CC data within 3 sec of a transition from Fast FWD to Normal Speed playback of Retained content.	B
+Closed Caption.DVR:002-006	Disable the rendering of CC if the selection to Slow RWD Retained content is enabled.	
+Closed Caption.DVR:002-007	Begin rendering CC data within 3 sec of a transition from Slow RWD to Normal Speed playback of Retained content.	B
+Closed Caption.DVR:002-008	Disable the rendering of CC if the selection to Fast RWD Retained content is enabled.	B
+Closed Caption.DVR:002-009	Begin rendering CC data within 3 sec of a transition from Fast RWD  to Normal Speed playback of Retained content.	B
+Closed Caption.DVR:002-010	Disable the rendering of CC if the selection to Pause Retained content is enabled.	B
+Closed Caption.DVR:002-011	Begin rendering CC data within t3) sec of a transition from Paused to Normal Speed playback of Retained content.	B
+Closed Caption.DVR:003-001	Reconstruct L21, F1 and F2, of the VBI during playback of Recorded content, at Normal Speed.	
+Closed Caption.DVR:003-002	Disable the reconstruction of L21, F1 and F2, of the VBI if the selection to Slow FWD Recorded content is enabled.	
+Closed Caption.DVR:003-003	Begin reconstructing L21, F1 & F2, of the VBI within 3 sec of a transition from Slow FWD to Normal Speed playback of Recorded content.	
+Closed Caption.DVR:003-004	Disable the reconstruction of L21, F1 and F2, of the VBI if the selection to Fast FWD Recorded content is enabled.	
+Closed Caption.DVR:003-005	Begin reconstructing L21, F1 & F2, of the VBI within 3 sec of a transition from Fast FWD  to Normal Speed playback of Recorded content.	
+Closed Caption.DVR:003-006	Disable the reconstruction of L1, F1 and F2, of the VBI if the selection to Slow RWD Recorded content is enabled.	
+Closed Caption.DVR:003-007	Regin reconstructing L21, F1 & F2, of the VBI within 3 sec of a transition from Slow RWD to Normal Speed playback of Recorded content.	
+Closed Caption.DVR:003-008	Disable the reconstruction of L21, F1 & F2, of the VBI if the selection to Fast RWD Recorded content is enabled.	
+Closed Caption.DVR:003-009	Begin reconstructing L21, F1 & F2, of the VBI within 3 sec of a transition from Fast RWD to Normal Speed playback of Recorded content.	
+Closed Caption.DVR:003-010	Disable the reconstruction of L21, F1 and F2, of the VBI if the selection to Pause Recorded content is enabled.	
+Closed Caption.DVR:003-011	Begin reconstructing L1, F1 and Field 2, of the VBI within 3 sec of a transition from Paused playback to Normal Speed playback of Recorded content.	
+Closed Caption.DVR:004-001	Render closed captions during playback of Recorded content, at Normal Speed.	B
+Closed Caption.DVR:004-002	Disable the rendering of closed captions if the selection to Slow FWD Recorded content is enabled.	B
+Closed Caption.DVR:004-003	Begin rendering closed caption data within 3 sec of a transition from Slow FWD playback to Normal Speed playback of Recorded content.	F
+Closed Caption.DVR:004-004	Disable the rendering of closed captions if the selection to Fast FWD Recorded content is enabled.	B
+Closed Caption.DVR:004-005	Begin rendering closed caption data within 3 sec of a transition from Fast FWD to Normal Speed playback of Recorded content.	F
+Closed Caption.DVR:004-006	Disable the rendering of closed captions if the selection to Slow Rewind Recorded content is enabled.	B
+Closed Caption.DVR:004-007	Begin rendering closed caption data within 3 sec of a transition from Slow RWD to Normal Speed playback of Recorded content.	F
+Closed Caption.DVR:004-008	Disable the rendering of closed captions if the selection to Fast Rewind Recorded content is enabled.	B
+Closed Caption.DVR:004-009	Begin rendering closed caption data within 3 sec of a transition from Fast RWD to Normal Speed playback of Recorded content.	F
+Closed Caption.DVR:004-010	Disable the rendering of closed captions if the selection to Pause Recorded content is enabled.	B
+Closed Caption.DVR:004-011	Begin rendering closed caption data within 3 sec of a transition from Paused playback to Normal Speed playback of Recorded content.	F
+Closed Caption.Performance:001-001	CEA-608 CC begin rendered within 3 sec of a transition to a Digital service.	P
+Closed Caption.Performance:002-001	CEA-608 CC begin rendered within 3 sec if the closed caption transport syntax transitions from SCTE-21 to SCTE-20.	F
+Closed Caption.Performance:003-001	CEA608 CC within 3 sec if the CC transport syntax transitions from SCTE-20 to SCTE-21.	F
+Closed Caption.Performance:004-001	CEA608 CC begin rendered within 3 sec if a Digital service is tuned where CEA608 caption data is present in the MPEG-2 Picture User Data.	P
+Closed Caption.Performance:005-001	Begin reconstructing L21, F1/ F2, of the VBI within three 3 if the closed caption transport syntax transitions from SCTE-21 to SCTE-20	P
+Closed Caption.Performance:006-001	Reconstructing L21, F1 /F2 of the VBI within 3 secif the CC transport syntax transitions from SCTE-20 to SCTE-21.	P
+Closed Caption.Performance:007-001	Begin reconstructing L1, F1 /F2, of the VBI within 3 sec if a Digital service is tuned where CEA608 CC data is present in the MPEG2 Picture User Data	P
+Closed Caption.Performance:008-001	The product SHALL begin rendering CEA-708 captions within (3) seconds if a Digital service is tuned where CEA-708 caption data is present in the MPEG-2 Picture User Data.	F
+Closed Caption.Performance:009-001	Begin rendering CEA708 CC within 3 if the CC data format transitions from CEA-608 to CEA-708.	F
+Closed Caption.Performance:010-001	Begin reconstructing L21, F1/ F2, of the VBI within 3 seconds if the CC data format transitions from CEA-708 to CEA-608.	P
+Closed Caption.Performance:011-001	Begin rendering CEA-608 CC within 3 seconds if the closed caption data format transitions from CEA-708 to CEA-608.	F
+ConsumerSanity:001-013	The product SHALL run on the DSR800 hardware platform	P
+ConsumerSanity:001-014	The product SHALL run on the DSR830 hardware platform	P
+Download:001-001	DSR should download new target code	P
+Download:001-002	DSR should retain code in flash after standby	P
+Download:001-003	DSR should retain downloaded code after AC power cycle	P
+Download:001-008	Start an authenticated download to the DSR (i.e. released download code).	P
+Download:001-009	Send a forced preamble to the DSR	P
+Download:001-010	Download released code to DSR with fielded code.	F
+Download:001-011	DSR executes new downloaded code	P
+Download:002-001	Channel list maintained after download	P
+Download:002-002	Rating settings maintained after download	P
+Download:002-003	Channel lockout maintained after download	P
+Download:002-005	Network Information Table unchanged after download	P
+Download:002-006	Change and maintain VCT after download	P
+Download:002-007	Video settings maintained after download	P
+Download:002-008	Audio settings maintained after download	P
+Download:002-009	Language settings maintained after download	P
+Download:002-010	EPMs maintained and processed after download	P
+Download:002-011	Tiers settings maintained after download	P
+Download:002-012	Geographic location selection maintained after download	P
+Download:002-013	Region selection maintained after download	P
+Download:002-016	Multicast 16 Addresses functional	P
+Download:002-017	Last channel viewed maintained after download	P
+Download:002-018	RCU address maintained after download	P
+Download:002-019	Configurable application ID functional	P
+Download:002-021	Timer(s) settings maintained after download	P
+Download:002-022	DVS user settings preserved after download	P
+Download:002-023	User password maintained after download	P
+Download:002-024	The Product SHALL maintain all Closed Captioning user settings through a code download.	P
+Download:002-025	Scheduled recodrings Shall be maintained after a code download	P
+Download:003-008	Start download - AC power cycle the DSR during download.	F
+Download:003-023	User Download Screen Warning present	F
+Download:003-024	Starting User Download and Screen Warning	F
+Download:003-025	Download does not start	B
+Download:004-001	Starting User Friendly Download	F
+Download:004-015	Current Packing List version displayed on Standard Download Screen	P
+Download:004-019	Target Packing List version displayed on Standard Download Screen	P
+Download:004-022	Preamble PID displayed on line 4 in Standard Download Screen	P
+Download:004-023	Download PID displayed on line 4 in Standard Download Screen	P
+Download:004-024	Download channel number (VCN) displayed on line 4 in Standard Download Screen	P
+Download:004-025	Transport Locked State displayed in Standard Download Screen.	P
+Download:004-026	Signal Level displayed in Standard Download Screen.	F
+Download:004-027	VCT ID displayed in the Standard Download Screen.	P
+Download:004-028	Download Channel Frequency displayed in Standard Download Screen.	P
+Download:004-029	Download channel Code Rate displayed in Standard Download Screen.	P
+Download:004-030	Download channel symbol Rate displayed in Standard Download Screen.	P
+Download:004-031	Download state Acquired or Not to the download channel displayed in Standard Download Screen.	P
+Download:004-032	Total Files Collected displayed in the Standard Download Screen.	P
+Download:004-033	Total Files displayed in the Standard Download Screen.	P
+Download:004-034	File collected state shall be indicated with a 1 in the standard download screen	P
+Download:004-035	File NOT collected state shall be indicated with a 0 in the standard download screen	P
+Download:004-036	Download Preamble Filter State displayed in the Standard Download Screen	P
+Download:004-037	Download Msg Filter State displayed in the Standard Download Screen	P
+Download:004-038	Download Channel Tune State displayed in the Standard Download Screen	P
+Download:004-039	Bad Section count displayed in the Standard Download Screen	P
+Download:004-040	Last Section count displayed in the Standard Download Screen	P
+Download:004-041	Remaining Section count displayed in the Standard Download Screen	P
+Download:004-042	Current Section Number displayed in the Standard Download Screen	P
+Download:004-043	Latest firmware already installed banner	F
+Download:006-002	Start Download button should be functional when opportunity preamble is available	D
+Download:006-004	Verify Download is enabled WARNING is present	F
+Download:006-005	Major Software Download Notification Banner present	D
+Download:007-001	After downloading Next code version on DSR6xx (code Jenner 46.23 and above)	P
+DRM.CGMSA:001-001	CGMSA pass through on analog output for MPEG2	
+DRM.CGMSA:001-003	CGMSA pass through on Component output for MPEG2 on 480i	
+DRM.CGMSA:001-004	CGMSA pass through on Component output for MPEG2 on 480p, 720p, and 1080i	
+DRM.Fingerprint:001-001	Fingerprint display	P
+DRM.Fingerprint:001-002	Fingerprint duration	P
+DRM.Fingerprint:001-003	Fingerprint on composite	P
+DRM.Fingerprint:001-004	Fingerprint on HDMI	P
+DRM.Fingerprint:001-008	Fingerprint over DVR playback	P
+DRM.Fingerprint:001-009	Fingerprint on foreground service	P
+DRM.Fingerprint:001-010	No fingerprints on background recording use case	P
+DRM.Fingerprint:001-011	No fingerprints on foreground recording use case	P
+DRM.Fingerprint:001-012	Standby cycle use case	P
+DRM.Fingerprint:001-013	AC cycle use case	P
+DRM.Fingerprint:001-014	Fingerprint durations	P
+DVR.Dual Record Feature:001-001	Independent AV Stream	B
+DVR.Dual Record Feature:001-002	Associated AV stream	B
+DVR.Dual Record Feature:001-003	Watch video from tuner	B
+DVR.DVR Response Time:001-001		
+DVR.HD Fail:001-001	Boot with HD fail	
+DVR.HD Fail:001-002	Channel change w/o hard drive	
+DVR.HD Fail:001-003	HD operation after detection	
+DVR.Legacy DVR:001-001	Simple background record	P
+DVR.Legacy DVR:001-002	Watch while recording a different service	P
+DVR.Legacy DVR:001-003	Watch while recording the same service	P
+DVR.Legacy DVR:001-004	Dual record	B
+DVR.Legacy DVR:001-006	Record Service while playing back a different recording	B
+DVR.Legacy DVR:001-007	Record Service while playing back the same service	
+DVR.Legacy DVR:001-008	Watch Service 1 With Trick Play, Record Service 2	
+DVR.Legacy DVR:001-009	LOD disable\enable	
+DVR.Legacy DVR:001-010	Multiple audio components & language selection	B
+DVR.Legacy DVR:001-012	Disk spin down standby	
+DVR.Legacy DVR:001-015	DVR Audio PID selection on user language mismatch	B
+DVR.Legacy DVR:001-016	Variable bit rate recording	
+DVR.Legacy DVR:001-017	MPEG2 Trick Play	P
+DVR.MPEG4:001-001	Simple background record & playback	P
+DVR.MPEG4:001-002	Watch while recording a different service	
+DVR.MPEG4:001-003	Watch while recording the same service	P
+DVR.MPEG4:001-004	Dual record	B
+DVR.MPEG4:001-006	Record Service while playing back a different recording	
+DVR.MPEG4:001-007	Record Service while playing back the same service	
+DVR.MPEG4:001-008	Watch Service 1 With Trick Play, Record Service 2	
+DVR.MPEG4:001-009	LOD operation	P
+DVR.MPEG4:001-010	Multiple audio components & language selection	B
+DVR.MPEG4:001-015	MPEG4 Trick Play	P
+DVR.MPEG4:002-001	Record MPEG4 T1, MPEG2 T2	B
+DVR.MPEG4:002-002	Record MPEG2 T1, MPEG4 T2	B
+DVR.MPEG4:002-003	Record MPEG4 T1, MPEG4 T2	B
+Networking.WiFi:001-001	WiFi Network Detection	I
+Networking.WiFi:001-002	Join a WiFi Network	
+Networking.WiFi:001-003	Retain WiFi Config	
+System Control.Power Up, Down, Reset:001-001	Factory Reset	P
+System Control.Power Up, Down, Reset:001-005	Default Acquisition	F
+System Control.Power Up, Down, Reset:001-007	EMM Search Mode	P
+System Control.Power Up, Down, Reset:001-008	User Interface Factory Reset Defaults	P
+System Control.Power Up, Down, Reset:001-009	Active and Pending channel overrides	B
+System Control.Power Up, Down, Reset:001-010	IPG Service ID	B
+System Control.Power Up, Down, Reset:001-011	RCU Address	P
+System Control.Power Up, Down, Reset:001-012	EPMs Status	B
+System Control.Power Up, Down, Reset:001-013	Closed Caption Settings	P
+System Control.Power Up, Down, Reset:001-014	Video Format	P
+System Control.Power Up, Down, Reset:001-015	DSR defaults to a ROM map after factory reset	F
+System Control.Power Up, Down, Reset:002-005	DSR will execute hardware reset	P
+System Control.Power Up, Down, Reset:002-006	Closed Caption Settings	P
+System Control.Power Up, Down, Reset:002-007	RCU address	P
+System Control.Power Up, Down, Reset:002-008	Reset with RCU	P
+System Control.Power Up, Down, Reset:003-002	Acquisition Recovery	B
+System Control.Power Up, Down, Reset:003-003	Muted Outputs	B
+System Control.Power Up, Down, Reset:003-004	Disabled Controls	B
+System Control.Power Up, Down, Reset:003-005	Standby mode	P
+System Control.Power Up, Down, Reset:005-001	Last Channel restored after AC power interruption standby/active	B
+System Control.Power Up, Down, Reset:005-003	VCT ID & Satellite ID	B
+System Control.Power Up, Down, Reset:005-004	EMM provider ID	B
+System Control.Power Up, Down, Reset:005-006	CDT	B
+System Control.Power Up, Down, Reset:005-007	MMT	B
+System Control.Power Up, Down, Reset:005-008	SIT	B
+System Control.Power Up, Down, Reset:005-009	TDTs	B
+System Control.Power Up, Down, Reset:005-010	Virtual Channel Records	B
+System Control.Power Up, Down, Reset:005-011	Antitaping Control Vectors	B
+System Control.Power Up, Down, Reset:005-013	RCU Address	P
+System Control.Power Up, Down, Reset:005-014	UIM Data	B
+System Control.Power Up, Down, Reset:005-015	EPMs	B
+System Control.Power Up, Down, Reset:005-016	Firmware Code Version	B
+System Control.Power Up, Down, Reset:005-017	User Settings Saved	P
+System Control.Power Up, Down, Reset:006-001	Boot code execution from flash within 15 seconds of application of power.	P
+System Control.Power Up, Down, Reset:006-002	DSR should power on from internal flash memory.	P
+System Control.Power Up, Down, Reset:007-001	Change the network information message while the DSR is in standby mode.	P
+System Control.Power Up, Down, Reset:007-002	Delete one channel from the map while the DSR is in standby mode.	
+System Control.Power Up, Down, Reset:007-003	Power on the DSR using remote control while it is in standby mode.	P
+System Control.Power Up, Down, Reset:007-004	DSR non-volitile memory retention while in standby mode.	P
+System Control.PrivMessg:001-001	Verify that private messages are processed	P
+System Control.PrivMessg:001-002	Verify that E6 Messages are received and processed	P
+System Control.Service Selection:001-001	Demultiplexing one video service	P
+System Control.Service Selection:001-002	Decoding one PCR stream	P
+System Control.Service Selection:001-003	Reconstructing all the services which are currently selected and subscribed.	P
+System Control.Service Selection:001-005	PMT Flush: Clear the PMT stored in memory cache.	P
+System Control.Service Selection:001-006	Audio Language Descriptor update	F
+System Control.Service Selection:001-007	The IRD shall support one VCT with up to 4095 virtual channels	B
+System Control.Service Selection:001-008	Tune to any virtual channels in the VCT numbered 1-999. Example live map 4321 has channels in the range 1 to 9xx.	P
+System Control.Service Selection:001-009	The IRD shall use the ROM resident VCT	P
+System Control.Service Selection:001-010	The IRD shall contain a ROM based default VCT 4352	P
+System Control.Service Selection:001-011	system time messages	P
+System Control.Service Selection:001-012	absence of system time messages	P
+System Control.Service Selection:001-013	Satellite Information Table (SIT) tuning data stored in non-volatile memory	P
+System Control.Service Selection:001-014	IRD shall be capable of storing one RTT	
+System Control.Service Selection:001-015	The IRD shall be capable of storing one SNT	
+System Control.Service Selection:001-016	more records than IRD can store	
+System Control.Service Selection:001-017	performance of the IRD shall not be impacted	
+System Control.Service Selection:001-018	SIT election shall be based on lowest channel number in the map	
+System Control.Service Selection:001-020	The IRD shall select and maintain the TDT associated with the current SIT.	P
+System Control.Service Selection:001-021	The IRD shall disregard messages that have duplicate table version,	
+System Control.Service Selection:001-022	The IRD shall be capable of storing 64 TDT records	
+System Control.Service Selection:001-023	The IRD shall be capable of storing up to 255 satellite CDT records	
+System Control.Service Selection:001-024	The IRD shall be capable of storing 1000 VCT records	
+System Control.Service Selection:001-025	Removal of undefined channels	
+System Control.Service Selection:001-026	Frequency Descriptor Functional	P
+System Control.Service Selection:001-027	Virtual Channel Table is stored in non-volitile memory	P
+System Control.Service Selection:001-028	Tune to Audio channel: Music and Radio	P
+System Control.Service Selection:001-029	First audio listed in PMT should be selected if preferred audio language is NOT available	P
+System Control.Service Selection:002-001	Change service number on existing channel	
+System Control.Service Selection:002-002	Change transponder on existing channel	
+System Control.Service Selection:002-003	Delete a channel from the map	P
+System Control.Service Selection:002-004	Add a channel to the map	P
+System Control.Service Selection:002-005	Channel source ID change	P
+System Control.Service Selection:002-006	CDT change in NIT	
+System Control.Service Selection:002-007	MMT change in the NIT	
+System Control.Service Selection:002-008	Adding a component PID to existing service	
+System Control.Service Selection:002-009	Removing a component PID from an existing service	
+System Control.Service Selection:002-010	Descriptor change	
+System Control.Service Selection:002-011	Modify the tone setting in the map	
+System Control.Service Selection:002-012	Modify the LNB voltage setting in the NIT	
+System Control.Service Selection:002-013	MMT Change by Transponder Change	
+System Control.Service Selection:002-014	VCT ID (Map) Load	P
+System Control.Service Selection:003-001	Channel tuning time within same multiplex	P
+System Control.Service Selection:003-002	Channel tuning time between different multiplexes	P
+System Control.Service Selection:004-001	DSR has factory ROM map 4352. Connect DSR to live feed. Do not authorize it.	P
+System Control.Service Selection:004-002	Load canned xKu map “X4C(4321)” Options- 1-1-2-2	P
+System Control.Service Selection:004-003	Make sure unit is tuned and has Sat lock. Trip DSR with desired map ex: 4188 live.	P
+System Control.Service Selection:004-004	Reboot DSR after DSR loaded authorized map ex: 4188.	P
+System Control.Service Selection:004-005	Load canned xKu map “X4C(4321)” Options-1-1-2-2	P
+System Control.Service Selection:004-006	Reboot unit after stream map was loaded ex: 4321	D
+System Control.Service Selection:004-007	DSR has authorized map ex: 4188	P
+System Control.Service Selection:004-008	DSR has authorized map Ex: 4188. Load canned xKu map “X4C(4321)” Options-1-1-2-2	P
+System Control.Service Selection:005-001	DSR has factory ROM map 4352. Connect DSR to live feed. Do not authorize it.	P
+System Control.Service Selection:005-002	Load canned Ku map “Q4C(4320)” Options- 1-1-2-2	P
+System Control.Service Selection:005-003	Make sure unit is tuned and has Sat lock. Trip DSR with desired map ex: 4373 live.	P
+System Control.Service Selection:005-004	Reboot DSR after DSR loaded authorized map ex: 4373.	P
+System Control.Service Selection:005-005	Load canned Ku map “Q4C(4320)” Options-1-1-2-2	P
+System Control.Service Selection:005-006	Reboot unit after stream map was loaded ex: 4320	D
+System Control.Service Selection:005-007	DSR has authorized map ex: 4373	P
+System Control.Service Selection:005-008	DSR has authorized map Ex: 4373. Load canned Ku map “Q4C(4320)” Options-1-1-2-2	P
+System Control.Service Selection:006-001	DSR has factory ROM map 4352. Connect DSR to CSS live feed. Do not authorize	P
+System Control.Service Selection:006-002	Load canned xKu map “X4C(4321)” Options-1-1-2-2	P
+System Control.Service Selection:006-003	Make sure unit is tuned and has Sat lock. Trip DSR with desired map ex: 4188 live.	P
+System Control.Service Selection:006-004	Reboot DSR after DSR loaded authorized map ex: 4188.	P
+System Control.VCO regress & DVR:001-001	Start and stop verification	P
+System Control.VCO regress & DVR:001-002	Alternate tuner verification	P
+System Control.VCO regress & DVR:001-003	Verification of preamble conditionals: circle	P
+System Control.VCO regress & DVR:001-004	Verification of preamble conditionals: regional	P
+System Control.VCO regress & DVR:001-005	Verification of preamble conditionals: tier	P
+System Control.VCO regress & DVR:001-006	Verification of preamble conditionals: unconditional based on VCT ID	P
+System Control.VCO regress & DVR:001-007	Verification of preamble conditionals: black out	P
+System Control.VCO regress & DVR:001-008	Preamble verification and back to back VCO use case	
+System Control.VCO regress & DVR:001-009	Activation in the past	P
+System Control.VCO regress & DVR:001-010	Immediate activation and conflicting overrides	P
+System Control.VCO regress & DVR:001-012	VCOs not saved on AC cycle	
+System Control.VCO regress & DVR:001-013	VCO Channel change use cases	
+System Control.VCO regress & DVR:001-014	Trick play within VCO LOD use case	F
+System Control.VCO regress & DVR:001-015	Trick play across VCO show end boundary use case	
+System Control.VCO regress & DVR:001-016	Delayed video on VCO start and saved LOD recordings use case	
+System Control.VCO regress & DVR:001-017	Delayed video on VCO end use case	
+System Control.VCO regress & DVR:001-018	Immediate VCO and LOD use case	F
+System Control.VCO regress & DVR:001-019	Delayed video and immediate VCO use case	
+System Control.VCO regress & DVR:001-022	Simple background record use case	
+System Control.VCO regress & DVR:001-023	Back to back recording with a normal program use case	
+System Control.VCO regress & DVR:001-024	Back to back VCO recordings use case	
+System Control.VCO regress & DVR:001-025	Immediate VCO on background recording use case	
+System Control.VCO regress & DVR:001-026	Watch and record: single VCO use case	P
+System Control.VCO regress & DVR:001-027	Watch and record: dual VCOs use case	P
+System Control.VCO regress & DVR:001-028	Dual VCO recordings use case	P
+System Control.VCO regress & DVR:002-001	Reserved10 transmission medium	
+System Control.VCOs w Freq Descr:001-001	VCO: Source channel uses FD,  destination channel does NOT	P
+System Control.VCOs w Freq Descr:001-002	VCO: Source channel does NOT use FD, Destination does	P
+System Control.VCOs w Freq Descr:001-003	VCO: Source channel uses FD, Destination channel uses FD	P
+Text Messaging.EPMs:001-002	Text messages language	P
+Text Messaging.EPMs:001-003	Character set ISO Latin 1	P
+Text Messaging.EPMs:001-004	Unit addressed EPM Processing	P
+Text Messaging.EPMs:001-005	Multicast and Broadcast EPMs	P
+Text Messaging.EPMs:001-006	Immediate display duration	P
+Text Messaging.EPMs:001-007	EPM vs Normal Viewing Precedence rules	P
+Text Messaging.EPMs:001-008	Immediate EPM Precedence rules	F
+Text Messaging.EPMs:001-009	Non immediate display EPMs	P
+Text Messaging.EPMs:001-011	Expired EPMs redisplayed	P
+Text Messaging.EPMs:001-012	Read EPMs after power cycle	
+Text Messaging.EPMs:001-013	EPM retention after power cycle	
+Text Messaging.EPMs:001-014	EPMs in stand-by mode	
+Text Messaging.EPMs:001-015	Store till Read EPMs	
+Text Messaging.EPMs:001-016	IRD Cancel (aka IRD DELETE)	
+Text Messaging.Preamble Processing:001-001	Decoder Condition TRUE/FALSE	
+Text Messaging.Preamble Processing:001-002	TAM tier_match	
+Text Messaging.Preamble Processing:001-003	circular_blacked_out region	
+Text Messaging.Preamble Processing:001-004	regional_blacked_out	
+Text Messaging.Preamble Processing:001-005	circle_test	
+Text Messaging.Preamble Processing:001-006	region	
+Text Messaging.Preamble Processing:001-009	model_ID_test	
+Text Messaging.Preamble Processing:001-011	time_zone_test	
+Text Messaging.Preamble Processing:001-012	Un-evaluatable terms	
+Text Messaging.TAMs:001-001	Max TAM Size	
+Text Messaging.TAMs:001-002	TAM retention after power cycle	
+Text Messaging.TAMs:001-003	IRD TAM Condition Match	P
+Text Messaging.TAMs:001-004	IRD TAM Condition Non Match	P
+Text Messaging.TAMs:001-005	Included Tier TAMs	F
+Text Messaging.TAMs:001-006	Postal TAMs	P
+Text Messaging.TAMs:001-008	Include Regional TAMs	P
+Text Messaging.TAMs:001-009	Exclude Regional TAMs	
+Text Messaging.TAMs:001-010	Exclude Tier TAMs	P
+Text Messaging.TAMs:001-011	Exclude Tier TAMs dismissal	P
+Text Messaging.TAMs:001-012	Exclude Postal TAM dimissal	P
+Text Messaging.TAMs:001-014	TAMs vs menu precedence	P
+Text Messaging.TAMs:001-015	TAM channel change dismissal	P
+Text Messaging.TAMs:001-016	Circular Black Out TAMs	P
+Tuning.Acquisition:001-001	Modulation mode selectable..	
+Tuning.Acquisition:001-006	Manual Tune menu - User Selectable Options	
+Tuning.Acquisition:001-007	Manual tuning indication	
+Tuning.Acquisition:001-009	Demod & FEC lock	
+Tuning.Acquisition:001-010	Tuner offset frequency	
+Tuning.Acquisition:001-012	User Interface -: Manual Tune menu	P
+Tuning.Acquisition:001-013	Ability to retain the last value of the tuner	P
+Tuning.Acquisition:002-001	QPSK frequency tuning range	
+Tuning.Acquisition:002-002	Acquired QPSK carriers signall with Frequency offset +/-3.5 MHz from it nominal value.	
+Tuning.Acquisition:002-003	Installation Screen	F
+Tuning.Acquisition:002-004	QPSK Signal Strength indication	P
+Tuning.Acquisition:002-005	QPSK Received Eb/No (dB)	P
+Tuning.Acquisition:002-026	Manual tune to QPSK, 19.51 Msps, 3/4, Combined	F
+Tuning.Acquisition:002-027	Auto tune to QPSK, 19.51 Msps, 3/4, Combined	P
+Tuning.Acquisition:003-001	Acquired any 8PSK signal in the L-Band input frequency range of 950-2150 MHz	P
+Tuning.Acquisition:003-005	8PSK signal acquisition	
+Tuning.Acquisition:003-006	8-PSK Received Eb/No (dB)	P
+Tuning.Acquisition:003-013	Manual tune to 8PSK Rate Symbol Rate 20.50 Code Rate 1.92	F
+Tuning.Acquisition:003-014	Auto tune to 8PSK Rate Symbol Rate 20.50 Code Rate 1.92	P
+Tuning.Acquisition:003-015	Manual tune to 8PSK Rate Symbol Rate 20.50 Code Rate 2.05	
+Tuning.Acquisition:003-016	Auto tune to 8PSK Rate Symbol Rate 20.50 Code Rate 2.05	
+Tuning.Acquisition:003-017	Manual tune to 8PSK Rate Symbol Rate 20.50 Code Rate 2.11	
+Tuning.Acquisition:003-018	Auto tune to 8PSK Rate Symbol Rate 20.50 Code Rate 2.11	
+Tuning.Acquisition:003-019	Manual tune to 8PSK Rate Symbol Rate 21.00 Code Rate 1.92	
+Tuning.Acquisition:003-020	Auto tune to 8PSK Rate Symbol Rate 21.00 Code Rate 1.92	
+Tuning.Acquisition:003-021	Manual tune to 8PSK Rate Symbol Rate 21.00 Code Rate 2.05	
+Tuning.Acquisition:003-022	Auto tune to 8PSK Rate Symbol Rate 21.00 Code Rate 2.05	
+Tuning.Acquisition:003-023	Manual tune to 8PSK Rate Symbol Rate 21.00 Code Rate 2.11	
+Tuning.Acquisition:003-024	Auto tune to 8PSK Rate Symbol Rate 21.00 Code Rate 2.11	
+Tuning.Acquisition:003-025	Manual tune to 8PSK Rate Symbol Rate 21.50 Code Rate 1.92	
+Tuning.Acquisition:003-026	Auto tune to 8PSK Rate Symbol Rate 21.50 Code Rate 1.92	
+Tuning.Acquisition:003-027	Manual tune to 8PSK Rate Symbol Rate 21.50 Code Rate 2.05	
+Tuning.Acquisition:003-028	Auto tune to 8PSK Rate Symbol Rate 21.50 Code Rate 2.05	
+Tuning.Acquisition:003-029	Manual tune to 8PSK Rate Symbol Rate 21.50 Code Rate 2.11	
+Tuning.Acquisition:003-030	Auto tune to 8PSK Rate Symbol Rate 21.50 Code Rate 2.11	
+Tuning.Acquisition:003-032	Auto tune to 8PSK - 22.00 Msps - 2/3 - 1.92 Bps	P
+Tuning.Acquisition:003-034	Auto tune to 8PSK - 22.00 Mbps - 3/4 - 2.05 bps	
+Tuning.Acquisition:003-036	Auto tune to 8PSK - 22 Mps - 3/4 - 2.11 bps	
+Tuning.Channel Stacking Switch CSS:001-001	Standard ODU Install	
+Tuning.Channel Stacking Switch CSS:001-002	CSS Auto Install receiver (DSR630, DSR830)	
+Tuning.Channel Stacking Switch CSS:001-005	Simultaneously AC power-ON in Auto Mode (all DSR6xx or DSR8xx)	
+Tuning.Channel Stacking Switch CSS:001-006	CSS Signal Loss	
+Tuning.Channel Stacking Switch CSS:001-007	Simultaneously Tune all DSRs to Same Channel	
+Tuning.Channel Stacking Switch CSS:001-008	Simultaneously tune 4 tuners (DSR6xx units or DSR8xx) to a different satellite and polarity on each channel.	
+Tuning.Channel Stacking Switch CSS:001-009	Tune DSR6xx or DSR8xx to highest frequency channels regardless of satellite or polarity.	
+Tuning.Channel Stacking Switch CSS:001-010	AUTO Install – Remove DSR/Tuner RF Connection from CSS distribution.	
+Tuning.Channel Stacking Switch CSS:001-011	Factory reset DSR6xx / DSR8xx - Erase CSS Configuration.	
+Tuning.Channel Stacking Switch CSS:001-012	AUTO Install – Manual Add 1 Tuner.	
+Tuning.Channel Stacking Switch CSS:001-013	AUTO Install - Lowest Available CSS Slot Claimed.	
+Tuning.Channel Stacking Switch CSS:001-014	Auto Install – CSS Failed	P
+Tuning.Channel Stacking Switch CSS:001-015	CSS Manual Install	
+Tuning.Channel Stacking Switch CSS:001-016	Factory Reset  DSR6xx/DSR8xx - Save CSS Configuration.	P
+Tuning.Channel Stacking Switch CSS:001-017	Slot Number Restored after AC Power Cycle - Manual Mode.	
+Tuning.Channel Stacking Switch CSS:001-018	Slot Number Restored after Front Panel Reset - Manual Mode.	
+Tuning.Channel Stacking Switch CSS:001-019	Manual Install DSR600 and DSR630 – Same Slot Claimed, Or DSR830 and DSR800.	
+Tuning.Channel Stacking Switch CSS:001-020	CSS Auto Install 6 tuners DSR6xx or DSR8xx on CSS Switch.	F
+Tuning.Channel Stacking Switch CSS:001-021	CSS Reclaim UB Slot - Front Panel Reset (CSS Auto Mode)	
+Tuning.Channel Stacking Switch CSS:001-022	Manual Install fail after FPR if slot claimed by another DSR6xx	
+Tuning.Channel Stacking Switch CSS:001-023	Manual Install fail after AC power ON if slot claimed by another DSR6xx or DSR8xx	
+Tuning.Channel Stacking Switch CSS:001-024	Manual Install User entered slot number (UB and Frequency	
+Tuning.Channel Stacking Switch CSS:002-001	Tune UUT (DSR6xx, DSR8xx) to a VC with TSID match	
+Tuning.Channel Stacking Switch CSS:002-002	Tune UUT (DSR6xx, DSR8xx) to VC with TSID does not match	
+Tuning.Channel Stacking Switch CSS:002-003	Tune (DSR6xx, DSR8xx) to VC without TSID	
+Tuning.Channel Stacking Switch CSS:002-004	DSR6xx/DSR8xx Code download using CSS system	
+Tuning.Channel Stacking Switch CSS:003-001	Install Type - STANDARD ODU	P
+Tuning.Channel Stacking Switch CSS:003-002	Install Type - CSS Auto	F
+Tuning.Channel Stacking Switch CSS:003-003	Initiate CSS Auto installation process.	P
+Tuning.Channel Stacking Switch CSS:003-004	Slot number displayed for each tuner (UB: User Band).	
+Tuning.Channel Stacking Switch CSS:003-005	Prevent user from modifying CSS parameters in CSS Auto install type.	
+Tuning.Channel Stacking Switch CSS:003-006	Install Type - CSS Manual	P
+Tuning.Channel Stacking Switch CSS:003-007	Tuner # and Slot # sequencial assignment in CSS Manual install type.	
+Tuning.Channel Stacking Switch CSS:003-008	Modify UB Slot Frequency in CSS Manual install type.	
+Tuning.Channel Stacking Switch CSS:003-009	Default UB Slot Frequency in CSS Manual install type.	
+Tuning.Channel Stacking Switch CSS:003-010	Save CSS settings through a factory reset	
+Tuning.Channel Stacking Switch CSS:003-011	Erase CSS settings through a factory reset	
+VOD:001-001	Loss of Ethernet connection	
+VOD:001-002	UUT AC power interruption	
+VOD:001-003	Diminishing Bandwidth	
+VOD:001-004	GUI operations	P
+VOD:001-005	Event timer	
+VOD:001-006	Check all outputs	
+VOD:001-007	HD dual record while streaming	
+VOD:001-008	Sat feed removal	P
+VOD:001-011	Download	P
+VOD:001-012	User settings changes	
+VOD:001-013	Different routers	
+VOD:001-014	Closed captions	
+VOD:001-015	Video scaling	
+VOD:001-016	JPEG rendering	P
+VOD:001-017	CGMS	
+VOD:001-018	Long Term Quality	
+VOD:001-019	Channel Change	
+VOD:001-020	Maximum supported bitrates	
+VOD:001-021	Sanity	P
+VOD:001-022	NTP Server	
+VOD:001-023	Static IP	
+VOD:001-024	Trick Play	
