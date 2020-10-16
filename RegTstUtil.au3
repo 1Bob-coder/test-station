@@ -10,7 +10,7 @@
 $sBindAddr = "192.168.1.156"  ; Binding address for the NIC card, Test Rack 2.
 
 ; Location of files
-$sTestCenter = "C:\Users\dsr\Documents\GitHub\test-station"
+$sTestCenter = "."
 $sTeraTerm = "c:\Program Files (x86)\teraterm\ttermpro.exe "   ; TeraTerm exe file
 $sPython = "C:\Python27\python.exe "                           ; Python exe file
 
@@ -21,13 +21,11 @@ $sAstTTL = $sTestCenter & "\ttl\ast.ttl"    ; ttl file for running the ast comma
 $sAstLog = $sLogDir & "ast.log"   ; log file
 $sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a single command
 $sCmdLog = $sLogDir & "cmd.log"   ; log file
-$sSITSpreadsheet = $sTestCenter & "\docs\Original8xxMaster.txt"
+$sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_CyclePlan_TestCases.txt"
 $sPyDrip = $sTestCenter & "\DripClient.py"       ; Python DRIP Client program
 
 $sIpAddress = ""
 
-$iComStart = 4  ; first com port
-$iNumBoxes = 7
 $iBoxNum = 0
 
 
@@ -41,17 +39,8 @@ EndIf
 ; Purpose:  Display the test spreadsheet with final results.
 Func DisplayTestSummary()
 	SaveTestResult("A/V Presentation.Audio:001-003", "Passed")
-	_ArrayDisplay($aTestArray, "Master Regression Test Plan", "", 64, 0, "Test Case|Test Description|Results")
+	_ArrayDisplay($aTestArray, "Master Regression Test Plan", "", 64, 0, "Box Type|Level|Test Case|Case Description|Results")
 EndFunc   ;==>DisplayTestSummary
-
-
-; Purpose:  Control the HDMI switch input, set the box number, and find the IP Address.
-Func BoxUnderTest($whichBox, $BoxIPAddress)
-	RunWait(@ComSpec & " /c " & "echo sw i0" & $whichBox & " > COM1" & @CRLF)
-	ConsoleWrite(@ComSpec & " /c " & "echo sw i0" & $whichBox & " > COM1" & @CRLF)
-	$iBoxNum = $whichBox - 1
-	FindBoxIPAddress($BoxIPAddress)
-EndFunc   ;==>BoxUnderTest
 
 
 ; Purpose:  To put up Pass/Fail/Running criteria in appropriate color.
@@ -102,7 +91,7 @@ EndFunc   ;==>TestForString
 Func SaveTestResult($sTestCase, $sTestResult)
 	Local $iIndex = _ArraySearch($aTestArray, $sTestCase, 0, 0, 0, 0, 1, 0)
 	If @error == 0 Then
-		$aTestArray[$iIndex][2] = $sTestResult
+		$aTestArray[$iIndex][4] = $sTestResult
 	Else
 		ConsoleWrite("Row " & $iIndex & "  error " & @error & @CRLF)
 	EndIf
