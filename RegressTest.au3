@@ -48,11 +48,12 @@ $hUSB_pf = GUICtrlCreateLabel("", 140, 440, 105, 17)
 $hVCO_pf = GUICtrlCreateLabel("", 140, 464, 105, 17)
 $hRunTests = GUICtrlCreateButton("Run Tests", 32, 504, 75, 25)
 $hBoxIPAddress = GUICtrlCreateLabel("IP Address of Box", 376, 128, 144, 17)
+$hBoxVersion = GUICtrlCreateLabel("Box Type and Code Version", 200, 128, 144, 17)
 $hTitle = GUICtrlCreateLabel("Feature and Regression Tests", 176, 8, 295, 27)
 GUICtrlSetFont(-1, 14, 800, 0, "Georgia")
 $hSubtitle = GUICtrlCreateLabel("DSR8xx Digital Satellite Receiver", 216, 40, 215, 20)
 GUICtrlSetFont(-1, 10, 400, 2, "Georgia")
-$hTestSummary = GUICtrlCreateList("", 256, 160, 369, 305, 0)
+$hTestSummary = GUICtrlCreateList("", 256, 160, 369, 305, 0, $WS_VSCROLL)
 GUICtrlSetData(-1, "")
 $hTestSummaryButton = GUICtrlCreateButton("Test Summary", 408, 504, 75, 25)
 $hComPort = GUICtrlCreateCombo("Com Port", 104, 72, 145, 25)
@@ -62,7 +63,6 @@ GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 ; Get List of ComPorts
-$comPort = 5
 RunWait(@ComSpec & " /c " & "mode > logs\com_ports.log", "", @SW_HIDE)
 $lComPorts = FindAllStringsInFile("Status for device COM", "com_ports", -4)
 GUICtrlSetData($hComPort, $lComPorts)
@@ -80,19 +80,20 @@ While 1
 		Case $hTestSummaryButton
 			DisplayTestSummary()
 
-		Case $hComPort
+		Case $hComPort							; Changing the com port will change IPAddress and BoxVersion
 			$sComboRead = GUICtrlRead($hComPort)
-			FindBoxIPAddress($hBoxIPAddress, $comPort)
-			$hBoxIPAddress = StringReplace($hBoxIPAddress, " ", "")
-			$hBoxIPAddress = StringReplace($hBoxIPAddress, @CRLF, "")
+			$sComPort = StringReplace($sComboRead, "COM", "")  ; Save as 0, 1, 2, etc.
+			FindBoxIPAddress($hBoxIPAddress, $sComPort) 	   ; IP Address used by DRIP
+			FindBoxVer($hBoxVersion)
 
-		Case $hBindAddr
+		Case $hBindAddr							; Binding address used by DRIP, needed for BoxVersion
 			$sBindAddr = GUICtrlRead($hBindAddr)
 			$sBindAddr = StringReplace($sBindAddr, " ", "")
-			$sBindAddr = StringReplace($sBindAddr, @CRLF, "")
+			$sBindAddr = StringReplace($sBindAddr, @CRLF, "")  ; Save the binding address
+			FindBoxVer($hBoxVersion)
 
 		Case $hDripClient
-			Run("DRIP_client_5.5.exe" & " /b " & $sBindAddr & " /i " & $sIpAddress)
+			RunDripClient55()
 
 		Case $hAllTests
 			If _IsChecked($hAllTests) Then
@@ -130,11 +131,11 @@ While 1
 				GUICtrlSetData($hTestSummary, "")    ; Clear out Test Summary window
 
 				If _IsChecked($hAV_Presentation) Then
-					RunAVPresentationTest($hTestSummary, $hAV_Presentation_pf, $comPort)
+					RunAVPresentationTest($hTestSummary, $hAV_Presentation_pf, $sComPort)
 				EndIf
 
 				If _IsChecked($hClosedCaptions) Then
-					RunClosedCaptionTest($hTestSummary, $hClosedCaptions_pf, $comPort)
+					RunClosedCaptionTest($hTestSummary, $hClosedCaptions_pf, $sComPort)
 				EndIf
 
 				If _IsChecked($hDVR) Then
@@ -161,16 +162,3 @@ WEnd
 
 
 
-
-
-; Purpose:  Control the HDMI switch input, set the box number, and find the IP Address.
-; whichBox - 1 to 7
-; hBoxIPAddress - handle of the Text Box to show the IP address.
-Func BoxUnderTest($whichBox, $hBoxIPAddress)
-	RunWait(@ComSpec & " /c " & "echo sw i0" & $whichBox & " > COM1" & @CRLF)  ; Sends "sw i0x" command to switch HDMI port
-	; Box com ports for test boxes on Test Rack 2
-	; Box 1 is Com 9, Box 2 is Com 5, etc.
-	Local $aBoxComPorts[7] = [9, 5, 7, 4, 6, 10, 8]
-	$comPort = $aBoxComPorts[$whichBox - 1]
-	FindBoxIPAddress($hBoxIPAddress, $comPort)
-EndFunc   ;==>BoxUnderTest

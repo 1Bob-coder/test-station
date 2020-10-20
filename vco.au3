@@ -14,7 +14,7 @@ Func RunVCOTest($TestSummary, $VCO_pf)
 			"wait:500; rmt:DIGIT6", _
 			"wait:500; rmt:DIGIT6", _
 			"wait:6000; vco:30,66,64869,2,788", _                     ; Send vco command
-			"wait:7000; sea:all"]                                    ; wait 7 seconds
+			"wait:10000; sea:all"]                                    ; wait 10 seconds
 	MakeCmdDrip($aVcoCmd)                    ; Make cmd.drip file to be run with Drip.
 	RunTestCriteria("cmd", "SEND LIVE PMT_CHANGED_EVENT (SVC NUM  = 788, CHANNEL = 166)", "VCO (start)", $TestSummary, $VCO_pf)
 	MakeRmtCmdDrip("rmt:REWIND", 3000)

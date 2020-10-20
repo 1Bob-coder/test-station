@@ -26,28 +26,72 @@ $sAstTTL = $sTestCenter & "\ttl\ast.ttl"    ; ttl file for running the ast comma
 $sAstLog = $sLogDir & "ast.log"   ; log file
 $sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a single command
 $sCmdLog = $sLogDir & "cmd.log"   ; log file
-$sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_CyclePlan_TestCases.txt"
 $sPyDrip = $sTestCenter & "\DripClient.py"       ; Python DRIP Client program
 
 ConsoleWrite("sCmdLog = " & $sCmdLog & @CRLF)
 ConsoleWrite("sCmdDrip = " & $sCmdDrip & @CRLF)
 
 $sIpAddress = ""
-
-$iBoxNum = 0
-
+$sComPort = ""
+$sCodeVer = ""
+$sSITSpreadsheet = ""
 
 
 Global $aTestArray
-_FileReadToArray($sSITSpreadsheet, $aTestArray, $FRTA_NOCOUNT, @TAB)
-If @error <> 0 Then
-	MsgBox($MB_SYSTEMMODAL, "Error opening file and creating array", $sSITSpreadsheet)
-EndIf
+
+
+
+; Purpose:  Find the box version information.
+Func FindBoxVer($hBoxVersion)
+	If $sIpAddress == "" Or $sBindAddr == "" Then
+		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
+	Else
+		Local $aVersion[2] = ["wait:1000; diag:A,2,1", _         ; Diag A, line 2, column 1, e.g., NepVer = DSR830 sprint04 70.08e
+				"wait:1000; sea:ALL"] ; Pause for a second
+		MakeCmdDrip($aVersion)      ; Make cmd.drip file to be run with Drip.
+		RunDripTest("cmd")            ; Run cmd.drip
+		$sCodeVer = GetStringInFile("NepVer = ", "cmd", 0, -1)
+		$sCodeVer = StringReplace($sCodeVer, "NepVer = ", "")
+		ConsoleWrite("sCodeVer = " & $sCodeVer & @CRLF)
+		GUICtrlSetData($hBoxVersion, $sCodeVer)
+		If StringInStr($sCodeVer, "DSR800 ") Then
+			$sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_800.txt"
+		ElseIf StringInStr($sCodeVer, "DSR830 ") Then
+			$sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_830.txt"
+		Else
+			$sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_830_p2.txt"
+		EndIf
+		_FileReadToArray($sSITSpreadsheet, $aTestArray, $FRTA_NOCOUNT, @TAB)
+		If @error <> 0 Then
+			MsgBox($MB_SYSTEMMODAL, "Error opening file and creating array", $sSITSpreadsheet)
+		EndIf
+	EndIf
+EndFunc   ;==>FindBoxVer
+
+; Purpose:  Search for a string, and return a string +/- it's position, of specified length
+; sWhichString - The string to search for
+; sWhichTest - The .log file
+; iOffset - The starting offset from the beginning of the string
+; iLength - The length of the string to be returned (-1 means rest of string)
+; Returns a string of specified offset from beginning of search string and with specified length
+Func GetStringInFile($sWhichString, $sWhichTest, $iOffset, $iLength)
+	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
+	Local $sRetString = ""
+	Local $sRead = FileRead($sLogFile)
+	If @error Then
+		ConsoleWrite("FindStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
+	Else
+		Local $iPosition = StringInStr($sRead, $sWhichString)
+		$sRetString = StringMid($sRead, $iPosition + $iOffset, $iLength)
+	EndIf
+	Return ($sRetString)
+EndFunc   ;==>GetStringInFile
+
 
 ; Purpose:  Display the test spreadsheet with final results.
 Func DisplayTestSummary()
-	SaveTestResult("A/V Presentation.Audio:001-003", "Passed")
-	_ArrayDisplay($aTestArray, "Master Regression Test Plan", "", 64, 0, "Box Type|Level|Test Case|Case Description|Results")
+	;SaveTestResult("A/V Presentation.Audio:001-003", "Passed")
+	_ArrayDisplay($aTestArray, "DSR8xx Regression Test Plan", "", 64, 0, "Level|Test Case|Case Description|Results")
 EndFunc   ;==>DisplayTestSummary
 
 
@@ -127,16 +171,28 @@ EndFunc   ;==>FindBoxIPAddress
 ; sWhichTest - Name of the .drip file, e.g., 'cmd'
 Func RunDripTest($sWhichTest)
 	; Run the specified test.
-	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
-	Local $sTestFile = $sDripScripts & $sWhichTest & ".drip"
-	Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
-			" /f " & $sTestFile & " /o " & $sLogFile
-	ConsoleWrite($sTestCommand & @CRLF)
-	FileDelete($sLogFile)
-	ConsoleWrite("RunDripTest delete " & $sLogFile & @CRLF)
-	RunWait($sTestCommand, "", @SW_HIDE)                           ; Run the test.
-	ConsoleWrite($sTestCommand & @CRLF)
+	If $sIpAddress == "" Then
+		MsgBox($MB_SYSTEMMODAL, "IP Address of Box", "Does not exist")
+	ElseIf $sBindAddr == "" Then
+		MsgBox($MB_SYSTEMMODAL, "Binding Address of Network Card", "Does not exist")
+	Else
+		Local $sLogFile = $sLogDir & $sWhichTest & ".log"
+		Local $sTestFile = $sDripScripts & $sWhichTest & ".drip"
+		Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
+				" /f " & $sTestFile & " /o " & $sLogFile
+		ConsoleWrite($sTestCommand & @CRLF)
+		FileDelete($sLogFile)
+		ConsoleWrite("RunDripTest delete " & $sLogFile & @CRLF)
+		RunWait($sTestCommand, "", @SW_HIDE)                       ; Run the test.
+		ConsoleWrite($sTestCommand & @CRLF)
+	EndIf
 EndFunc   ;==>RunDripTest
+
+
+; Purpose:  Run the DRIP Client 5.5 for Windows.
+Func RunDripClient55()
+	Run("DRIP_client_5.5.exe" & " /b " & $sBindAddr & " /i " & $sIpAddress)
+EndFunc   ;==>RunDripClient55
 
 
 ; Purpose: To find a string in a file and pass back its position.
@@ -306,5 +362,5 @@ EndFunc   ;==>ChanChangeDrip
 ; comPort - The com port number (i.e., serial port)
 Func RunAstTtl($comPort)
 	FileDelete($sAstLog)      ; Delete ast.log
-	RunWait($sTeraTerm & " /C=" & $comPort & " /W=" & "Box" & $iBoxNum & " /M=" & $sAstTTL & " /L=" & $sAstLog)
+	RunWait($sTeraTerm & " /C=" & $comPort & " /W=" & "COM_" & $comPort & " /M=" & $sAstTTL & " /L=" & $sAstLog)
 EndFunc   ;==>RunAstTtl
