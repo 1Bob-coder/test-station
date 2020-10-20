@@ -4,9 +4,8 @@
 #include <RegTstUtil.au3>
 
 
-Func RunAVPresentationTest($TestSummary, $AV_Presentation_pf)
+Func RunAVPresentationTest($TestSummary, $AV_Presentation_pf, $comPort)
 	PF_Box("Running", $COLOR_BLUE, $AV_Presentation_pf)
-	RunDripTest("av_menu")
 	PF_Box("Pass", $COLOR_GREEN, $AV_Presentation_pf)
 EndFunc   ;==>RunAVPresentationTest
 
