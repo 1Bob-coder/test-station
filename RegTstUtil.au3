@@ -7,10 +7,15 @@
 #include <Array.au3>
 
 
-$sBindAddr = "192.168.1.156"  ; Binding address for the NIC card, Test Rack 2.
+$sBindAddr = ""  ; Binding address for the NIC card
+
+RunWait(@ComSpec & " /c " & "echo %USERPROFILE% > logs\userprofile.log")
+$sUserProfile = FileRead(".\logs\userprofile.log")
+$sUserProfile = StringReplace($sUserProfile, " ", "")
+$sUserProfile = StringReplace($sUserProfile, @CRLF, "")
 
 ; Location of files
-$sTestCenter = "."
+$sTestCenter = $sUserProfile & "\Documents\GitHub\test-station"
 $sTeraTerm = "c:\Program Files (x86)\teraterm\ttermpro.exe "   ; TeraTerm exe file
 $sPython = "C:\Python27\python.exe "                           ; Python exe file
 
@@ -23,6 +28,9 @@ $sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a single com
 $sCmdLog = $sLogDir & "cmd.log"   ; log file
 $sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_CyclePlan_TestCases.txt"
 $sPyDrip = $sTestCenter & "\DripClient.py"       ; Python DRIP Client program
+
+ConsoleWrite("sCmdLog = " & $sCmdLog & @CRLF)
+ConsoleWrite("sCmdDrip = " & $sCmdDrip & @CRLF)
 
 $sIpAddress = ""
 
@@ -44,9 +52,12 @@ EndFunc   ;==>DisplayTestSummary
 
 
 ; Purpose:  To put up Pass/Fail/Running criteria in appropriate color.
-Func PF_Box($whichString, $whichColor, $whichBox)
-	GUICtrlSetData($whichBox, $whichString)
-	GUICtrlSetColor($whichBox, $whichColor)
+; sWhichString - usually "pass", "fail", or "running"
+; whichColor - color for the string
+; hWhichBox_pf - handle for the pass/fail box to print in
+Func PF_Box($sWhichString, $whichColor, $hWhichBox_pf)
+	GUICtrlSetData($hWhichBox_pf, $sWhichString)
+	GUICtrlSetColor($hWhichBox_pf, $whichColor)
 EndFunc   ;==>PF_Box
 
 
@@ -57,12 +68,13 @@ EndFunc   ;==>PF_Box
 ; sWhichTest - refers to the .drip script filename
 ; sWhichString - is the pass/fail string to search for
 ; sTestTitle - can be anything, just for display purposes
+; hTestSummary - box which holds the test summary
 ; hTestBox - is the display box next to the checkbox
-Func RunTestCriteria($sWhichTest, $sWhichString, $sTestTitle, $TestSummary, $hTestBox)
+Func RunTestCriteria($sWhichTest, $sWhichString, $sTestTitle, $hTestSummary, $hTestBox)
 	Local $bRunTest = False
 	RunDripTest($sWhichTest)
 	ConsoleWrite("Looking for " & $sWhichString & @CRLF)
-	TestForString($sWhichString, $sWhichTest, $sTestTitle, $TestSummary, $hTestBox)
+	TestForString($sWhichString, $sWhichTest, $sTestTitle, $hTestSummary, $hTestBox)
 	$bRunTest = True
 	Return ($bRunTest)
 EndFunc   ;==>RunTestCriteria
@@ -72,13 +84,15 @@ EndFunc   ;==>RunTestCriteria
 ; sWhichString - The string to search for
 ; sWhichTest - The .log file to search in
 ; sTestTitle - Any name, will be echoed to the screen
-Func TestForString($sWhichString, $sWhichTest, $sTestTitle, $TestSummary, $hTestBox)
+; hTestSummary - box which holds the test summary
+; hTestBox - is the display box next to the checkbox
+Func TestForString($sWhichString, $sWhichTest, $sTestTitle, $hTestSummary, $hTestBox)
 	Local $bPassFail = False
 	If FindStringInFile($sWhichString, $sWhichTest) Then
-		GUICtrlSetData($TestSummary, $sTestTitle & ": Passed")
+		GUICtrlSetData($hTestSummary, $sTestTitle & ": Passed")
 		$bPassFail = True
 	Else
-		GUICtrlSetData($TestSummary, $sTestTitle & ": Failed")
+		GUICtrlSetData($hTestSummary, $sTestTitle & ": Failed")
 		GUICtrlSetColor($hTestBox, $COLOR_RED)
 	EndIf
 	Return ($bPassFail)
@@ -99,11 +113,13 @@ EndFunc   ;==>SaveTestResult
 
 
 ; Purpose:  Run 'ifconfig', and get the ip address.
-Func FindBoxIPAddress($BoxIPAddress)
-	MakeAstTtl("ifconfig", 1)
-	RunAstTtl()
+; hBoxIPAddress - handle for text box display
+; $comPort - The com port number (i.e., serial port)
+Func FindBoxIPAddress($hBoxIPAddress, $comPort)
+	MakeAstTtl("ifconfig", 2)  ; make the "ifconfig" command, 2 second timeout in case of no response.
+	RunAstTtl($comPort)
 	$sIpAddress = FindNextStringInFile("inet addr", "ast")
-	GUICtrlSetData($BoxIPAddress, $sIpAddress)
+	GUICtrlSetData($hBoxIPAddress, $sIpAddress)
 EndFunc   ;==>FindBoxIPAddress
 
 
@@ -118,7 +134,7 @@ Func RunDripTest($sWhichTest)
 	ConsoleWrite($sTestCommand & @CRLF)
 	FileDelete($sLogFile)
 	ConsoleWrite("RunDripTest delete " & $sLogFile & @CRLF)
-	RunWait($sTestCommand)                           ; Run the test.
+	RunWait($sTestCommand, "", @SW_HIDE)                           ; Run the test.
 	ConsoleWrite($sTestCommand & @CRLF)
 EndFunc   ;==>RunDripTest
 
@@ -131,16 +147,48 @@ Func FindStringInFile($sWhichString, $sWhichTest)
 	Local $iPosition = 0
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
 	Local $sRead = FileRead($sLogFile)
-	;ConsoleWrite("FindStringInFile Try to read " & $sLogFile & @CRLF)
 	If @error Then
 		ConsoleWrite("FindStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
 	Else
 		$iPosition = StringInStr($sRead, $sWhichString)
-		;ConsoleWrite("Position = " & $iPosition & @CRLF)
 	EndIf
 	Return ($iPosition)
 EndFunc   ;==>FindStringInFile
 
+; Purpose: To find a set of strings in a file.  An array is passed back with the
+; the next word after the string (separated by space or :), + or - the position indicated.
+; For example, a position of 0 would mean the next word immediately after the search string.
+; A position of -3 and a search string of "device COM" would go back 3 characters and would
+; return the string "COM4", for instance.
+; Useful for finding all com ports or all IP addresses of system.
+; sWhichString - The string to search for
+; sWhichTest - The .log file to search in
+; iOffset - Number of characters after or before end of string to skip
+; Returns an array of strings.
+Func FindAllStringsInFile($sWhichString, $sWhichTest, $iOffset)
+	Local $iPosition = 1, $sChop = " ", $sNextWord = "", $aSplit = [], $lStrings = ""
+	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
+	Local $sRead = FileRead($sLogFile)
+
+	If @error Then
+		ConsoleWrite("FindStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
+	Else
+		; Loop through sRead searching for all sWhichString
+		While $iPosition
+			$iPosition = StringInStr($sRead, $sWhichString)
+			If $iPosition Then
+				$sRead = StringTrimLeft($sRead, $iPosition + StringLen($sWhichString) + $iOffset)
+				$aSplit = StringSplit($sRead, " :") ; Array of strings where spaces and colons are separators
+
+				If $aSplit[0] Then
+					$sNextWord = $aSplit[1]
+					$lStrings = $lStrings & $sNextWord & "|"
+				EndIf
+			EndIf
+		WEnd
+	EndIf
+	Return ($lStrings)
+EndFunc   ;==>FindAllStringsInFile
 
 ; Purpose: To search for a string, if found return the next string after it.
 ; Note:  Useful for returning a value given by the stats commands.
@@ -179,9 +227,10 @@ EndFunc   ;==>_IsChecked
 ; Purpose: Creates ast.ttl file to be run.
 ; Note:  This will be run by a TeraTerm session.
 ; sAstCmd - The command to be run, e.g., "ast CcStats"
-; timeout - Just in case 'Done' never happens.
+; timeout - Just in case 'Done' never happens (in seconds)
 Func MakeAstTtl($sAstCmd, $timeout)
 	$hFilehandle = FileOpen($sAstTTL, $FO_OVERWRITE)
+	ConsoleWrite("file open " & $sAstTTL)
 	If FileExists($sAstTTL) Then
 		FileWrite($hFilehandle, "timeout = " & $timeout & @CRLF)
 		FileWrite($hFilehandle, 'sendln ""' & @CRLF)
@@ -254,9 +303,8 @@ EndFunc   ;==>ChanChangeDrip
 
 
 ; Purpose: Run TeraTerm with the ast.ttl macro and save to ast.log
-Func RunAstTtl()
-	; Box com ports for test boxes on Test Rack 2
-	Local $aBoxComPorts[7] = [9, 5, 7, 4, 6, 10, 8]
+; comPort - The com port number (i.e., serial port)
+Func RunAstTtl($comPort)
 	FileDelete($sAstLog)      ; Delete ast.log
-	RunWait($sTeraTerm & " /C=" & $aBoxComPorts[$iBoxNum] & " /W=" & "Box" & $iBoxNum & " /M=" & $sAstTTL & " /L=" & $sAstLog)
+	RunWait($sTeraTerm & " /C=" & $comPort & " /W=" & "Box" & $iBoxNum & " /M=" & $sAstTTL & " /L=" & $sAstLog)
 EndFunc   ;==>RunAstTtl

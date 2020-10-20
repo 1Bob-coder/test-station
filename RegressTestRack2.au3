@@ -3,22 +3,31 @@
 
 
 ; Includes for test files
-#include <RegTstUtil.au3> ; Utilities
-#include <cc.au3> ; Closed Caption tests
-#include <av.au3> ; A / V tests
-#include <dvr.au3> ; DVR tests
-#include <finger.au3> ; Fingerprint tests
-#include <vco.au3> ; VCO tests
+#include <RegTstUtil.au3>  ; Utilities
+#include <cc.au3>          ; Closed Caption tests
+#include <av.au3>          ; A/V tests
+#include <dvr.au3>         ; DVR tests
+#include <finger.au3>      ; Fingerprint tests
+#include <vco.au3>         ; VCO tests
 
 ; Includes for GUI buttons.
 #include <ButtonConstants.au3>
-#include <ComboConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <GUIListBox.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
+
 #Region ### START Koda GUI section ### Form=
-$hForm = GUICreate("Regression Tests", 672, 561, 192, 124)
+$hForm = GUICreate("Regression Tests", 670, 559, 192, 124)
+$hHdmiGroup = GUICtrlCreateGroup("HDMI Switch", 128, 64, 385, 57)
+$hHdmiBox1 = GUICtrlCreateRadio("Box1", 144, 88, 49, 17)
+$hHdmiBox2 = GUICtrlCreateRadio("Box2", 196, 88, 49, 17)
+$hHdmiBox3 = GUICtrlCreateRadio("Box3", 248, 88, 49, 17)
+$hHdmiBox4 = GUICtrlCreateRadio("Box4", 300, 88, 49, 17)
+$hHdmiBox5 = GUICtrlCreateRadio("Box5", 352, 88, 49, 17)
+$hHdmiBox6 = GUICtrlCreateRadio("Box6", 404, 88, 49, 17)
+$hHdmiBox7 = GUICtrlCreateRadio("Box7", 456, 88, 49, 17)
+$IP_Address = GUICtrlCreateLabel("", 208, 72, 7, 17)
 $hAllTests = GUICtrlCreateCheckbox("All Tests", 32, 136, 73, 17)
 $hAV_Presentation = GUICtrlCreateCheckbox("A/V Presentation", 32, 176, 105, 17)
 $hAccessControl = GUICtrlCreateCheckbox("Access Control", 32, 200, 105, 17)
@@ -41,37 +50,24 @@ $hDownload_pf = GUICtrlCreateLabel("", 140, 272, 105, 17)
 $hDVR_pf = GUICtrlCreateLabel("", 140, 296, 105, 17)
 $hFingerprint_pf = GUICtrlCreateLabel("", 140, 320, 105, 17)
 $hNetworking_pf = GUICtrlCreateLabel("", 140, 344, 105, 17)
-$hSystemControl_pf = GUICtrlCreateLabel("", 140, 368, 105, 17)
-$hTextMessaging_pf = GUICtrlCreateLabel("", 140, 392, 105, 17)
+$hSystemControl_pf = GUICtrlCreateLabel(" ", 140, 368, 105, 17)
+$hTextMessaging_pf = GUICtrlCreateLabel(" ", 140, 392, 105, 17)
 $hTuning_pf = GUICtrlCreateLabel("", 140, 416, 105, 17)
 $hUSB_pf = GUICtrlCreateLabel("", 140, 440, 105, 17)
 $hVCO_pf = GUICtrlCreateLabel("", 140, 464, 105, 17)
 $hRunTests = GUICtrlCreateButton("Run Tests", 32, 504, 75, 25)
-$hBoxIPAddress = GUICtrlCreateLabel("IP Address of Box", 376, 128, 144, 17)
+$hBoxIPAddress = GUICtrlCreateLabel("IP Address of Box", 264, 128, 88, 17)
 $hTitle = GUICtrlCreateLabel("Feature and Regression Tests", 176, 8, 295, 27)
 GUICtrlSetFont(-1, 14, 800, 0, "Georgia")
-$hSubtitle = GUICtrlCreateLabel("DSR8xx Digital Satellite Receiver", 216, 40, 215, 20)
+$hSubtitle = GUICtrlCreateLabel("DSR Test Rack 2", 248, 40, 103, 20)
 GUICtrlSetFont(-1, 10, 400, 2, "Georgia")
-$hTestSummary = GUICtrlCreateList("", 256, 160, 369, 305, 0)
+$hTestSummary = GUICtrlCreateList("", 256, 160, 369, 305, $WS_VSCROLL) ;
 GUICtrlSetData(-1, "")
 $hTestSummaryButton = GUICtrlCreateButton("Test Summary", 408, 504, 75, 25)
-$hComPort = GUICtrlCreateCombo("Com Port", 104, 72, 145, 25)
-$hBindAddr = GUICtrlCreateCombo("Binding Address", 296, 72, 145, 25, BitOR($CBS_DROPDOWN, $CBS_AUTOHSCROLL))
-$hDripClient = GUICtrlCreateButton("DRIP Client", 512, 72, 75, 25)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
-; Get List of ComPorts
-$comPort = 5
-RunWait(@ComSpec & " /c " & "mode > logs\com_ports.log", "", @SW_HIDE)
-$lComPorts = FindAllStringsInFile("Status for device COM", "com_ports", -4)
-GUICtrlSetData($hComPort, $lComPorts)
-
-; Get List of IP Addresses for binding.
-RunWait(@ComSpec & " /c " & "ipconfig > logs\ip_addr.log", "", @SW_HIDE)
-$lIpAddr = FindAllStringsInFile("IPv4 Address. . . . . . . . . . . :", "ip_addr", 0)
-GUICtrlSetData($hBindAddr, $lIpAddr)
-
+$comPort = 0
 
 While 1
 	$nMsg = GUIGetMsg()
@@ -80,19 +76,20 @@ While 1
 		Case $hTestSummaryButton
 			DisplayTestSummary()
 
-		Case $hComPort
-			$sComboRead = GUICtrlRead($hComPort)
-			FindBoxIPAddress($hBoxIPAddress, $comPort)
-			$hBoxIPAddress = StringReplace($hBoxIPAddress, " ", "")
-			$hBoxIPAddress = StringReplace($hBoxIPAddress, @CRLF, "")
-
-		Case $hBindAddr
-			$sBindAddr = GUICtrlRead($hBindAddr)
-			$sBindAddr = StringReplace($sBindAddr, " ", "")
-			$sBindAddr = StringReplace($sBindAddr, @CRLF, "")
-
-		Case $hDripClient
-			Run("DRIP_client_5.5.exe" & " /b " & $sBindAddr & " /i " & $sIpAddress)
+		Case $hHdmiBox1
+			BoxUnderTest(1, $hBoxIPAddress)
+		Case $hHdmiBox2
+			BoxUnderTest(2, $hBoxIPAddress)
+		Case $hHdmiBox3
+			BoxUnderTest(3, $hBoxIPAddress)
+		Case $hHdmiBox4
+			BoxUnderTest(4, $hBoxIPAddress)
+		Case $hHdmiBox5
+			BoxUnderTest(5, $hBoxIPAddress)
+		Case $hHdmiBox6
+			BoxUnderTest(6, $hBoxIPAddress)
+		Case $hHdmiBox7
+			BoxUnderTest(7, $hBoxIPAddress)
 
 		Case $hAllTests
 			If _IsChecked($hAllTests) Then
