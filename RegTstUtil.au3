@@ -28,8 +28,8 @@ $sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a single com
 $sCmdLog = $sLogDir & "cmd.log"   ; log file
 $sPyDrip = $sTestCenter & "\DripClient.py"       ; Python DRIP Client program
 
-ConsoleWrite("sCmdLog = " & $sCmdLog & @CRLF)
-ConsoleWrite("sCmdDrip = " & $sCmdDrip & @CRLF)
+;ConsoleWrite("sCmdLog = " & $sCmdLog & @CRLF)
+;ConsoleWrite("sCmdDrip = " & $sCmdDrip & @CRLF)
 
 $sIpAddress = ""
 $sComPort = ""
@@ -44,7 +44,7 @@ Global $aTestArray
 ; Purpose:  Find the box version information.
 Func FindBoxVer($hBoxVersion)
 	If $sIpAddress == "" Or $sBindAddr == "" Then
-		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
+		;ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
 	Else
 		Local $aVersion[2] = ["wait:1000; diag:A,2,1", _         ; Diag A, line 2, column 1, e.g., NepVer = DSR830 sprint04 70.08e
 				"wait:1000; sea:ALL"] ; Pause for a second
@@ -52,7 +52,7 @@ Func FindBoxVer($hBoxVersion)
 		RunDripTest("cmd")            ; Run cmd.drip
 		$sCodeVer = GetStringInFile("NepVer = ", "cmd", 0, -1)
 		$sCodeVer = StringReplace($sCodeVer, "NepVer = ", "")
-		ConsoleWrite("sCodeVer = " & $sCodeVer & @CRLF)
+		;ConsoleWrite("sCodeVer = " & $sCodeVer & @CRLF)
 		GUICtrlSetData($hBoxVersion, $sCodeVer)
 		If StringInStr($sCodeVer, "DSR800 ") Then
 			$sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_800.txt"
@@ -115,12 +115,10 @@ EndFunc   ;==>PF_Box
 ; hTestSummary - box which holds the test summary
 ; hTestBox - is the display box next to the checkbox
 Func RunTestCriteria($sWhichTest, $sWhichString, $sTestTitle, $hTestSummary, $hTestBox)
-	Local $bRunTest = False
 	RunDripTest($sWhichTest)
-	ConsoleWrite("Looking for " & $sWhichString & @CRLF)
-	TestForString($sWhichString, $sWhichTest, $sTestTitle, $hTestSummary, $hTestBox)
-	$bRunTest = True
-	Return ($bRunTest)
+	;ConsoleWrite("Looking for " & $sWhichString & @CRLF)
+	$bPassFail = TestForString($sWhichTest, $sWhichString, $sTestTitle, $hTestSummary, $hTestBox)
+	Return ($bPassFail)
 EndFunc   ;==>RunTestCriteria
 
 
@@ -130,7 +128,7 @@ EndFunc   ;==>RunTestCriteria
 ; sTestTitle - Any name, will be echoed to the screen
 ; hTestSummary - box which holds the test summary
 ; hTestBox - is the display box next to the checkbox
-Func TestForString($sWhichString, $sWhichTest, $sTestTitle, $hTestSummary, $hTestBox)
+Func TestForString($sWhichTest, $sWhichString, $sTestTitle, $hTestSummary, $hTestBox)
 	Local $bPassFail = False
 	If FindStringInFile($sWhichString, $sWhichTest) Then
 		GUICtrlSetData($hTestSummary, $sTestTitle & ": Passed")
@@ -158,10 +156,9 @@ EndFunc   ;==>SaveTestResult
 
 ; Purpose:  Run 'ifconfig', and get the ip address.
 ; hBoxIPAddress - handle for text box display
-; $comPort - The com port number (i.e., serial port)
-Func FindBoxIPAddress($hBoxIPAddress, $comPort)
+Func FindBoxIPAddress($hBoxIPAddress)
 	MakeAstTtl("ifconfig", 2)  ; make the "ifconfig" command, 2 second timeout in case of no response.
-	RunAstTtl($comPort)
+	RunAstTtl()
 	$sIpAddress = FindNextStringInFile("inet addr", "ast")
 	GUICtrlSetData($hBoxIPAddress, $sIpAddress)
 EndFunc   ;==>FindBoxIPAddress
@@ -180,11 +177,11 @@ Func RunDripTest($sWhichTest)
 		Local $sTestFile = $sDripScripts & $sWhichTest & ".drip"
 		Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
 				" /f " & $sTestFile & " /o " & $sLogFile
-		ConsoleWrite($sTestCommand & @CRLF)
+		;ConsoleWrite($sTestCommand & @CRLF)
 		FileDelete($sLogFile)
-		ConsoleWrite("RunDripTest delete " & $sLogFile & @CRLF)
+		;ConsoleWrite("RunDripTest delete " & $sLogFile & @CRLF)
 		RunWait($sTestCommand, "", @SW_HIDE)                       ; Run the test.
-		ConsoleWrite($sTestCommand & @CRLF)
+		;ConsoleWrite($sTestCommand & @CRLF)
 	EndIf
 EndFunc   ;==>RunDripTest
 
@@ -207,6 +204,7 @@ Func FindStringInFile($sWhichString, $sWhichTest)
 		ConsoleWrite("FindStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
 	Else
 		$iPosition = StringInStr($sRead, $sWhichString)
+		ConsoleWrite("Position = " & $iPosition & ", test = " & $sWhichTest & ", string = " & $sWhichString & @CRLF)
 	EndIf
 	Return ($iPosition)
 EndFunc   ;==>FindStringInFile
@@ -234,7 +232,7 @@ Func FindAllStringsInFile($sWhichString, $sWhichTest, $iOffset)
 			$iPosition = StringInStr($sRead, $sWhichString)
 			If $iPosition Then
 				$sRead = StringTrimLeft($sRead, $iPosition + StringLen($sWhichString) + $iOffset)
-				$aSplit = StringSplit($sRead, " :") ; Array of strings where spaces and colons are separators
+				$aSplit = StringSplit($sRead, " :" & @CRLF) ; Array of strings where spaces and colons are separators
 
 				If $aSplit[0] Then
 					$sNextWord = $aSplit[1]
@@ -253,7 +251,7 @@ EndFunc   ;==>FindAllStringsInFile
 Func FindNextStringInFile($sWhichString, $sWhichTest)
 	Local $iPosition = 0, $sChop = " ", $sNextWord = "", $aSplit = []
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
-	ConsoleWrite("FindNextStringInFile Try to read " & $sLogFile & @CRLF)
+	;ConsoleWrite("FindNextStringInFile Try to read " & $sLogFile & @CRLF)
 	Local $sRead = FileRead($sLogFile)
 	If @error Then
 		ConsoleWrite("FindNextStringInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
@@ -261,14 +259,14 @@ Func FindNextStringInFile($sWhichString, $sWhichTest)
 		$iPosition = StringInStr($sRead, $sWhichString)
 		If $iPosition Then
 			$sChop = StringTrimLeft($sRead, $iPosition + StringLen($sWhichString))
-			$aSplit = StringSplit($sChop, " :")  ; Array of strings where spaces and colons are separators
+			$aSplit = StringSplit($sChop, " :" & @CRLF)  ; Array of strings where spaces and colons are separators
 
 			If $aSplit[0] Then
 				$sNextWord = $aSplit[1]
 			EndIf
 		EndIf
 	EndIf
-	ConsoleWrite($sNextWord & @CRLF)
+	;ConsoleWrite($sNextWord & @CRLF)
 	Return $sNextWord
 EndFunc   ;==>FindNextStringInFile
 
@@ -286,7 +284,7 @@ EndFunc   ;==>_IsChecked
 ; timeout - Just in case 'Done' never happens (in seconds)
 Func MakeAstTtl($sAstCmd, $timeout)
 	$hFilehandle = FileOpen($sAstTTL, $FO_OVERWRITE)
-	ConsoleWrite("file open " & $sAstTTL)
+	;ConsoleWrite("file open " & $sAstTTL)
 	If FileExists($sAstTTL) Then
 		FileWrite($hFilehandle, "timeout = " & $timeout & @CRLF)
 		FileWrite($hFilehandle, 'sendln ""' & @CRLF)
@@ -342,7 +340,7 @@ EndFunc   ;==>MakeCmdDrip
 ; Channel change to a particular channel.
 ; sKey - The three key commands, e.g. 'rmt:DIGIT0' for '0'
 Func ChanChangeDrip($sKey1, $sKey2, $sKey3)
-	ConsoleWrite("ChanChangeDrip" & @CRLF)
+	;ConsoleWrite("ChanChangeDrip" & @CRLF)
 	$hFilehandle = FileOpen($sCmdDrip, $FO_OVERWRITE)  ; Open and delete any existing content
 	If FileExists($sCmdDrip) Then
 		FileWrite($hFilehandle, "wait:500; " & $sKey1 & @CRLF)
@@ -350,7 +348,7 @@ Func ChanChangeDrip($sKey1, $sKey2, $sKey3)
 		FileWrite($hFilehandle, "wait:500; " & $sKey3 & @CRLF)
 		FileWrite($hFilehandle, "wait:6000; sea:all" & @CRLF)  ; Wait 6 seconds for chan change to be done
 		FileClose($hFilehandle)
-		ConsoleWrite("Run the Drip Test with file " & $sCmdDrip & @CRLF)
+		;ConsoleWrite("Run the Drip Test with file " & $sCmdDrip & @CRLF)
 		RunDripTest("cmd")
 	Else
 		MsgBox($MB_SYSTEMMODAL, $sCmdDrip, "Does not exist")
@@ -359,8 +357,7 @@ EndFunc   ;==>ChanChangeDrip
 
 
 ; Purpose: Run TeraTerm with the ast.ttl macro and save to ast.log
-; comPort - The com port number (i.e., serial port)
-Func RunAstTtl($comPort)
+Func RunAstTtl()
 	FileDelete($sAstLog)      ; Delete ast.log
-	RunWait($sTeraTerm & " /C=" & $comPort & " /W=" & "COM_" & $comPort & " /M=" & $sAstTTL & " /L=" & $sAstLog)
+	RunWait($sTeraTerm & " /C=" & $sComPort & " /W=" & "COM_" & $sComPort & " /M=" & $sAstTTL & " /L=" & $sAstLog, "", @SW_MINIMIZE)
 EndFunc   ;==>RunAstTtl

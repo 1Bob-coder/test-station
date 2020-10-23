@@ -53,7 +53,7 @@ $hTitle = GUICtrlCreateLabel("Feature and Regression Tests", 176, 8, 295, 27)
 GUICtrlSetFont(-1, 14, 800, 0, "Georgia")
 $hSubtitle = GUICtrlCreateLabel("DSR8xx Digital Satellite Receiver", 216, 40, 215, 20)
 GUICtrlSetFont(-1, 10, 400, 2, "Georgia")
-$hTestSummary = GUICtrlCreateList("", 256, 160, 369, 305, 0, $WS_VSCROLL)
+$hTestSummary = GUICtrlCreateList("", 256, 160, 369, 305, $WS_VSCROLL)
 GUICtrlSetData(-1, "")
 $hTestSummaryButton = GUICtrlCreateButton("Test Summary", 408, 504, 75, 25)
 $hComPort = GUICtrlCreateCombo("Com Port", 104, 72, 145, 25)
@@ -80,13 +80,13 @@ While 1
 		Case $hTestSummaryButton
 			DisplayTestSummary()
 
-		Case $hComPort							; Changing the com port will change IPAddress and BoxVersion
+		Case $hComPort                            ; Changing the com port will change IPAddress and BoxVersion
 			$sComboRead = GUICtrlRead($hComPort)
 			$sComPort = StringReplace($sComboRead, "COM", "")  ; Save as 0, 1, 2, etc.
-			FindBoxIPAddress($hBoxIPAddress, $sComPort) 	   ; IP Address used by DRIP
+			FindBoxIPAddress($hBoxIPAddress)        ; IP Address used by DRIP
 			FindBoxVer($hBoxVersion)
 
-		Case $hBindAddr							; Binding address used by DRIP, needed for BoxVersion
+		Case $hBindAddr                            ; Binding address used by DRIP, needed for BoxVersion
 			$sBindAddr = GUICtrlRead($hBindAddr)
 			$sBindAddr = StringReplace($sBindAddr, " ", "")
 			$sBindAddr = StringReplace($sBindAddr, @CRLF, "")  ; Save the binding address
@@ -127,15 +127,29 @@ While 1
 			EndIf
 
 		Case $hRunTests
+			GUICtrlSetData($hAV_Presentation_pf, "")
+			GUICtrlSetData($hAccessControl_pf, "")
+			GUICtrlSetData($hConsumerSanity_pf, "")
+			GUICtrlSetData($hClosedCaptions_pf, "")
+			GUICtrlSetData($hDownload_pf, "")
+			GUICtrlSetData($hDVR_pf, "")
+			GUICtrlSetData($hFingerprint_pf, "")
+			GUICtrlSetData($hNetworking_pf, "")
+			GUICtrlSetData($hSystemControl_pf, "")
+			GUICtrlSetData($hTextMessaging_pf, "")
+			GUICtrlSetData($hTuning_pf, "")
+			GUICtrlSetData($hUSB_pf, "")
+			GUICtrlSetData($hVCO_pf, "")
+
 			If StringCompare($sIpAddress, "") Then
 				GUICtrlSetData($hTestSummary, "")    ; Clear out Test Summary window
 
 				If _IsChecked($hAV_Presentation) Then
-					RunAVPresentationTest($hTestSummary, $hAV_Presentation_pf, $sComPort)
+					RunAVPresentationTest($hTestSummary, $hAV_Presentation_pf)
 				EndIf
 
 				If _IsChecked($hClosedCaptions) Then
-					RunClosedCaptionTest($hTestSummary, $hClosedCaptions_pf, $sComPort)
+					RunClosedCaptionTest($hTestSummary, $hClosedCaptions_pf)
 				EndIf
 
 				If _IsChecked($hDVR) Then
