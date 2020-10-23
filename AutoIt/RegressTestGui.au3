@@ -3,12 +3,12 @@
 
 
 ; Includes for test files
-#include <RegTstUtil.au3> ; Utilities
-#include <cc.au3> ; Closed Caption tests
-#include <av.au3> ; A / V tests
-#include <dvr.au3> ; DVR tests
-#include <finger.au3> ; Fingerprint tests
-#include <vco.au3> ; VCO tests
+#include <tst/RegTstUtil.au3> ; Utilities
+#include <tst/cc.au3> ; Closed Caption tests
+#include <tst/av.au3> ; A / V tests
+#include <tst/dvr.au3> ; DVR tests
+#include <tst/finger.au3> ; Fingerprint tests
+#include <tst/vco.au3> ; VCO tests
 
 ; Includes for GUI buttons.
 #include <ButtonConstants.au3>
@@ -63,12 +63,12 @@ GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 ; Get List of ComPorts
-RunWait(@ComSpec & " /c " & "mode > logs\com_ports.log", "", @SW_HIDE)
+RunWait(@ComSpec & " /c " & "mode > %USERPROFILE%\Documents\GitHub\test-station\logs\com_ports.log", "", @SW_HIDE)
 $lComPorts = FindAllStringsInFile("Status for device COM", "com_ports", -4)
 GUICtrlSetData($hComPort, $lComPorts)
 
 ; Get List of IP Addresses for binding.
-RunWait(@ComSpec & " /c " & "ipconfig > logs\ip_addr.log", "", @SW_HIDE)
+RunWait(@ComSpec & " /c " & "ipconfig > %USERPROFILE%\Documents\GitHub\test-station\logs\ip_addr.log", "", @SW_HIDE)
 $lIpAddr = FindAllStringsInFile("IPv4 Address. . . . . . . . . . . :", "ip_addr", 0)
 GUICtrlSetData($hBindAddr, $lIpAddr)
 

@@ -9,8 +9,8 @@
 
 $sBindAddr = ""  ; Binding address for the NIC card
 
-RunWait(@ComSpec & " /c " & "echo %USERPROFILE% > logs\userprofile.log")
-$sUserProfile = FileRead(".\logs\userprofile.log")
+RunWait(@ComSpec & " /c " & "echo %USERPROFILE% > userprofile.log")
+$sUserProfile = FileRead(".\userprofile.log")
 $sUserProfile = StringReplace($sUserProfile, " ", "")
 $sUserProfile = StringReplace($sUserProfile, @CRLF, "")
 
@@ -22,14 +22,14 @@ $sPython = "C:\Python27\python.exe "                           ; Python exe file
 $sLogDir = $sTestCenter & "\logs\"               ; log directory
 $sDripScripts = $sTestCenter & "\DripScripts\"    ; DRIP scripts directory
 
-$sAstTTL = $sTestCenter & "\ttl\ast.ttl"    ; ttl file for running the ast command
+$sAstTTL = $sTestCenter & "\TtlScripts\ast.ttl"    ; ttl file for running the ast command
 $sAstLog = $sLogDir & "ast.log"   ; log file
 $sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a single command
 $sCmdLog = $sLogDir & "cmd.log"   ; log file
-$sPyDrip = $sTestCenter & "\DripClient.py"       ; Python DRIP Client program
-
-;ConsoleWrite("sCmdLog = " & $sCmdLog & @CRLF)
-;ConsoleWrite("sCmdDrip = " & $sCmdDrip & @CRLF)
+$sPyDrip = $sTestCenter & "\DripClient\DripClient.py"       ; Python DRIP Client program
+$sWinDrip = $sTestCenter & "\DripClient\DRIP_client_5.5.exe"  ; Windows DRIP Client program
+ConsoleWrite("sCmdLog = " & $sCmdLog & @CRLF)
+ConsoleWrite("sCmdDrip = " & $sCmdDrip & @CRLF)
 
 $sIpAddress = ""
 $sComPort = ""
@@ -44,7 +44,7 @@ Global $aTestArray
 ; Purpose:  Find the box version information.
 Func FindBoxVer($hBoxVersion)
 	If $sIpAddress == "" Or $sBindAddr == "" Then
-		;ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
+		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
 	Else
 		Local $aVersion[2] = ["wait:1000; diag:A,2,1", _         ; Diag A, line 2, column 1, e.g., NepVer = DSR830 sprint04 70.08e
 				"wait:1000; sea:ALL"] ; Pause for a second
@@ -188,7 +188,7 @@ EndFunc   ;==>RunDripTest
 
 ; Purpose:  Run the DRIP Client 5.5 for Windows.
 Func RunDripClient55()
-	Run("DRIP_client_5.5.exe" & " /b " & $sBindAddr & " /i " & $sIpAddress)
+	Run($sWinDrip & " /b " & $sBindAddr & " /i " & $sIpAddress)
 EndFunc   ;==>RunDripClient55
 
 
