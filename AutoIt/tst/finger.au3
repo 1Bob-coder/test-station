@@ -5,7 +5,8 @@
 
 
 Func RunFingerTest($TestSummary, $Fingerprint_pf)
-	GUICtrlSetData($TestSummary, @CRLF & "Fingerprint Test Running ...")
+	GUICtrlSetData($hTestSummary, "Fingerprint Test Started")
+
 	PF_Box("Running", $COLOR_BLUE, $Fingerprint_pf)
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
 	RunDripTest("cmd")

@@ -6,6 +6,8 @@
 
 Func RunDVRTest($TestSummary, $DVR_pf)
 	Local $bPass = True
+	CollectSerialLogs("DvrSerial")	; Start collection of serial log file
+	GUICtrlSetData($TestSummary, "DVR Test Started")
 
 	PF_Box("Running", $COLOR_BLUE, $DVR_pf)
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
@@ -30,6 +32,7 @@ Func RunDVRTest($TestSummary, $DVR_pf)
 	$bPass = TestForString("cmd", "SEND AUDIO_COMPONENT_START_SUCCESS", " Trick Play (audio)", $TestSummary, $DVR_pf) And $bPass
 
 	GUICtrlSetData($TestSummary, "DVR Test Done")
+    WinKill("COM")		; End collection of serial log file
 
 	If $bPass Then
 		PF_Box("Pass", $COLOR_GREEN, $DVR_pf)

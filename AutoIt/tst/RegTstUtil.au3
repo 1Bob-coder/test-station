@@ -40,6 +40,12 @@ $sSITSpreadsheet = ""
 Global $aTestArray
 
 
+; Purpose:  Open the serial log files to look at.  Useful in case there is a reboot.
+Func OpenLogFiles()
+	Run(@ComSpec & " /c " & $sLogDir & 'DvrSerial.log')
+	Run(@ComSpec & " /c " & $sLogDir & 'VcoSerial.log')
+EndFunc   ;==>OpenLogFiles
+
 
 ; Purpose:  Find the box version information.
 Func FindBoxVer($hBoxVersion)
@@ -157,7 +163,7 @@ EndFunc   ;==>SaveTestResult
 ; Purpose:  Run 'ifconfig', and get the ip address.
 ; hBoxIPAddress - handle for text box display
 Func FindBoxIPAddress($hBoxIPAddress)
-	MakeAstTtl("ifconfig", 2)  ; make the "ifconfig" command, 2 second timeout in case of no response.
+	MakeAstTtl("ifconfig", 1)  ; make the "ifconfig" command, 1 second timeout in case of no response.
 	RunAstTtl()
 	$sIpAddress = FindNextStringInFile("inet addr", "ast")
 	GUICtrlSetData($hBoxIPAddress, $sIpAddress)
@@ -308,7 +314,7 @@ EndFunc   ;==>MakeAstTtl
 Func MakeRmtCmdDrip($sDripCmd, $timeout)
 	$hFilehandle = FileOpen($sCmdDrip, $FO_OVERWRITE)  ; Delete any existing content
 	If FileExists($sCmdDrip) Then
-		FileWrite($hFilehandle, "wait:300; send:1,53" & @CRLF)   ; Turn on unsolicited messages
+		FileWrite($hFilehandle, "wait:1000; send:1,53" & @CRLF)   ; Turn on unsolicited messages
 		FileWrite($hFilehandle, "wait:1000; " & $sDripCmd & @CRLF)  ; The particular command we want to send
 		FileWrite($hFilehandle, "wait:" & $timeout & "; sea:all" & @CRLF)  ; Wait for a bit, possibly to collect logs
 		FileClose($hFilehandle)
@@ -325,7 +331,7 @@ EndFunc   ;==>MakeRmtCmdDrip
 Func MakeCmdDrip($aDripCmd)
 	$hFilehandle = FileOpen($sCmdDrip, $FO_OVERWRITE)  ; Delete any existing content
 	If FileExists($sCmdDrip) Then
-		FileWrite($hFilehandle, "wait:300; send:1,53" & @CRLF)           ; Turn on unsolicited messages
+		FileWrite($hFilehandle, "wait:500; send:1,53" & @CRLF)           ; Turn on unsolicited messages
 		Local $iSize = UBound($aDripCmd)
 		For $i = 0 To $iSize - 1
 			FileWrite($hFilehandle, $aDripCmd[$i] & @CRLF)
@@ -355,6 +361,16 @@ Func ChanChangeDrip($sKey1, $sKey2, $sKey3)
 	EndIf
 EndFunc   ;==>ChanChangeDrip
 
+
+; Purpose: Run TeraTerm and collect a serial log file.
+; Notes: Useful for collecting logs in case the system reboots.
+;        Only one TeraTerm session per com port can be run at any given time.
+;        To end, use WinKill("COM").
+Func CollectSerialLogs($sWhichTest)
+	Local $sWhichLog = $sLogDir & $sWhichTest & ".log" ; log file
+	FileDelete($sWhichLog)
+	Run($sTeraTerm & " /C=" & $sComPort & " /W=" & $sWhichTest & " /L=" & $sWhichLog, "", @SW_MINIMIZE)
+EndFunc   ;==>CollectSerialLogs
 
 ; Purpose: Run TeraTerm with the ast.ttl macro and save to ast.log
 Func RunAstTtl()

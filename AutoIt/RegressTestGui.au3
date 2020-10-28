@@ -1,16 +1,8 @@
 ; Purpose:  Main GUI Screen and Button Handler for Regression Test.
 ; This has the HDMI switch control and com ports specific for Test Rack 2
 
-
-; Includes for test files
-#include <tst/RegTstUtil.au3> ; Utilities
-#include <tst/cc.au3> ; Closed Caption tests
-#include <tst/av.au3> ; A / V tests
-#include <tst/dvr.au3> ; DVR tests
-#include <tst/finger.au3> ; Fingerprint tests
-#include <tst/vco.au3> ; VCO tests
-
 ; Includes for GUI buttons.
+#include-once
 #include <ButtonConstants.au3>
 #include <ComboConstants.au3>
 #include <GUIConstantsEx.au3>
@@ -18,7 +10,7 @@
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
 #Region ### START Koda GUI section ### Form=
-$hForm = GUICreate("Regression Tests", 672, 561, 192, 124)
+$hForm = GUICreate("Regression Tests", 673, 562, 192, 124)
 $hAllTests = GUICtrlCreateCheckbox("All Tests", 32, 136, 73, 17)
 $hAV_Presentation = GUICtrlCreateCheckbox("A/V Presentation", 32, 176, 105, 17)
 $hAccessControl = GUICtrlCreateCheckbox("Access Control", 32, 200, 105, 17)
@@ -56,11 +48,22 @@ GUICtrlSetFont(-1, 10, 400, 2, "Georgia")
 $hTestSummary = GUICtrlCreateList("", 256, 160, 369, 305, $WS_VSCROLL)
 GUICtrlSetData(-1, "")
 $hTestSummaryButton = GUICtrlCreateButton("Test Summary", 408, 504, 75, 25)
-$hComPort = GUICtrlCreateCombo("Com Port", 104, 72, 145, 25)
+$hComPort = GUICtrlCreateCombo("Com Port", 104, 72, 145, 25, BitOR($CBS_DROPDOWN,$CBS_AUTOHSCROLL))
 $hBindAddr = GUICtrlCreateCombo("Binding Address", 296, 72, 145, 25, BitOR($CBS_DROPDOWN, $CBS_AUTOHSCROLL))
 $hDripClient = GUICtrlCreateButton("DRIP Client", 512, 72, 75, 25)
+$hSerialLogs = GUICtrlCreateButton("Serial Logs", 120, 504, 75, 25)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
+
+
+; Includes for test files
+#include <tst/RegTstUtil.au3> ; Utilities
+#include <tst/cc.au3> ; Closed Caption tests
+#include <tst/av.au3> ; A / V tests
+#include <tst/dvr.au3> ; DVR tests
+#include <tst/finger.au3> ; Fingerprint tests
+#include <tst/vco.au3> ; VCO tests
+
 
 ; Get List of ComPorts
 RunWait(@ComSpec & " /c " & "mode > %USERPROFILE%\Documents\GitHub\test-station\logs\com_ports.log", "", @SW_HIDE)
@@ -125,6 +128,9 @@ While 1
 				GUICtrlSetState($hUSB, $GUI_UNCHECKED)
 				GUICtrlSetState($hVCO, $GUI_UNCHECKED)
 			EndIf
+
+		Case $hSerialLogs
+			OpenLogFiles()
 
 		Case $hRunTests
 			GUICtrlSetData($hAV_Presentation_pf, "")

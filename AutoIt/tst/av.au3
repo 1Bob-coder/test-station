@@ -14,19 +14,22 @@ Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 
 	MakeAstTtl("ast vi", 5)           ; make the 'ast vi' command with 5 second timeout
 
-	; Video Aspect override test, for Normal, Stretch, and Zoom modes
 	$bPassFail = RunVideoAspectOverride($hTestSummary) And $bPassFail
-
-	; Test the A/V Settings Screen with all the various settings.
-	; Test video output modes
 	$bPassFail = RunVideoOutputMode($hTestSummary) And $bPassFail
+
+	MakeAstTtl("ast au", 5)           ; make the 'ast au' command with 5 second timeout
+
+	$bPassFail = RunAudioCompression($hTestSummary) And $bPassFail
+	$bPassFail = RunHdmiAudio($hTestSummary) And $bPassFail
+	$bPassFail = RunAnalogAudio($hTestSummary) And $bPassFail
+	$bPassFail = RunOpticalDigitalAudio($hTestSummary) And $bPassFail
 
 	If $bPassFail Then
 		PF_Box("Pass", $COLOR_GREEN, $AV_Presentation_pf)
 	Else
 		PF_Box("Fail", $COLOR_RED, $AV_Presentation_pf)
 	EndIf
-	GUICtrlSetData($hTestSummary, "AV Test Done")
+	GUICtrlSetData($hTestSummary, "AV Test Done" & @CRLF)
 EndFunc   ;==>RunAVPresentationTest
 
 
@@ -46,6 +49,7 @@ Func RunVideoAspectOverride($hTestSummary)
 EndFunc   ;==>RunVideoAspectOverride
 
 
+; Purpose:  Cycle through 1080p, 1080i, 720p, 480p, and 480i output modes.
 Func RunVideoOutputMode($hTestSummary)
 	$bPassFail = True  ; True for Pass
 	; OPTIONS-4-2-DOWN-ENTER
@@ -94,16 +98,13 @@ Func RunVideoOutputMode($hTestSummary)
 	RunDripTest("cmd")
 	RunAstTtl()
 	$sValue = FindNextStringInFile("Nexus Display Format          :", "ast")
-	If $sValue = "1080P" Then
-		$bPassFail = RunVideoOutput($aVid_1080i, "1080I", $hTestSummary) And $bPassFail
+	If $sValue = "1080I" Then
+		$bPassFail = RunVideoOutput($aVid_1080p, "1080P", $hTestSummary) And $bPassFail
 	EndIf
-	ConsoleWrite("Keep running test" & @CRLF)
-	$bPassFail = RunVideoOutput($aVid_1080p, "1080P", $hTestSummary) And $bPassFail
-	$bPassFail = RunVideoOutput($aVid_1080i, "1080I", $hTestSummary) And $bPassFail
 	$bPassFail = RunVideoOutput($aVid_720p, "720P", $hTestSummary) And $bPassFail
 	$bPassFail = RunVideoOutput($aVid_480p, "480P", $hTestSummary) And $bPassFail
 	$bPassFail = RunVideoOutput($aVid_480i, "480I", $hTestSummary) And $bPassFail
-	$bPassFail = RunVideoOutput($aVid_1080p, "1080P", $hTestSummary) And $bPassFail
+	$bPassFail = RunVideoOutput($aVid_1080i, "1080I", $hTestSummary) And $bPassFail
 	Return ($bPassFail)
 EndFunc   ;==>RunVideoOutputMode
 
@@ -124,3 +125,145 @@ Func RunVideoOutput($aDripCmd, $sTestString, $hTestSummary)
 	EndIf
 	Return ($bPassFail)
 EndFunc   ;==>RunVideoOutput
+
+
+; Purpose: Cycle through the various Audio Compression settings of
+; No Compression, HiFi (Light), and TV (Heavy).
+Func RunAudioCompression($hTestSummary)
+	Local $bPass = True
+	; OPTIONS-4-2-DOWN-DOWN-DOWN-DOWN
+	Local $aAVSettings[] = [ _
+			"wait:1000; rmt:EXIT", _
+			"wait:2000; rmt:OPTIONS", _
+			"wait:1000; rmt:DIGIT4", _
+			"wait:1000; rmt:DIGIT2", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN"]
+	MakeCmdDrip($aAVSettings)
+	RunDripTest("cmd")
+
+	;  User Value,  Actual value
+	Local $aAVResults[3][2] = [ _
+			["AUDIO_COMPRESSION_LIGHT", "Off"], _
+			["AUDIO_COMPRESSION_HEAVY", "On"], _
+			["AUDIO_COMPRESSION_NONE", "Off"]]
+	$bPass = RunRightArrowTest($aAVResults, "Audio Compression", "Changing Audio Compression mode to", "Audio compression:", $hTestSummary)
+	Return ($bPass)
+EndFunc   ;==>RunAudioCompression
+
+
+; Purpose: Cycle through the HDMI Audio settings of
+; Pass Through, PCM and Auto.
+Func RunHdmiAudio($hTestSummary)
+	Local $bPass = True
+	; OPTIONS-4-2-DOWN-DOWN-DOWN-DOWN-DOWN
+	Local $aAVSettings[] = [ _
+			"wait:1000; rmt:EXIT", _
+			"wait:2000; rmt:OPTIONS", _
+			"wait:1000; rmt:DIGIT4", _
+			"wait:1000; rmt:DIGIT2", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN" _
+			]
+	MakeCmdDrip($aAVSettings)
+	RunDripTest("cmd")        ; Run Options 4 2 dn dn dn dn dn
+
+	;  User Value,  Actual value
+	Local $aAVResults[3][2] = [ _
+			["Auto", "eAuto"], _
+			["PCM", "ePcm"], _
+			["PassThrough", "eAuto"]]
+	$bPass = RunRightArrowTest($aAVResults, "HDMI Audio", "Set HDMI Audio", "hdmi.outputMode       =", $hTestSummary)
+	Return ($bPass)
+EndFunc   ;==>RunHdmiAudio
+
+
+; Cycle throught the Analog Audio settings: Surround and Stereo.
+Func RunAnalogAudio($hTestSummary)
+	Local $bPass = True
+	; OPTIONS-4-2-DOWN-DOWN-DOWN-DOWN-DOWN
+	Local $aAVSettings[] = [ _
+			"wait:1000; rmt:EXIT", _
+			"wait:2000; rmt:OPTIONS", _
+			"wait:1000; rmt:DIGIT4", _
+			"wait:1000; rmt:DIGIT2", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN" _
+			]
+	MakeCmdDrip($aAVSettings)
+	RunDripTest("cmd")
+
+	;  User Value,  Actual value
+	Local $aAVResults[2][2] = [ _
+			["Stereo", "eStandard"], _
+			["Surround", "eDolbySurroundCompatible"]]
+	$bPass = RunRightArrowTest($aAVResults, "Analog Audio", "Changing Audio analog mode to", "Analog audio :", $hTestSummary)
+	Return ($bPass)
+EndFunc   ;==>RunAnalogAudio
+
+
+; Cycle through the Optical Digital Audio settings: PCM and Dolby Digital.
+Func RunOpticalDigitalAudio($hTestSummary)
+	Local $bPass = True
+	; OPTIONS-4-2-DOWN-DOWN-DOWN-DOWN-DOWN
+	Local $aAVSettings[] = [ _
+			"wait:1000; rmt:EXIT", _
+			"wait:2000; rmt:OPTIONS", _
+			"wait:1000; rmt:DIGIT4", _
+			"wait:1000; rmt:DIGIT2", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN" _
+			]
+	MakeCmdDrip($aAVSettings)
+	RunDripTest("cmd")
+
+	;  User Value,  Actual value
+	Local $aAVResults[2][2] = [ _
+			["Ac3", "eAuto"], _
+			["PCM", "ePcm"]]
+	$bPass = RunRightArrowTest($aAVResults, "Optical Digital Audio", "Spidif mode:", "spdif.outputMode      =", $hTestSummary)
+
+	Return ($bPass)
+EndFunc   ;==>RunOpticalDigitalAudio
+
+
+; Purpose:  Run the RIGHT_ARROW test on a GUI box, and compare debug settings to stats results.
+Func RunRightArrowTest($aUserActualValues, $sTestTitle, $sDebugSearch, $sStatsSearch, $hTestSummary)
+	Local $bPass = True
+	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
+	Local $iSize = UBound($aUserActualValues, $UBOUND_ROWS)
+	For $iCount = 1 To $iSize
+		Local $sSubtestTitle = $iCount & ") " & $sTestTitle
+		RunDripTest("cmd")                ; Run RIGHT_ARROW
+		$sValueUser = FindNextStringInFile($sDebugSearch, "cmd")
+		GUICtrlSetData($hTestSummary, $sSubtestTitle & " (user): " & $sValueUser & @CRLF)
+		RunAstTtl()            ; Run the ast stats command
+		$sValueActual = FindNextStringInFile($sStatsSearch, "ast")
+		GUICtrlSetData($hTestSummary, $sSubtestTitle & " (actual): " & $sValueActual & @CRLF)
+
+		$iIndex = _ArraySearch($aUserActualValues, $sValueUser)
+		If @error Or $sValueActual <> $aUserActualValues[$iIndex][1] Then
+			GUICtrlSetData($hTestSummary, $sSubtestTitle & " Fail" & @CRLF)
+			ConsoleWrite("error = " & @error & ", iIndex = " & $iIndex & @CRLF)
+			$bPass = False
+		Else
+			GUICtrlSetData($hTestSummary, $sSubtestTitle & " Pass" & @CRLF)
+		EndIf
+	Next
+
+	Return ($bPass)
+EndFunc   ;==>RunRightArrowTest
