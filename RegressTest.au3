@@ -1,5 +1,4 @@
-; Purpose:  Main GUI Screen and Button Handler for Regression Test.
-; This has the HDMI switch control and com ports specific for Test Rack 2
+; Purpose:  Main GUI Screen and Button Handler for Regression Test
 
 ; Includes for GUI buttons.
 #include-once
@@ -66,13 +65,17 @@ GUISetState(@SW_SHOW)
 
 
 ; Get List of ComPorts
-RunWait(@ComSpec & " /c " & "mode > %USERPROFILE%\Documents\GitHub\test-station\logs\com_ports.log", "", @SW_HIDE)
+RunWait(@ComSpec & " /c " & "mode > com_ports.log", "", @SW_HIDE)
+FileCopy("com_ports.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
 $lComPorts = FindAllStringsInFile("Status for device COM", "com_ports", -4)
+FileDelete("com_ports.log")
 GUICtrlSetData($hComPort, $lComPorts)
 
 ; Get List of IP Addresses for binding.
-RunWait(@ComSpec & " /c " & "ipconfig > %USERPROFILE%\Documents\GitHub\test-station\logs\ip_addr.log", "", @SW_HIDE)
+RunWait(@ComSpec & " /c " & "ipconfig > ip_addr.log", "", @SW_HIDE)
+FileCopy("ip_addr.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
 $lIpAddr = FindAllStringsInFile("IPv4 Address. . . . . . . . . . . :", "ip_addr", 0)
+FileDelete("ip_addr.log")
 GUICtrlSetData($hBindAddr, $lIpAddr)
 
 

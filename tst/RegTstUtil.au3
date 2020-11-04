@@ -9,31 +9,36 @@
 
 $sBindAddr = ""  ; Binding address for the NIC card
 
-RunWait(@ComSpec & " /c " & "echo %USERPROFILE% > userprofile.log")
-$sUserProfile = FileRead(".\userprofile.log")
-$sUserProfile = StringReplace($sUserProfile, " ", "")
-$sUserProfile = StringReplace($sUserProfile, @CRLF, "")
+; Get the current working directory.  This is the test-center directory.
+; From there, compute location of other directories relative to this.
+RunWait(@ComSpec & " /c " & "cd > dir.log")
+$sTestDir = FileRead(".\dir.log")
+$sTestDir = StringReplace($sTestDir, " ", "")
+$sTestDir = StringReplace($sTestDir, @CRLF, "")
+FileDelete("dir.log")
 
 ; Location of files
-$sTestCenter = $sUserProfile & "\Documents\GitHub\test-station"
+ConsoleWrite("TestDir is AutoIt, located at " & $sTestDir & @CRLF)
+;$sTestCenter = $sTestDir & "\.."
+;ConsoleWrite("TestCenter is test-station, located at " & $sTestCenter & @CRLF)
 $sTeraTerm = "c:\Program Files (x86)\teraterm\ttermpro.exe "   ; TeraTerm exe file
 $sPython = "C:\Python27\python.exe "                           ; Python exe file
 
-$sLogDir = $sTestCenter & "\logs\"               ; log directory
-$sDripScripts = $sTestCenter & "\DripScripts\"    ; DRIP scripts directory
+$sLogDir = $sTestDir & "\logs\"               ; log directory
+$sDripScripts = $sTestDir & "\DripScripts\"    ; DRIP scripts directory
 
-$sAstTTL = $sTestCenter & "\TtlScripts\ast.ttl"    ; ttl file for running the ast command
+$sAstTTL = $sTestDir & "\TtlScripts\ast.ttl"    ; ttl file for running the ast command
 $sAstLog = $sLogDir & "ast.log"   ; log file
 $sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a single command
 $sCmdLog = $sLogDir & "cmd.log"   ; log file
-$sPyDrip = $sTestCenter & "\DripClient\DripClient.py"       ; Python DRIP Client program
-$sWinDrip = $sTestCenter & "\DripClient\DRIP_client_5.5.exe"  ; Windows DRIP Client program
+$sPyDrip = $sTestDir & "\DripClient\DripClient.py"       ; Python DRIP Client program
+$sWinDrip = $sTestDir & "\DripClient\DRIP_client_5.5.exe"  ; Windows DRIP Client program
 ConsoleWrite("sCmdLog = " & $sCmdLog & @CRLF)
 ConsoleWrite("sCmdDrip = " & $sCmdDrip & @CRLF)
 
 $sIpAddress = ""
-$sComPort = ""
-$sCodeVer = ""
+$sComPort = ""				; e.g., COM1
+$sCodeVer = ""				; e.g., DSR830 sprint04 70.09e
 $sSITSpreadsheet = ""
 
 
@@ -61,11 +66,11 @@ Func FindBoxVer($hBoxVersion)
 		;ConsoleWrite("sCodeVer = " & $sCodeVer & @CRLF)
 		GUICtrlSetData($hBoxVersion, $sCodeVer)
 		If StringInStr($sCodeVer, "DSR800 ") Then
-			$sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_800.txt"
+			$sSITSpreadsheet = $sTestDir & "\docs\Gomesia_800.txt"
 		ElseIf StringInStr($sCodeVer, "DSR830 ") Then
-			$sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_830.txt"
+			$sSITSpreadsheet = $sTestDir & "\docs\Gomesia_830.txt"
 		Else
-			$sSITSpreadsheet = $sTestCenter & "\docs\Gomesia_830_p2.txt"
+			$sSITSpreadsheet = $sTestDir & "\docs\Gomesia_830_p2.txt"
 		EndIf
 		_FileReadToArray($sSITSpreadsheet, $aTestArray, $FRTA_NOCOUNT, @TAB)
 		If @error <> 0 Then
@@ -257,7 +262,7 @@ EndFunc   ;==>FindAllStringsInFile
 Func FindNextStringInFile($sWhichString, $sWhichTest)
 	Local $iPosition = 0, $sChop = " ", $sNextWord = "", $aSplit = []
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
-	;ConsoleWrite("FindNextStringInFile Try to read " & $sLogFile & @CRLF)
+	ConsoleWrite("FindNextStringInFile Try to read " & $sLogFile & @CRLF)
 	Local $sRead = FileRead($sLogFile)
 	If @error Then
 		ConsoleWrite("FindNextStringInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
@@ -272,7 +277,7 @@ Func FindNextStringInFile($sWhichString, $sWhichTest)
 			EndIf
 		EndIf
 	EndIf
-	;ConsoleWrite($sNextWord & @CRLF)
+	ConsoleWrite($sNextWord & @CRLF)
 	Return $sNextWord
 EndFunc   ;==>FindNextStringInFile
 
@@ -289,7 +294,7 @@ EndFunc   ;==>_IsChecked
 ; sAstCmd - The command to be run, e.g., "ast CcStats"
 ; timeout - Just in case 'Done' never happens (in seconds)
 Func MakeAstTtl($sAstCmd, $timeout)
-	$hFilehandle = FileOpen($sAstTTL, $FO_OVERWRITE)
+	$hFilehandle = FileOpen($sAstTTL, $FO_OVERWRITE + $FO_CREATEPATH )
 	;ConsoleWrite("file open " & $sAstTTL)
 	If FileExists($sAstTTL) Then
 		FileWrite($hFilehandle, "timeout = " & $timeout & @CRLF)
