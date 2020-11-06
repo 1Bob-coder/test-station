@@ -8,17 +8,13 @@ Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 	Local $bPassFail = True
 	PF_Box("Running", $COLOR_BLUE, $AV_Presentation_pf)
 	GUICtrlSetData($hTestSummary, "AV Test Started")
+	GUICtrlSetData($hTestSummary, "Test Type : User Setting / Actual Setting => Result")
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
 	RunDripTest("cmd")
 	RunDripTest("cmd")        ; EXIT key twice to get out of any GUI screens
 
-	MakeAstTtl("ast vi", 5)           ; make the 'ast vi' command with 5 second timeout
-
 	$bPassFail = RunVideoAspectOverride($hTestSummary) And $bPassFail
 	$bPassFail = RunVideoOutputMode($hTestSummary) And $bPassFail
-
-	MakeAstTtl("ast au", 5)           ; make the 'ast au' command with 5 second timeout
-
 	$bPassFail = RunAudioCompression($hTestSummary) And $bPassFail
 	$bPassFail = RunHdmiAudio($hTestSummary) And $bPassFail
 	$bPassFail = RunAnalogAudio($hTestSummary) And $bPassFail
@@ -35,17 +31,28 @@ EndFunc   ;==>RunAVPresentationTest
 
 ; Purpose:  To cycle through the aspect ratios Zoom/Stretch/Normal
 Func RunVideoAspectOverride($hTestSummary)
-	Local $aAspect[] = ["wait:1000; rmt:ASPECT", _            ; ASPECT key to toggle Aspect ratio
-			"wait:1000; rmt:ASPECT"]                    ; press it twice to toggle it
+	Local $aUserVsActual[3][2] = [ _
+			["6", "FORCE_STRETCH"], _
+			["9", "ZOOM"], _
+			["4", "NORMAL"]]
+
+	; make the 'ast vi' command with 5 second timeout
+	MakeAstTtl("ast vi", 5)
+
+	; Turn on Video/Info debugs, "sea vi", "ses 2"
+	Local $aDebugs[] = [ _
+			"wait:1000; sea:vi", _
+			"wait:1000; ses:2"]
+	MakeCmdDrip($aDebugs)
+	RunDripTest("cmd")
+
+	; Make the cmd.drip file to press the ASPECT key twice to toggle the aspect ratio.
+	Local $aAspect[] = [ _
+			"wait:1000; rmt:ASPECT", _
+			"wait:1000; rmt:ASPECT"]
 	MakeCmdDrip($aAspect)        ; Make cmd.drip file to be run with Drip.
-	For $count = 1 To 3 Step 1
-		RunDripTest("cmd")
-		RunAstTtl()          ; run the 'ast vi' command and collect the log
-		$sValue = FindNextStringInFile("User Conversion Preference    :", "ast")
-		ConsoleWrite("User Conversion Preference " & $sValue & @CRLF)
-		GUICtrlSetData($hTestSummary, "User Conversion Preference: " & $sValue & @CRLF)
-	Next
-	Return (True)
+	$bPass = RunDripAstSerialTest($aUserVsActual, "Video Aspect Override", "conversion =", "User Conversion Preference    :", $hTestSummary)
+	Return ($bPass)
 EndFunc   ;==>RunVideoAspectOverride
 
 
@@ -131,6 +138,17 @@ EndFunc   ;==>RunVideoOutput
 ; No Compression, HiFi (Light), and TV (Heavy).
 Func RunAudioCompression($hTestSummary)
 	Local $bPass = True
+
+	; make the 'ast au' command with 5 second timeout for Audio Stats
+	MakeAstTtl("ast au", 5)
+
+	; Turn on Audio/Info debugs, "sea vi", "ses 2"
+	Local $aDebugs[] = [ _
+			"wait:1000; sea:au", _
+			"wait:1000; ses:2"]
+	MakeCmdDrip($aDebugs)
+	RunDripTest("cmd")
+
 	; OPTIONS-4-2-DOWN-DOWN-DOWN-DOWN
 	Local $aAVSettings[] = [ _
 			"wait:1000; rmt:EXIT", _
@@ -149,7 +167,8 @@ Func RunAudioCompression($hTestSummary)
 			["AUDIO_COMPRESSION_LIGHT", "Off"], _
 			["AUDIO_COMPRESSION_HEAVY", "On"], _
 			["AUDIO_COMPRESSION_NONE", "Off"]]
-	$bPass = RunRightArrowTest($aAVResults, "Audio Compression", "Changing Audio Compression mode to", "Audio compression:", $hTestSummary)
+	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
+	$bPass = RunDripAstSerialTest($aAVResults, "Audio Compression", "Changing Audio Compression mode to", "Audio compression:", $hTestSummary)
 	Return ($bPass)
 EndFunc   ;==>RunAudioCompression
 
@@ -172,13 +191,15 @@ Func RunHdmiAudio($hTestSummary)
 			]
 	MakeCmdDrip($aAVSettings)
 	RunDripTest("cmd")        ; Run Options 4 2 dn dn dn dn dn
+	MakeAstTtl("ast au", 5)           ; make the 'ast au' command with 5 second timeout
 
 	;  User Value,  Actual value
 	Local $aAVResults[3][2] = [ _
 			["Auto", "eAuto"], _
 			["PCM", "ePcm"], _
 			["PassThrough", "eAuto"]]
-	$bPass = RunRightArrowTest($aAVResults, "HDMI Audio", "Set HDMI Audio", "hdmi.outputMode       =", $hTestSummary)
+	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
+	$bPass = RunDripAstSerialTest($aAVResults, "HDMI Audio", "HDMI Audio :", "hdmi.outputMode       =", $hTestSummary)
 	Return ($bPass)
 EndFunc   ;==>RunHdmiAudio
 
@@ -201,12 +222,14 @@ Func RunAnalogAudio($hTestSummary)
 			]
 	MakeCmdDrip($aAVSettings)
 	RunDripTest("cmd")
+	MakeAstTtl("ast au", 5)           ; make the 'ast au' command with 5 second timeout
 
 	;  User Value,  Actual value
 	Local $aAVResults[2][2] = [ _
 			["Stereo", "eStandard"], _
 			["Surround", "eDolbySurroundCompatible"]]
-	$bPass = RunRightArrowTest($aAVResults, "Analog Audio", "Changing Audio analog mode to", "Analog audio :", $hTestSummary)
+	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
+	$bPass = RunDripAstSerialTest($aAVResults, "Analog Audio", "Audio analog mode :", "Analog audio :", $hTestSummary)
 	Return ($bPass)
 EndFunc   ;==>RunAnalogAudio
 
@@ -230,40 +253,46 @@ Func RunOpticalDigitalAudio($hTestSummary)
 			]
 	MakeCmdDrip($aAVSettings)
 	RunDripTest("cmd")
+	MakeAstTtl("ast au", 5)           ; make the 'ast au' command with 5 second timeout
 
 	;  User Value,  Actual value
 	Local $aAVResults[2][2] = [ _
 			["Ac3", "eAuto"], _
 			["PCM", "ePcm"]]
-	$bPass = RunRightArrowTest($aAVResults, "Optical Digital Audio", "Spidif mode:", "spdif.outputMode      =", $hTestSummary)
+	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
+
+	$bPass = RunDripAstSerialTest($aAVResults, "Optical Digital Audio", "Spidif mode:", "spdif.outputMode      =", $hTestSummary)
 
 	Return ($bPass)
 EndFunc   ;==>RunOpticalDigitalAudio
 
 
-; Purpose:  Run the RIGHT_ARROW test on a GUI box, and compare debug settings to stats results.
-Func RunRightArrowTest($aUserActualValues, $sTestTitle, $sDebugSearch, $sStatsSearch, $hTestSummary)
+; Purpose:  Run the cmd.drip test on a GUI box, and compare debug settings to stats results.
+; This collects the serial.log file for Neptune Debugs, and the ast.log file for the Stats.
+; Then compares strings from both those files for proper association.
+; Note:  The MakeAstTtl(), MakeCmdDrip() need to be defined before running this test, and debugs need to be turned on.
+Func RunDripAstSerialTest($aUserVsActual, $sTestTitle, $sDebugSearch, $sStatsSearch, $hTestSummary)
 	Local $bPass = True
-	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
-	Local $iSize = UBound($aUserActualValues, $UBOUND_ROWS)
+	Local $iSize = UBound($aUserVsActual, $UBOUND_ROWS)  ; Compute size of array
 	For $iCount = 1 To $iSize
-		Local $sSubtestTitle = $iCount & ") " & $sTestTitle
-		RunDripTest("cmd")                ; Run RIGHT_ARROW
-		$sValueUser = FindNextStringInFile($sDebugSearch, "cmd")
-		GUICtrlSetData($hTestSummary, $sSubtestTitle & " (user): " & $sValueUser & @CRLF)
+		Local $sSubtestTitle = $iCount & ") " & $sTestTitle & ": "
+		CollectSerialLogs("serial")        ; Start collecting the serial.log file
+		RunDripTest("cmd")                ; Run the cmd.drip file
+		Sleep(3000)                            ; Sleep for 3 seconds
+		WinKill("COM")                    ; Stop collecting the serial.log file
 		RunAstTtl()            ; Run the ast stats command
 		$sValueActual = FindNextStringInFile($sStatsSearch, "ast")
-		GUICtrlSetData($hTestSummary, $sSubtestTitle & " (actual): " & $sValueActual & @CRLF)
+		$sValueUser = FindNextStringInFile($sDebugSearch, "serial")
 
-		$iIndex = _ArraySearch($aUserActualValues, $sValueUser)
-		If @error Or $sValueActual <> $aUserActualValues[$iIndex][1] Then
-			GUICtrlSetData($hTestSummary, $sSubtestTitle & " Fail" & @CRLF)
+		$iIndex = _ArraySearch($aUserVsActual, $sValueUser)
+		If @error Or $sValueActual <> $aUserVsActual[$iIndex][1] Then
+			GUICtrlSetData($hTestSummary, $sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Fail" & @CRLF)
 			ConsoleWrite("error = " & @error & ", iIndex = " & $iIndex & @CRLF)
 			$bPass = False
 		Else
-			GUICtrlSetData($hTestSummary, $sSubtestTitle & " Pass" & @CRLF)
+			GUICtrlSetData($hTestSummary, $sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Pass" & @CRLF)
 		EndIf
 	Next
 
 	Return ($bPass)
-EndFunc   ;==>RunRightArrowTest
+EndFunc   ;==>RunDripAstSerialTest
