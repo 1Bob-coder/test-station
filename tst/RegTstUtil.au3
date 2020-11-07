@@ -37,10 +37,10 @@ ConsoleWrite("sCmdLog = " & $sCmdLog & @CRLF)
 ConsoleWrite("sCmdDrip = " & $sCmdDrip & @CRLF)
 
 $sIpAddress = ""
-$sComPort = ""				; e.g., COM1
-$sCodeVer = ""				; e.g., DSR830 sprint04 70.09e
+$sComPort = ""                ; e.g., COM1
+$sCodeVer = ""                ; e.g., DSR830 sprint04 70.09e
 $sSITSpreadsheet = ""
-
+$sVctId = ""
 
 Global $aTestArray
 
@@ -57,13 +57,14 @@ Func FindBoxVer($hBoxVersion)
 	If $sIpAddress == "" Or $sBindAddr == "" Then
 		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
 	Else
-		Local $aVersion[2] = ["wait:1000; diag:A,2,1", _         ; Diag A, line 2, column 1, e.g., NepVer = DSR830 sprint04 70.08e
+		Local $aVersion[2] = [ _
+				"wait:1000; diag:A,2,1", _ ; Diag A, line 2, column 1, e.g., NepVer = DSR830 sprint04 70.08e
 				"wait:1000; sea:ALL"] ; Pause for a second
 		MakeCmdDrip($aVersion)      ; Make cmd.drip file to be run with Drip.
 		RunDripTest("cmd")            ; Run cmd.drip
 		$sCodeVer = GetStringInFile("NepVer = ", "cmd", 0, -1)
 		$sCodeVer = StringReplace($sCodeVer, "NepVer = ", "")
-		;ConsoleWrite("sCodeVer = " & $sCodeVer & @CRLF)
+		ConsoleWrite("sCodeVer = " & $sCodeVer & @CRLF)
 		GUICtrlSetData($hBoxVersion, $sCodeVer)
 		If StringInStr($sCodeVer, "DSR800 ") Then
 			$sSITSpreadsheet = $sTestDir & "\docs\Gomesia_800.txt"
@@ -78,6 +79,22 @@ Func FindBoxVer($hBoxVersion)
 		EndIf
 	EndIf
 EndFunc   ;==>FindBoxVer
+
+; Purpose:  Gets the VCT_ID.  Useful for VCO and SD channel tests based on the VCT_ID.
+; Found on Diag A, line 5, column 3, e.g.,  VCT_ID = 4380
+Func GetVctId()
+	If $sIpAddress == "" Or $sBindAddr == "" Then
+		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
+	Else
+		Local $aVctId[2] = [ _
+				"wait:1000; diag:A,5,3", _
+				"wait:1000; sea:ALL"]
+		MakeCmdDrip($aVctId)      ; Make cmd.drip file to be run with Drip.
+		RunDripTest("cmd")                            ; Run cmd.drip
+		$sVctId = GetStringInFile("VCT_ID = ", "cmd", 0, 13)
+		$sVctId = StringReplace($sVctId, "VCT_ID = ", "")
+	EndIf
+EndFunc   ;==>GetVctId
 
 ; Purpose:  Search for a string, and return a string +/- it's position, of specified length
 ; sWhichString - The string to search for
@@ -294,7 +311,7 @@ EndFunc   ;==>_IsChecked
 ; sAstCmd - The command to be run, e.g., "ast CcStats"
 ; timeout - Just in case 'Done' never happens (in seconds)
 Func MakeAstTtl($sAstCmd, $timeout)
-	$hFilehandle = FileOpen($sAstTTL, $FO_OVERWRITE + $FO_CREATEPATH )
+	$hFilehandle = FileOpen($sAstTTL, $FO_OVERWRITE + $FO_CREATEPATH)
 	;ConsoleWrite("file open " & $sAstTTL)
 	If FileExists($sAstTTL) Then
 		FileWrite($hFilehandle, "timeout = " & $timeout & @CRLF)
