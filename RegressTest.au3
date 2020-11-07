@@ -91,12 +91,14 @@ While 1
 			$sComPort = StringReplace($sComboRead, "COM", "")  ; Save as 0, 1, 2, etc.
 			FindBoxIPAddress($hBoxIPAddress)        ; IP Address used by DRIP
 			FindBoxVer($hBoxVersion)
+			GetVctId()
 
 		Case $hBindAddr                            ; Binding address used by DRIP, needed for BoxVersion
 			$sBindAddr = GUICtrlRead($hBindAddr)
 			$sBindAddr = StringReplace($sBindAddr, " ", "")
 			$sBindAddr = StringReplace($sBindAddr, @CRLF, "")  ; Save the binding address
 			FindBoxVer($hBoxVersion)
+			GetVctId()
 
 		Case $hDripClient
 			RunDripClient55()
@@ -150,7 +152,11 @@ While 1
 			GUICtrlSetData($hUSB_pf, "")
 			GUICtrlSetData($hVCO_pf, "")
 
-			If StringCompare($sIpAddress, "") Then
+			If StringCompare($sIpAddress, "") = 0 Then
+				MsgBox($MB_SYSTEMMODAL, "IP Address not found", "Could not get IP address.")
+			ElseIf StringCompare($sBindAddr, "") = 0 Then
+				MsgBox($MB_SYSTEMMODAL, "Binding Address not found", "Could not get IP address.")
+			Else
 				GUICtrlSetData($hTestSummary, "")    ; Clear out Test Summary window
 
 				If _IsChecked($hAV_Presentation) Then
@@ -172,16 +178,10 @@ While 1
 				If _IsChecked($hVCO) Then
 					RunVCOTest($hTestSummary, $hVCO_pf)
 				EndIf
-
-			Else
-				MsgBox($MB_SYSTEMMODAL, "IP Address not found", "Could not get IP address.")
-			EndIf
+		EndIf
 
 		Case $GUI_EVENT_CLOSE
 			Exit
 
 	EndSwitch
 WEnd
-
-
-

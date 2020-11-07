@@ -9,12 +9,10 @@ Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 	PF_Box("Running", $COLOR_BLUE, $AV_Presentation_pf)
 	GUICtrlSetData($hTestSummary, "AV Test Started")
 	GUICtrlSetData($hTestSummary, "Test Type : User Setting / Actual Setting => Result")
-	MakeRmtCmdDrip("rmt:EXIT", 1000)
-	RunDripTest("cmd")
-	RunDripTest("cmd")        ; EXIT key twice to get out of any GUI screens
 
 	$bPassFail = RunVideoAspectOverride($hTestSummary) And $bPassFail
 	$bPassFail = RunVideoOutputMode($hTestSummary) And $bPassFail
+	$bPassFail = RunSdAspectRatio($hTestSummary) And $bPassFail
 	$bPassFail = RunAudioCompression($hTestSummary) And $bPassFail
 	$bPassFail = RunHdmiAudio($hTestSummary) And $bPassFail
 	$bPassFail = RunAnalogAudio($hTestSummary) And $bPassFail
@@ -31,6 +29,16 @@ EndFunc   ;==>RunAVPresentationTest
 
 ; Purpose:  To cycle through the aspect ratios Zoom/Stretch/Normal
 Func RunVideoAspectOverride($hTestSummary)
+	Local $bPass
+	; Press EXIT twice to get out of any screens.
+	MakeRmtCmdDrip("rmt:EXIT", 1000)
+	RunDripTest("cmd")
+	RunDripTest("cmd")
+
+	If $sVctId = "4380" Then        ; Use channel 482 - This channel is 1080i.
+		ChanChangeDrip("rmt:DIGIT4", "rmt:DIGIT8", "rmt:DIGIT2")
+	EndIf
+
 	Local $aUserVsActual[3][2] = [ _
 			["6", "FORCE_STRETCH"], _
 			["9", "ZOOM"], _
@@ -132,6 +140,50 @@ Func RunVideoOutput($aDripCmd, $sTestString, $hTestSummary)
 	EndIf
 	Return ($bPassFail)
 EndFunc   ;==>RunVideoOutput
+
+
+; Purpose: Cycle through the various SD Aspect Ratio settings of Stretch, Zoom, and Normal.
+Func RunSdAspectRatio($hTestSummary)
+	Local $bPass = True
+	; Press Exit twice to get out of any GUI screens.
+	MakeRmtCmdDrip("rmt:EXIT", 1000)
+	RunDripTest("cmd")
+	RunDripTest("cmd")
+
+	If $sVctId = "4380" Then        ; Use channel 485 - This channel is 480i.
+		ChanChangeDrip("rmt:DIGIT4", "rmt:DIGIT8", "rmt:DIGIT5")
+	EndIf
+
+	; make the 'ast vi' command with 3 second timeout for Video Stats
+	MakeAstTtl("ast vi", 3)
+
+	; Turn on Video/Info debugs, "sea vi", "ses 2"
+	Local $aDebugs[] = [ _
+			"wait:1000; sea:vi", _
+			"wait:1000; ses:2"]
+	MakeCmdDrip($aDebugs)
+	RunDripTest("cmd")
+
+	; OPTIONS-4-2-DOWN-DOWN-DOWN-DOWN
+	Local $aAVSettings[] = [ _
+			"wait:1000; rmt:EXIT", _
+			"wait:2000; rmt:OPTIONS", _
+			"wait:1000; rmt:DIGIT4", _
+			"wait:1000; rmt:DIGIT2", _
+			"wait:1000; rmt:ARROW_DOWN", _
+			"wait:1000; rmt:ARROW_DOWN"]
+	MakeCmdDrip($aAVSettings)
+	RunDripTest("cmd")
+
+	;  User Value,  Actual value
+	Local $aAVResults[3][2] = [ _
+			["ZOOM", "ZOOM"], _
+			["STRETCH", "STRETCH"], _
+			["NORMAL-BARS", "NORMAL"]]
+	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
+	$bPass = RunDripAstSerialTest($aAVResults, "SD Aspect Ratio: ", "4:3 source on 16:9 TV -", "User Conversion Preference    :", $hTestSummary)
+	Return ($bPass)
+EndFunc   ;==>RunSdAspectRatio
 
 
 ; Purpose: Cycle through the various Audio Compression settings of
@@ -287,6 +339,8 @@ Func RunDripAstSerialTest($aUserVsActual, $sTestTitle, $sDebugSearch, $sStatsSea
 		$iIndex = _ArraySearch($aUserVsActual, $sValueUser)
 		If @error Or $sValueActual <> $aUserVsActual[$iIndex][1] Then
 			GUICtrlSetData($hTestSummary, $sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Fail" & @CRLF)
+			ConsoleWrite("Search in serial.log : " & $sDebugSearch & @CRLF)
+			ConsoleWrite("Search in ast.log : " & $sStatsSearch & @CRLF)
 			ConsoleWrite("error = " & @error & ", iIndex = " & $iIndex & @CRLF)
 			$bPass = False
 		Else
