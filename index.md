@@ -1,4 +1,4 @@
-## test-station Repository
+## Useful for running Regression Tests on an 8xx
 
 The GUI screen for the test station looks like the following:
 ![Image of test-station](RegressionTest.jpg)
