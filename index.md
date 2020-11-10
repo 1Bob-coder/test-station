@@ -1,4 +1,4 @@
-## Useful for running Regression Tests on an 8xx
+## Software for Running 8xx Regression Test
 
 The GUI screen for the test station looks like the following:
 ![Image of test-station](RegressionTest.jpg)
