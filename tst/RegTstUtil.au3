@@ -173,9 +173,9 @@ EndFunc   ;==>TestForString
 ; sTestCase - String to search for, e.g., "Closed Caption.608_708:001-001"
 ; sTestResult - String to put in the Results column, e.g., "Passed"
 Func SaveTestResult($sTestCase, $sTestResult)
-	Local $iIndex = _ArraySearch($aTestArray, $sTestCase, 0, 0, 0, 0, 1, 0)
+	Local $iIndex = _ArraySearch($aTestArray, $sTestCase, 0, 0, 0, 0, 1, 1)
 	If @error == 0 Then
-		$aTestArray[$iIndex][4] = $sTestResult
+		$aTestArray[$iIndex][3] = $sTestResult
 	Else
 		ConsoleWrite("Row " & $iIndex & "  error " & @error & @CRLF)
 	EndIf

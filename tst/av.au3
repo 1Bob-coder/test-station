@@ -38,11 +38,11 @@ Func RunVideoAspectOverride($hTestSummary)
 	If $sVctId = "4380" Then        ; Use channel 482 - This channel is 1080i.
 		ChanChangeDrip("rmt:DIGIT4", "rmt:DIGIT8", "rmt:DIGIT2")
 	EndIf
-
-	Local $aUserVsActual[3][2] = [ _
-			["6", "FORCE_STRETCH"], _
-			["9", "ZOOM"], _
-			["4", "NORMAL"]]
+	; User value, Resultant value, Test Requirement
+	Local $aUserVsActual[3][3] = [ _
+			["6", "FORCE_STRETCH", ""], _
+			["9", "ZOOM", ""], _
+			["4", "NORMAL", ""]]
 
 	; make the 'ast vi' command with 5 second timeout
 	MakeAstTtl("ast vi", 5)
@@ -60,6 +60,12 @@ Func RunVideoAspectOverride($hTestSummary)
 			"wait:1000; rmt:ASPECT"]
 	MakeCmdDrip($aAspect)        ; Make cmd.drip file to be run with Drip.
 	$bPass = RunDripAstSerialTest($aUserVsActual, "Video Aspect Override", "conversion =", "User Conversion Preference    :", $hTestSummary)
+	If $bPass Then
+		SaveTestResult("DSR SI&T.A/V Presentation.Video:007-001", "Pass")
+	Else
+		SaveTestResult("DSR SI&T.A/V Presentation.Video:007-001", "Fail")
+	EndIf
+
 	Return ($bPass)
 EndFunc   ;==>RunVideoAspectOverride
 

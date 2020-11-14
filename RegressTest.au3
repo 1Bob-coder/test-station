@@ -57,10 +57,18 @@ GUISetState(@SW_SHOW)
 
 ; Includes for test files
 #include <tst/RegTstUtil.au3> ; Utilities
-#include <tst/cc.au3> ; Closed Caption tests
 #include <tst/av.au3> ; A / V tests
+#include <tst/acc.au3>  ; Access Control
+#include <tst/cc.au3> ; Closed Caption tests
+#include <tst/consumer.au3>  ; Consumer Sanity
+#include <tst/download.au3>  ; Download tests
 #include <tst/dvr.au3> ; DVR tests
 #include <tst/finger.au3> ; Fingerprint tests
+#include <tst/network.au3> ; Networking tests
+#include <tst/sys.au3>  ; System Control tests
+#include <tst/text.au3>  ; Test Messaging
+#include <tst/tuning.au3> ; Tuning tests
+#include <tst/usb.au3>  ; USB tests
 #include <tst/vco.au3> ; VCO tests
 
 
@@ -163,8 +171,20 @@ While 1
 					RunAVPresentationTest($hTestSummary, $hAV_Presentation_pf)
 				EndIf
 
+				If _IsChecked($hAccessControl) Then
+					RunAccTest($hTestSummary, $hAccessControl_pf)
+				EndIf
+
+				If _IsChecked($hConsumerSanity) Then
+					RunConsumerTest($hTestSummary, $hConsumerSanity_pf)
+				EndIf
+
 				If _IsChecked($hClosedCaptions) Then
 					RunClosedCaptionTest($hTestSummary, $hClosedCaptions_pf)
+				EndIf
+
+				If _IsChecked($hDownload) Then
+					RunDownloadTest($hTestSummary, $hDownload_pf)
 				EndIf
 
 				If _IsChecked($hDVR) Then
@@ -173,6 +193,26 @@ While 1
 
 				If _IsChecked($hFingerprint) Then
 					RunFingerTest($hTestSummary, $hFingerprint_pf)
+				EndIf
+
+				If _IsChecked($hNetworking) Then
+					RunNetworkingTest($hTestSummary, $hNetworking_pf)
+				EndIf
+
+				If _IsChecked($hSystemControl) Then
+					RunSysControlTest($hTestSummary, $hSystemControl_pf)
+				EndIf
+
+				If _IsChecked($hTextMessaging) Then
+					RunTextMessagingTest($hTestSummary, $hTextMessaging_pf)
+				EndIf
+
+				If _IsChecked($hTuning) Then
+					RunTuningTest($hTestSummary, $hTuning_pf)
+				EndIf
+
+				If _IsChecked($hUSB) Then
+					RunUsbTest($hTestSummary, $hUSB_pf)
 				EndIf
 
 				If _IsChecked($hVCO) Then
