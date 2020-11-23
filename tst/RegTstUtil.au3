@@ -209,6 +209,7 @@ Func RunDripTest($sWhichTest)
 		FileDelete($sLogFile)
 		;ConsoleWrite("RunDripTest delete " & $sLogFile & @CRLF)
 		RunWait($sTestCommand, "", @SW_HIDE)                       ; Run the test.
+		;RunWait($sTestCommand, "")                       ; Run the test.
 		;ConsoleWrite($sTestCommand & @CRLF)
 	EndIf
 EndFunc   ;==>RunDripTest
@@ -277,6 +278,10 @@ EndFunc   ;==>FindAllStringsInFile
 ; sWhichString - which string to search for
 ; sWhichTest - which .log file to search in
 Func FindNextStringInFile($sWhichString, $sWhichTest)
+	$sNextWord = FindNthStringInFile($sWhichString, $sWhichTest, 1)
+	Return $sNextWord
+EndFunc   ;==>FindNextStringInFile
+#comments-start
 	Local $iPosition = 0, $sChop = " ", $sNextWord = "", $aSplit = []
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
 	ConsoleWrite("FindNextStringInFile Try to read " & $sLogFile & @CRLF)
@@ -291,12 +296,58 @@ Func FindNextStringInFile($sWhichString, $sWhichTest)
 
 			If $aSplit[0] Then
 				$sNextWord = $aSplit[1]
+				ConsoleWrite("next two words after " & $sWhichString & " 1 " & $sNextWord & " 2 " & $aSplit[2] & @CRLF)
+			Else
+				ConsoleWrite("No split")
 			EndIf
+		Else
+			ConsoleWrite("Did not find string " & $sWhichString & " in file" & @CRLF)
 		EndIf
 	EndIf
-	ConsoleWrite($sNextWord & @CRLF)
+	;ConsoleWrite($sNextWord & @CRLF)
 	Return $sNextWord
 EndFunc   ;==>FindNextStringInFile
+#comments-end
+
+
+; Purpose: To search for a string, if found return the Nth string after it.
+; Note:  Useful for returning a value given by the stats commands.
+; sWhichString - which string to search for
+; sWhichTest - which .log file to search in
+; iWhichOne - 1 for the next string, 2 to skip one, etc.
+Func FindNthStringInFile($sWhichString, $sWhichTest, $iWhichOne)
+	Local $iPosition = 0, $sChop = " ", $sNextWord = "", $aSplit = []
+	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
+	;ConsoleWrite("FindNextStringInFile Try to read " & $sLogFile & @CRLF)
+	Local $sRead = FileRead($sLogFile)
+	If @error Then
+		ConsoleWrite("FindNextStringInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
+	Else
+		$iPosition = StringInStr($sRead, $sWhichString)
+		If $iPosition Then
+			$sChop = StringTrimLeft($sRead, $iPosition + StringLen($sWhichString))
+			$aSplit = StringSplit($sChop, " :" & @CRLF)  ; Array of strings where spaces and colons are separators
+			$iWhichOne = $iWhichOne + 1 ; Skip the first element in the array (the original searched-for word)
+			If $aSplit[0] > $iWhichOne Then
+				Local $aNewArray[] = []
+				For $sItem In $aSplit
+					If $sItem <> "" Then
+						_ArrayAdd($aNewArray, $sItem)
+					EndIf
+				Next
+				$sNextWord = $aNewArray[$iWhichOne]
+				ConsoleWrite("1." & $aNewArray[$iWhichOne] & " 2." & $aNewArray[$iWhichOne + 1] & " 3." & $aNewArray[$iWhichOne + 2] & @CRLF)
+			Else
+				ConsoleWrite("No split")
+			EndIf
+		Else
+			ConsoleWrite("Did not find string " & $sWhichString & " in file" & @CRLF)
+		EndIf
+	EndIf
+	;ConsoleWrite($sNextWord & @CRLF)
+	Return $sNextWord
+EndFunc   ;==>FindNthStringInFile
+
 
 
 ; Purpose: Returns true if the checkbox is checked.
