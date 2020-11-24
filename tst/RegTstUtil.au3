@@ -86,13 +86,9 @@ Func GetVctId()
 	If $sIpAddress == "" Or $sBindAddr == "" Then
 		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
 	Else
-		Local $aVctId[2] = [ _
-				"wait:1000; diag:A,5,3", _
-				"wait:1000; sea:ALL"]
-		MakeCmdDrip($aVctId)      ; Make cmd.drip file to be run with Drip.
-		RunDripTest("cmd")                            ; Run cmd.drip
-		$sVctId = GetStringInFile("VCT_ID = ", "cmd", 0, 13)
-		$sVctId = StringReplace($sVctId, "VCT_ID = ", "")
+		MakeRmtCmdDrip("diag:A,5,3", 1000)
+		RunDripTest("cmd")
+		$sVctId = FindNextStringInFile("VCT_ID =", "cmd")
 	EndIf
 EndFunc   ;==>GetVctId
 
@@ -336,7 +332,6 @@ Func FindNthStringInFile($sWhichString, $sWhichTest, $iWhichOne)
 					EndIf
 				Next
 				$sNextWord = $aNewArray[$iWhichOne]
-				ConsoleWrite("1." & $aNewArray[$iWhichOne] & " 2." & $aNewArray[$iWhichOne + 1] & " 3." & $aNewArray[$iWhichOne + 2] & @CRLF)
 			Else
 				ConsoleWrite("No split")
 			EndIf

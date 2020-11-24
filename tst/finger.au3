@@ -5,7 +5,7 @@
 
 
 Func RunFingerTest($TestSummary, $Fingerprint_pf)
-	GUICtrlSetData($hTestSummary, "Fingerprint Test Started")
+	GUICtrlSetData($hTestSummary, "==> Fingerprint Test Started")
 
 	PF_Box("Running", $COLOR_BLUE, $Fingerprint_pf)
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
@@ -17,7 +17,7 @@ Func RunFingerTest($TestSummary, $Fingerprint_pf)
 			"wait:7000; sea:all"]
 	MakeCmdDrip($aFinCmd)
 	Local $bPass = RunTestCriteria("cmd", "displayUA", "Fingerprint", $TestSummary, $Fingerprint_pf)
-	GUICtrlSetData($TestSummary, "Fingerprint Test Done")
+	GUICtrlSetData($TestSummary, "<== Fingerprint Test Done")
 	If $bPass Then
 		PF_Box("Pass", $COLOR_GREEN, $Fingerprint_pf)
 	Else

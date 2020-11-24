@@ -7,7 +7,7 @@
 Func RunDVRTest($TestSummary, $DVR_pf)
 	Local $bPass = True
 	CollectSerialLogs("DvrSerial")    ; Start collection of serial log file (just in case it reboots)
-	GUICtrlSetData($TestSummary, "DVR Test Started")
+	GUICtrlSetData($TestSummary, "==> DVR Test Started")
 	PF_Box("Running", $COLOR_BLUE, $DVR_pf)
 
 	; Turn on Video/Info debugs, "sea all", "ses 3"
@@ -48,7 +48,7 @@ Func RunDVRTest($TestSummary, $DVR_pf)
 	$bPass = RunTestCriteria("cmd", "SEND VIDEO_COMPONENT_START_SUCCESS", "6. Play (video)", $TestSummary, $DVR_pf) And $bPass
 	$bPass = TestForString("cmd", "SEND AUDIO_COMPONENT_START_SUCCESS", "6. Play (audio)", $TestSummary, $DVR_pf) And $bPass
 
-	GUICtrlSetData($TestSummary, "DVR Test Done")
+	GUICtrlSetData($TestSummary, "<== DVR Test Done")
 	WinKill("COM")        ; End collection of serial log file
 
 	If $bPass Then

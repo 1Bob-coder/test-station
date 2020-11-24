@@ -7,7 +7,7 @@
 Func RunVCOTest($TestSummary, $VCO_pf)
 	Local $bPass = True
 	CollectSerialLogs("VcoSerial")    ; Start collection of serial log file (just in case it reboots)
-	GUICtrlSetData($TestSummary, "VCO Test Started")
+	GUICtrlSetData($TestSummary, "==> VCO Test Started")
 	PF_Box("Running", $COLOR_BLUE, $VCO_pf)
 
 	; Press EXIT twice to get out of any screens.
@@ -61,7 +61,7 @@ Func RunVCOTest($TestSummary, $VCO_pf)
 	$bPass = RunTestCriteria("cmd", "SEND VIDEO_COMPONENT_START_SUCCESS, CH: " & $sFrom, "6. Return (video CH " & $sFrom & ")", $TestSummary, $VCO_pf) And $bPass
 	$bPass = TestForString("cmd", "SEND AUDIO_COMPONENT_START_SUCCESS, CH: " & $sFrom, "6. Return (audio CH " & $sFrom & ")", $TestSummary, $VCO_pf) And $bPass
 
-	GUICtrlSetData($TestSummary, "VCO Test Done")
+	GUICtrlSetData($TestSummary, "<== VCO Test Done")
 	Sleep(6000)  ; Sleep 6 seconds just in case it crashes.
 	WinKill("COM")    ; End collection of serial log file
 

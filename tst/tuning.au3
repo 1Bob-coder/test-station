@@ -1,67 +1,73 @@
 ; Purpose:  To run the tuning tests.
+; All channels are MPEG4, Ac3, 8PSK, 20.5 MBPS Symbol Rate, 1.92 code rate
+; Data collection parameters are:
+; Nexus  Source Format          : 720P  --> or 1080I, or 480I
+; Nexus Aspect Ratio            : 4x3(1.3) derived with Sar x:y:(x*w/y*h)=10:11:1.33333  --> or 16x9 (1.7)
+; Freq from 995250000* to 1435250000* (all frequency descriptors)
+
 
 #include-once
 #include <RegTstUtil.au3>
 
+Local $aTuneResults[1][6] = [["--", "--", "--", "--", "--", "--"]]
 
-Func RunTuningTest($hTestSummary, $hTuning_pf)
+Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 	Local $bPass = True
 	PF_Box("Running", $COLOR_BLUE, $hTuning_pf)
-	GUICtrlSetData($hTestSummary, "Tuning Test Started")
+	GUICtrlSetData($hTestSummary, "==> Tuning Test Started")
+
+	; Is Test Type a "short" or "long" test?
+	If $iTestType = 0 Then
+		$sNumChans = 5
+	Else
+		; Get the number of channels from diag A.
+		MakeRmtCmdDrip("diag:A,5,2", 1000)
+		RunDripTest("cmd")
+		$sNumChans = FindNextStringInFile("NumChannels =", "cmd")
+	EndIf
+
+	GUICtrlSetData($hTestSummary, "Running Tuning Test on " & $sNumChans & " channels." & @CRLF)
+	$iNumMinutes = $sNumChans * 10 / 60
+	GUICtrlSetData($hTestSummary, "This will take approximately " & Round($iNumMinutes,1) & " minutes" & @CRLF)
 
 	; Press EXIT twice to get out of any screens.
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
 	RunDripTest("cmd")
 	RunDripTest("cmd")
-	ChanChangeDrip("rmt:DIGIT9", "rmt:DIGIT6", "rmt:DIGIT4")
 
-	;Nexus  Source Format          : 720P  --> or 1080I, or 480I
-	;Nexus Video Codec             : MPEG4
-	;Nexus Aspect Ratio            : 4x3(1.3) derived with Sar x:y:(x*w/y*h)=10:11:1.33333  --> or 16x9 (1.7)
-	;Input Source Type :    Ac3
-	; All channels are 8PSK, 20.5 MBPS, 1.92 code rate.
-	; Freq from 995250000* to 1435250000*
-
-	; Symbol Rate is always 20.5 MBPS for all channels on live
-	; Coding Rate is always 1.92 for all channels on live
-
-	; CA:CA:StsDigitalCaSystem.cpp:515:displayAuthReason:NOT_SUBSCRIBED
-	; CA:CA:StsDigitalCaSystem.cpp:403:notifyServiceInfo:CA1  SERVICE_DENIED CH : 966
-	;local1.notice : CA:CA:StsDigitalCaSystem.cpp:403:notifyServiceInfo:CA1  SERVICE_DENIED CH : 307
-	;local1.notice : CA:CA:StsDigitalCaSystem.cpp:515:displayAuthReason:NOT_SUBSCRIBED
-	; or,
-	; local1.notice : CA:CA:StsDigitalCaSystem.cpp:398:notifyServiceInfo:CA0 SERVICE_AUTHORIZED
-	; CA:CA:StsDigitalCaSystem.cpp:398:notifyServiceInfo:CA0 SERVICE_AUTHORIZED CH : 125
-
+	; For VCT_ID of 4380, start at channel 964
+	If $sVctId = "4380" Then
+		ChanChangeDrip("rmt:DIGIT9", "rmt:DIGIT6", "rmt:DIGIT4")
+	EndIf
 
 	MakeRmtCmdDrip("rmt:CHAN_UP", 5000)        ; Chan Up, collect logs for 5 seconds
-	Local $aTuneResults[1][5] = [["Chan", "Vid Src", "Aspect", "Auth", "AuthWhy"]]
-	For $ii = 1 To 308
+	For $ii = 1 To $sNumChans
 		RunDripTest("cmd")
-		MakeAstTtl("ast vi", 3)                ; Get the video stats
+		MakeAstTtl("ast vi", 2)                ; Get the video stats
 		RunAstTtl()
-		Local $sAuthState0 = "", $sAuthState1 = ""
+		;Local $sAuthState0 = "", $sAuthState1 = ""
+		$sChanNum = FindNextStringInFile("CH :", "cmd")
 		$sVideoSource = FindNextStringInFile("Nexus  Source Format", "ast")
 		$sAspectRatio = FindNextStringInFile("Nexus Aspect Ratio", "ast")
-		$sChanNum = FindNextStringInFile("CH :", "cmd")
-		;$sChanNum = FindNextStringInFile("CH", "cmd")
-		;Func GetStringInFile($sWhichString, $sWhichTest, $iOffset, $iLength)
-		;$iOffset = StringLen("
-		$sAuthState = FindNthStringInFile("notifyServiceInfo", "cmd", 2)
-		;$sAuthState0 = FindNextStringInFile("notifyServiceInfo:CA0  ", "cmd")
-		;$sAuthState1 = FindNextStringInFile("notifyServiceInfo:CA1  ", "cmd")
-		;$sAuthState = FindNextStringInFile("notifyServiceInfo:", "cmd")
-		$sAuthWhy = FindNthStringInFile("displayAuthReason", "cmd", 1)
-		;$sAuthWhy = FindNextStringInFile("displayAuthReason:", "cmd")
+		$sAuthState = FindNthStringInFile("notifyServiceInfo", "cmd", 2)    ; Skips one string and returns the next one.
+		$sAuthWhy = FindNthStringInFile("displayAuthReason", "cmd", 1)        ; Same as FindNextStringInFile
+		MakeAstTtl("ast chan " & $sChanNum, 2)         ; Get the chan stats and the frequency.
+		RunAstTtl()
+		$sFreq = FindNthStringInFile("Frequency", "ast", 24) ; Skips to the 24 string and returns it.
 		GUICtrlSetData($hTestSummary, "Channel " & $sChanNum & " " & $sVideoSource & " " & _
 				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & @CRLF)
-		Local $vRow[1][5] = [[$sChanNum, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
+		Local $vRow[1][6] = [[$sChanNum, $sFreq, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
 		_ArrayAdd($aTuneResults, $vRow)
 		Sleep(1000)  ; Sleep for 1 second
 		FileDelete($sChanNum & ".log")
 		FileCopy("cmd.log", $sChanNum & ".log")
 	Next
-	GUICtrlSetData($hTestSummary, "Tuning Test Done")
+	GUICtrlSetData($hTestSummary, "<== Tuning Test Done")
 	PF_Box("Done", $COLOR_BLUE, $hTuning_pf)
-	_ArrayDisplay($aTuneResults)
+	_FileWriteFromArray("logs\TuneTestResults.txt", $aTuneResults)
+	;_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Frequency|Vid Src|Aspect|Authorization|AuthWhy")
 EndFunc   ;==>RunTuningTest
+
+Func ShowTuneTestLogs()
+	_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Frequency|Vid Src|Aspect|Authorization|AuthWhy")
+EndFunc   ;==>ShowTuneTestLogs

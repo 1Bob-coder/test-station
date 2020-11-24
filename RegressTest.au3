@@ -8,49 +8,55 @@
 #include <GUIListBox.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
+
 #Region ### START Koda GUI section ### Form=
-$hForm = GUICreate("Regression Tests", 673, 562, 192, 124)
-$hAllTests = GUICtrlCreateCheckbox("All Tests", 32, 136, 73, 17)
-$hAV_Presentation = GUICtrlCreateCheckbox("A/V Presentation", 32, 176, 105, 17)
-$hAccessControl = GUICtrlCreateCheckbox("Access Control", 32, 200, 105, 17)
-$hClosedCaptions = GUICtrlCreateCheckbox("Closed Caption", 32, 224, 105, 17)
-$hConsumerSanity = GUICtrlCreateCheckbox("Consumer Sanity", 32, 248, 105, 17)
-$hDownload = GUICtrlCreateCheckbox("Download", 32, 272, 105, 17)
-$hDVR = GUICtrlCreateCheckbox("DVR", 32, 296, 105, 17)
-$hFingerprint = GUICtrlCreateCheckbox("Fingerprint", 32, 320, 105, 17)
-$hNetworking = GUICtrlCreateCheckbox("Networking", 32, 344, 105, 17)
-$hSystemControl = GUICtrlCreateCheckbox("System Control", 32, 368, 105, 17)
-$hTextMessaging = GUICtrlCreateCheckbox("Text Messaging", 32, 392, 105, 17)
-$hTuning = GUICtrlCreateCheckbox("Tuning", 32, 416, 105, 17)
-$hUSB = GUICtrlCreateCheckbox("USB", 32, 440, 105, 17)
-$hVCO = GUICtrlCreateCheckbox("VCO", 32, 464, 105, 17)
-$hAV_Presentation_pf = GUICtrlCreateLabel("", 140, 176, 105, 17)
-$hAccessControl_pf = GUICtrlCreateLabel("", 140, 200, 105, 17)
-$hClosedCaptions_pf = GUICtrlCreateLabel("", 140, 224, 105, 17)
-$hConsumerSanity_pf = GUICtrlCreateLabel("", 140, 248, 105, 17)
-$hDownload_pf = GUICtrlCreateLabel("", 140, 272, 105, 17)
-$hDVR_pf = GUICtrlCreateLabel("", 140, 296, 105, 17)
-$hFingerprint_pf = GUICtrlCreateLabel("", 140, 320, 105, 17)
-$hNetworking_pf = GUICtrlCreateLabel("", 140, 344, 105, 17)
-$hSystemControl_pf = GUICtrlCreateLabel("", 140, 368, 105, 17)
-$hTextMessaging_pf = GUICtrlCreateLabel("", 140, 392, 105, 17)
-$hTuning_pf = GUICtrlCreateLabel("", 140, 416, 105, 17)
-$hUSB_pf = GUICtrlCreateLabel("", 140, 440, 105, 17)
-$hVCO_pf = GUICtrlCreateLabel("", 140, 464, 105, 17)
+$hForm = GUICreate("Regression Tests", 674, 563, 192, 124)
+$hAllTests = GUICtrlCreateCheckbox("All Tests", 32, 104, 73, 17)
+$hAV_Presentation = GUICtrlCreateCheckbox("A/V Presentation", 32, 144, 105, 17)
+$hAccessControl = GUICtrlCreateCheckbox("Access Control", 32, 168, 105, 17)
+$hClosedCaptions = GUICtrlCreateCheckbox("Closed Caption", 32, 192, 105, 17)
+$hConsumerSanity = GUICtrlCreateCheckbox("Consumer Sanity", 32, 216, 105, 17)
+$hDownload = GUICtrlCreateCheckbox("Download", 32, 240, 105, 17)
+$hDVR = GUICtrlCreateCheckbox("DVR", 32, 264, 105, 17)
+$hFingerprint = GUICtrlCreateCheckbox("Fingerprint", 32, 288, 105, 17)
+$hNetworking = GUICtrlCreateCheckbox("Networking", 32, 312, 105, 17)
+$hSystemControl = GUICtrlCreateCheckbox("System Control", 32, 336, 105, 17)
+$hTextMessaging = GUICtrlCreateCheckbox("Text Messaging", 32, 360, 105, 17)
+$hTuning = GUICtrlCreateCheckbox("Tuning", 32, 384, 105, 17)
+$hUSB = GUICtrlCreateCheckbox("USB", 32, 448, 105, 17)
+$hVCO = GUICtrlCreateCheckbox("VCO", 32, 472, 105, 17)
+$hAV_Presentation_pf = GUICtrlCreateLabel("", 140, 144, 105, 17)
+$hAccessControl_pf = GUICtrlCreateLabel("", 140, 168, 105, 17)
+$hClosedCaptions_pf = GUICtrlCreateLabel("", 140, 192, 105, 17)
+$hConsumerSanity_pf = GUICtrlCreateLabel("", 140, 216, 105, 17)
+$hDownload_pf = GUICtrlCreateLabel("", 140, 240, 105, 17)
+$hDVR_pf = GUICtrlCreateLabel("", 140, 264, 105, 17)
+$hFingerprint_pf = GUICtrlCreateLabel("", 140, 288, 105, 17)
+$hNetworking_pf = GUICtrlCreateLabel("", 140, 312, 105, 17)
+$hSystemControl_pf = GUICtrlCreateLabel("", 140, 336, 105, 17)
+$hTextMessaging_pf = GUICtrlCreateLabel("", 140, 360, 105, 17)
+$hTuning_pf = GUICtrlCreateLabel("", 140, 384, 105, 17)
+$hUSB_pf = GUICtrlCreateLabel("", 140, 448, 105, 17)
+$hVCO_pf = GUICtrlCreateLabel("", 140, 472, 105, 17)
 $hRunTests = GUICtrlCreateButton("Run Tests", 32, 504, 75, 25)
-$hBoxIPAddress = GUICtrlCreateLabel("IP Address of Box", 376, 128, 144, 17)
-$hBoxVersion = GUICtrlCreateLabel("Box Type and Code Version", 200, 128, 144, 17)
+$hBoxIPAddress = GUICtrlCreateLabel("IP Address of Box", 344, 104, 144, 17)
+$hBoxVersion = GUICtrlCreateLabel("Box Type and Code Version", 152, 104, 144, 17)
 $hTitle = GUICtrlCreateLabel("Feature and Regression Tests", 176, 8, 295, 27)
 GUICtrlSetFont(-1, 14, 800, 0, "Georgia")
 $hSubtitle = GUICtrlCreateLabel("DSR8xx Digital Satellite Receiver", 216, 40, 215, 20)
 GUICtrlSetFont(-1, 10, 400, 2, "Georgia")
-$hTestSummary = GUICtrlCreateList("", 256, 160, 369, 305, $WS_VSCROLL)
+$hTestSummary = GUICtrlCreateList("", 256, 136, 369, 344, $WS_VSCROLL)
 GUICtrlSetData(-1, "")
-$hTestSummaryButton = GUICtrlCreateButton("Test Summary", 408, 504, 75, 25)
-$hComPort = GUICtrlCreateCombo("Com Port", 104, 72, 145, 25, BitOR($CBS_DROPDOWN,$CBS_AUTOHSCROLL))
-$hBindAddr = GUICtrlCreateCombo("Binding Address", 296, 72, 145, 25, BitOR($CBS_DROPDOWN, $CBS_AUTOHSCROLL))
-$hDripClient = GUICtrlCreateButton("DRIP Client", 512, 72, 75, 25)
+$hTestSummaryButton = GUICtrlCreateButton("Test Summary", 544, 504, 75, 25)
+$hComPort = GUICtrlCreateCombo("Com Port", 152, 72, 145, 25, BitOR($CBS_DROPDOWN,$CBS_AUTOHSCROLL))
+$hBindAddr = GUICtrlCreateCombo("Binding Address", 344, 72, 145, 25, BitOR($CBS_DROPDOWN, $CBS_AUTOHSCROLL))
+$hDripClient = GUICtrlCreateButton("DRIP Client", 544, 72, 75, 25)
 $hSerialLogs = GUICtrlCreateButton("Serial Logs", 120, 504, 75, 25)
+$hTuneTest = GUICtrlCreateButton("Tune Results", 216, 504, 75, 25)
+$TuningGroup = GUICtrlCreateGroup("", 40, 400, 97, 41)
+$hShortTest = GUICtrlCreateRadio("Short Test", 48, 408, 113, 17)
+$hLongTest = GUICtrlCreateRadio("Long Test", 48, 424, 113, 17)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -124,6 +130,7 @@ While 1
 				GUICtrlSetState($hSystemControl, $GUI_CHECKED)
 				GUICtrlSetState($hTextMessaging, $GUI_CHECKED)
 				GUICtrlSetState($hTuning, $GUI_CHECKED)
+			GUICtrlSetState($hShortTest, $GUI_CHECKED)
 				GUICtrlSetState($hUSB, $GUI_CHECKED)
 				GUICtrlSetState($hVCO, $GUI_CHECKED)
 			Else
@@ -144,6 +151,12 @@ While 1
 
 		Case $hSerialLogs
 			OpenLogFiles()
+
+		Case $hTuneTest
+			ShowTuneTestLogs()
+
+		Case $hTuning
+			GUICtrlSetState($hShortTest, $GUI_CHECKED)
 
 		Case $hRunTests
 			GUICtrlSetData($hAV_Presentation_pf, "")
@@ -175,12 +188,12 @@ While 1
 					RunAccTest($hTestSummary, $hAccessControl_pf)
 				EndIf
 
-				If _IsChecked($hConsumerSanity) Then
-					RunConsumerTest($hTestSummary, $hConsumerSanity_pf)
-				EndIf
-
 				If _IsChecked($hClosedCaptions) Then
 					RunClosedCaptionTest($hTestSummary, $hClosedCaptions_pf)
+				EndIf
+
+				If _IsChecked($hConsumerSanity) Then
+					RunConsumerTest($hTestSummary, $hConsumerSanity_pf)
 				EndIf
 
 				If _IsChecked($hDownload) Then
@@ -208,7 +221,11 @@ While 1
 				EndIf
 
 				If _IsChecked($hTuning) Then
-					RunTuningTest($hTestSummary, $hTuning_pf)
+					If _IsChecked($hShortTest) Then
+						RunTuningTest($hTestSummary, $hTuning_pf, 0)
+					Else
+						RunTuningTest($hTestSummary, $hTuning_pf, 1)
+					EndIf
 				EndIf
 
 				If _IsChecked($hUSB) Then

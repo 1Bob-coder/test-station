@@ -7,7 +7,7 @@
 Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 	Local $bPassFail = True
 	PF_Box("Running", $COLOR_BLUE, $AV_Presentation_pf)
-	GUICtrlSetData($hTestSummary, "AV Test Started")
+	GUICtrlSetData($hTestSummary, "==> AV Test Started")
 	GUICtrlSetData($hTestSummary, "Test Type : User Setting / Actual Setting => Result")
 
 	$bPassFail = RunVideoAspectOverride($hTestSummary) And $bPassFail
@@ -23,7 +23,7 @@ Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 	Else
 		PF_Box("Fail", $COLOR_RED, $AV_Presentation_pf)
 	EndIf
-	GUICtrlSetData($hTestSummary, "AV Test Done" & @CRLF)
+	GUICtrlSetData($hTestSummary, "<== AV Test Done" & @CRLF)
 EndFunc   ;==>RunAVPresentationTest
 
 
