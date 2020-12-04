@@ -64,7 +64,7 @@ def convertRemoteKeytoS(x):
             18 :'DIGIT3',
             19: 'BLUE',
             20: 'OPTIONS',
-            21: 'LIST',
+            21: 'LIST',      # PVR key
             22: 'GO_BACK',
             23: 'DIGIT4',
             24: 'LAST_CHAN',
@@ -93,7 +93,7 @@ def convertRemoteKeytoS(x):
             47: 'SKIP_AHEAD',
             48: 'SKIP_BACK',
             49: 'ASPECT',
-            52: 'INTERACTIVE',
+            52: 'INTERACTIVE',   # MENU key
             53: 'DEBUG_LOGS'
           }[x]
 
@@ -125,7 +125,7 @@ def convertRemoteKeytoI(x):
             'DIGIT3': 18,
             'BLUE': 19,
             'OPTIONS': 20,
-            'LIST': 21,
+            'LIST': 21,         # PVR key
             'GO_BACK': 22,
             'DIGIT4': 23,
             'LAST_CHAN': 24,
@@ -154,7 +154,7 @@ def convertRemoteKeytoI(x):
             'SKIP_AHEAD': 47,
             'SKIP_BACK': 48,
             'ASPECT': 49,
-            'INTERACTIVE': 52,
+            'INTERACTIVE': 52,    # MENU key
             'DEBUG_LOGS': 53
           }[x]
 
