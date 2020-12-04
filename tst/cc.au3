@@ -84,38 +84,38 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 	GUICtrlSetData($TestSummary, "Closed Captions Test Done")
 EndFunc   ;==>RunClosedCaptionTest
 
-
+; Purpose:  Turns on Closed Captions.
 Func TurnCaptionsOn()
 	; Run the cc stats command to check if captions are on or off.
-	MakeAstTtl("ast cc", 10)                            ; make the 'ast cc' command, 10 second timeout
-	RunAstTtl()                                 ; run the 'ast cc' command and collect the log
+	MakeAstTtl("ast cc", 10)      ; make the 'ast cc' command, 10 second timeout
+	RunAstTtl()                   ; run the 'ast cc' command and collect the log
 	If FindStringInFile("Captions are off", "ast") Then
 		ConsoleWrite("Captions are off, need to turn on" & @CRLF)
 		Local $aHelpC[2] = ["wait:1000; rmt:HELP", _     ; HELP C to toggle captions on
 				"wait:1000; rmt:YELLOW"]
 		MakeCmdDrip($aHelpC)    ; Make cmd.drip file to be run with Drip.
 		RunDripTest("cmd")
-		RunAstTtl()             ; Run TeraTerm with the 'ast cc' command and collect the log data
 	Else
 		ConsoleWrite("Captions are on" & @CRLF)
 	EndIf
 EndFunc   ;==>TurnCaptionsOn
 
 
+; Purpose:  Tests to see if the closed captions counter is incrementing.
+; This is the indicator that closed captions are being processed by Nexus.
 Func CcCounterTest($sTestName, $TestSummary)
-	Local $sCcCounter1 = ""
-	Local $sCcCounter2 = ""
 	Local $bPass = False
 
-	$sCcCounter1 = FindNextStringInFile("CC counter =", "ast")    ; Get the 'CC counter' value
+	MakeAstTtl("ast cc", 10)    ; make the 'ast cc' command, 10 second timeout
+	RunAstTtl()                 ; Run TeraTerm with the 'ast cc' command and collect the log data
+
+	Local $sCcCounter1 = FindNextStringInFile("CC counter =", "ast")    ; Get the 'CC counter' value
 	ConsoleWrite("Counter1 = " & $sCcCounter1 & @CRLF)
 
-	Sleep(5000)                     ; sleep for 5 seconds
+	Sleep(5000)              ; sleep for 5 seconds
+	RunAstTtl()              ; Run TeraTerm with the 'ast cc' command and collect the log data
 
-	; Run the same 'cc stats' command again to see if the value incremented.
-	RunAstTtl()
-
-	$sCcCounter2 = FindNextStringInFile("CC counter =", "ast")
+	Local $sCcCounter2 = FindNextStringInFile("CC counter =", "ast")    ; Get the 'CC counter' value
 	ConsoleWrite("Counter2 = " & $sCcCounter2 & @CRLF)
 	If $sCcCounter1 <> $sCcCounter2 Then
 		; Counter changed. Test passed.

@@ -23,7 +23,14 @@ Func RunAccTest($hTestSummary, $hAccessControl_pf)
 	MakeCmdDrip($aTestRemote)
 	RunDripTest("cmd")
 
-		GUICtrlSetData($hTestSummary, "BROWSE, EXIT" & @CRLF)
+	GUICtrlSetData($hTestSummary, "OPTIONS, EXIT" & @CRLF)
+	Local $aTestRemote[] = [ _
+			"wait:1000; rmt:OPTIONS", _
+			"wait:5000; rmt:EXIT"]
+	MakeCmdDrip($aTestRemote)
+	RunDripTest("cmd")
+
+	GUICtrlSetData($hTestSummary, "BROWSE, EXIT" & @CRLF)
 	Local $aTestRemote[] = [ _
 			"wait:1000; rmt:BROWSE", _
 			"wait:5000; rmt:EXIT"]

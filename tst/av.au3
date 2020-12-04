@@ -18,6 +18,12 @@ Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 	$bPassFail = RunAnalogAudio($hTestSummary) And $bPassFail
 	$bPassFail = RunOpticalDigitalAudio($hTestSummary) And $bPassFail
 
+	Local $aDebugs[] = [ _
+			"wait:1000; ses:3", _
+			"wait:1000; sea:all"]
+	MakeCmdDrip($aDebugs)
+	RunDripTest("cmd")
+
 	If $bPassFail Then
 		PF_Box("Pass", $COLOR_GREEN, $AV_Presentation_pf)
 	Else
@@ -59,7 +65,7 @@ Func RunVideoAspectOverride($hTestSummary)
 			"wait:1000; rmt:ASPECT", _
 			"wait:1000; rmt:ASPECT"]
 	MakeCmdDrip($aAspect)        ; Make cmd.drip file to be run with Drip.
-	$bPass = RunDripAstSerialTest($aUserVsActual, "Video Aspect Override", "conversion =", "User Conversion Preference    :", $hTestSummary)
+	$bPass = RunDripAstSerialTest($aUserVsActual, "Video Aspect Override", "conversion", "User Conversion Preference", $hTestSummary)
 	If $bPass Then
 		SaveTestResult("DSR SI&T.A/V Presentation.Video:007-001", "Pass")
 	Else
@@ -118,14 +124,21 @@ Func RunVideoOutputMode($hTestSummary)
 	MakeCmdDrip($aAVSettings)
 	RunDripTest("cmd")
 	RunAstTtl()
-	$sValue = FindNextStringInFile("Nexus Display Format          :", "ast")
+	$sValue = FindNextStringInFile("Nexus Display Format", "ast")
 	If $sValue = "1080I" Then
 		$bPassFail = RunVideoOutput($aVid_1080p, "1080P", $hTestSummary) And $bPassFail
+		$bPassFail = RunVideoOutput($aVid_720p, "720P", $hTestSummary) And $bPassFail
+		$bPassFail = RunVideoOutput($aVid_480p, "480P", $hTestSummary) And $bPassFail
+		$bPassFail = RunVideoOutput($aVid_480i, "480I", $hTestSummary) And $bPassFail
+		$bPassFail = RunVideoOutput($aVid_1080i, "1080I", $hTestSummary) And $bPassFail
+	Else
+		$bPassFail = RunVideoOutput($aVid_1080i, "1080I", $hTestSummary) And $bPassFail
+		$bPassFail = RunVideoOutput($aVid_720p, "720P", $hTestSummary) And $bPassFail
+		$bPassFail = RunVideoOutput($aVid_480p, "480P", $hTestSummary) And $bPassFail
+		$bPassFail = RunVideoOutput($aVid_480i, "480I", $hTestSummary) And $bPassFail
+		$bPassFail = RunVideoOutput($aVid_720p, "1080P", $hTestSummary) And $bPassFail
+		$bPassFail = RunVideoOutput($aVid_1080i, "1080P", $hTestSummary) And $bPassFail
 	EndIf
-	$bPassFail = RunVideoOutput($aVid_720p, "720P", $hTestSummary) And $bPassFail
-	$bPassFail = RunVideoOutput($aVid_480p, "480P", $hTestSummary) And $bPassFail
-	$bPassFail = RunVideoOutput($aVid_480i, "480I", $hTestSummary) And $bPassFail
-	$bPassFail = RunVideoOutput($aVid_1080i, "1080I", $hTestSummary) And $bPassFail
 	Return ($bPassFail)
 EndFunc   ;==>RunVideoOutputMode
 
@@ -135,7 +148,7 @@ Func RunVideoOutput($aDripCmd, $sTestString, $hTestSummary)
 	MakeCmdDrip($aDripCmd)
 	RunDripTest("cmd")
 	RunAstTtl()
-	$sValue = FindNextStringInFile("Nexus Display Format          :", "ast")
+	$sValue = FindNextStringInFile("Nexus Display Format", "ast")
 	ConsoleWrite("Video Output Display Format: " & $sValue & @CRLF)
 	Local $iResult = StringCompare($sValue, $sTestString)
 	If $iResult <> 0 Then
@@ -187,7 +200,7 @@ Func RunSdAspectRatio($hTestSummary)
 			["STRETCH", "STRETCH"], _
 			["NORMAL-BARS", "NORMAL"]]
 	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
-	$bPass = RunDripAstSerialTest($aAVResults, "SD Aspect Ratio: ", "4:3 source on 16:9 TV -", "User Conversion Preference    :", $hTestSummary)
+	$bPass = RunDripAstSerialTest($aAVResults, "SD Aspect Ratio: ", "4:3 source on 16:9 TV -", "User Conversion Preference", $hTestSummary)
 	Return ($bPass)
 EndFunc   ;==>RunSdAspectRatio
 
@@ -200,7 +213,7 @@ Func RunAudioCompression($hTestSummary)
 	; make the 'ast au' command with 5 second timeout for Audio Stats
 	MakeAstTtl("ast au", 5)
 
-	; Turn on Audio/Info debugs, "sea vi", "ses 2"
+	; Turn on Audio/Info debugs, "sea au", "ses 2"
 	Local $aDebugs[] = [ _
 			"wait:1000; sea:au", _
 			"wait:1000; ses:2"]
@@ -257,7 +270,7 @@ Func RunHdmiAudio($hTestSummary)
 			["PCM", "ePcm"], _
 			["PassThrough", "eAuto"]]
 	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
-	$bPass = RunDripAstSerialTest($aAVResults, "HDMI Audio", "HDMI Audio :", "hdmi.outputMode       =", $hTestSummary)
+	$bPass = RunDripAstSerialTest($aAVResults, "HDMI Audio", "HDMI Audio", "hdmi.outputMode", $hTestSummary)
 	Return ($bPass)
 EndFunc   ;==>RunHdmiAudio
 
@@ -265,6 +278,14 @@ EndFunc   ;==>RunHdmiAudio
 ; Cycle throught the Analog Audio settings: Surround and Stereo.
 Func RunAnalogAudio($hTestSummary)
 	Local $bPass = True
+
+	; Turn on Audio/Info debugs, "sea au", "ses 2"
+	Local $aDebugs[] = [ _
+			"wait:1000; sea:au", _
+			"wait:1000; ses:2"]
+	MakeCmdDrip($aDebugs)
+	RunDripTest("cmd")
+
 	; OPTIONS-4-2-DOWN-DOWN-DOWN-DOWN-DOWN
 	Local $aAVSettings[] = [ _
 			"wait:1000; rmt:EXIT", _
@@ -287,7 +308,7 @@ Func RunAnalogAudio($hTestSummary)
 			["Stereo", "eStandard"], _
 			["Surround", "eDolbySurroundCompatible"]]
 	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
-	$bPass = RunDripAstSerialTest($aAVResults, "Analog Audio", "Audio analog mode :", "Analog audio :", $hTestSummary)
+	$bPass = RunDripAstSerialTest($aAVResults, "Analog Audio", "Audio analog mode :", "Analog audio", $hTestSummary)
 	Return ($bPass)
 EndFunc   ;==>RunAnalogAudio
 
@@ -334,10 +355,10 @@ Func RunDripAstSerialTest($aUserVsActual, $sTestTitle, $sDebugSearch, $sStatsSea
 	Local $iSize = UBound($aUserVsActual, $UBOUND_ROWS)  ; Compute size of array
 	For $iCount = 1 To $iSize
 		Local $sSubtestTitle = $iCount & ") " & $sTestTitle & ": "
-		CollectSerialLogs("serial")        ; Start collecting the serial.log file
+		CollectSerialLogs("serial")        ; Start collecting the serial.txt file
 		RunDripTest("cmd")                ; Run the cmd.drip file
 		Sleep(3000)                            ; Sleep for 3 seconds
-		WinKill("COM")                    ; Stop collecting the serial.log file
+		WinKill("COM")                    ; Stop collecting the serial.txt file
 		RunAstTtl()            ; Run the ast stats command
 		$sValueActual = FindNextStringInFile($sStatsSearch, "ast")
 		$sValueUser = FindNextStringInFile($sDebugSearch, "serial")

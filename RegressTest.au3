@@ -2,6 +2,7 @@
 
 ; Includes for GUI buttons.
 #include-once
+#include <Date.au3>
 #include <ButtonConstants.au3>
 #include <ComboConstants.au3>
 #include <GUIConstantsEx.au3>
@@ -179,6 +180,8 @@ While 1
 				MsgBox($MB_SYSTEMMODAL, "Binding Address not found", "Could not get IP address.")
 			Else
 				GUICtrlSetData($hTestSummary, "")    ; Clear out Test Summary window
+				Local $timestamp = @HOUR & ":" & @MIN & ":" & @SEC
+				GUICtrlSetData($hTestSummary, "-- Regression Test Begin -- " & _NowTime() & @CRLF)
 
 				If _IsChecked($hAV_Presentation) Then
 					RunAVPresentationTest($hTestSummary, $hAV_Presentation_pf)
@@ -235,7 +238,9 @@ While 1
 				If _IsChecked($hVCO) Then
 					RunVCOTest($hTestSummary, $hVCO_pf)
 				EndIf
-		EndIf
+
+				GUICtrlSetData($hTestSummary, "-- Regression Test End -- " & _NowTime() & @CRLF)
+			EndIf
 
 		Case $GUI_EVENT_CLOSE
 			Exit

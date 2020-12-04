@@ -257,7 +257,7 @@ Func FindAllStringsInFile($sWhichString, $sWhichTest, $iOffset)
 			$iPosition = StringInStr($sRead, $sWhichString)
 			If $iPosition Then
 				$sRead = StringTrimLeft($sRead, $iPosition + StringLen($sWhichString) + $iOffset)
-				$aSplit = StringSplit($sRead, " :" & @CRLF) ; Array of strings where spaces and colons are separators
+				$aSplit = StringSplit($sRead, " :=" & @CRLF) ; Array of strings where spaces and colons are separators
 
 				If $aSplit[0] Then
 					$sNextWord = $aSplit[1]
@@ -322,7 +322,7 @@ Func FindNthStringInFile($sWhichString, $sWhichTest, $iWhichOne)
 		$iPosition = StringInStr($sRead, $sWhichString)
 		If $iPosition Then
 			$sChop = StringTrimLeft($sRead, $iPosition + StringLen($sWhichString))
-			$aSplit = StringSplit($sChop, " :" & @CRLF)  ; Array of strings where spaces and colons are separators
+			$aSplit = StringSplit($sChop, " :=" & @CRLF)  ; Array of strings where spaces and colons are separators
 			$iWhichOne = $iWhichOne + 1 ; Skip the first element in the array (the original searched-for word)
 			If $aSplit[0] > $iWhichOne Then
 				Local $aNewArray[] = []
@@ -444,4 +444,5 @@ EndFunc   ;==>CollectSerialLogs
 Func RunAstTtl()
 	FileDelete($sAstLog)      ; Delete ast.log
 	RunWait($sTeraTerm & " /C=" & $sComPort & " /W=" & "COM_" & $sComPort & " /M=" & $sAstTTL & " /L=" & $sAstLog, "", @SW_MINIMIZE)
+	;RunWait($sTeraTerm & " /C=" & $sComPort & " /W=" & "COM_" & $sComPort & " /M=" & $sAstTTL & " /L=" & $sAstLog, "")
 EndFunc   ;==>RunAstTtl
