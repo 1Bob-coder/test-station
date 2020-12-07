@@ -6,7 +6,7 @@
 
 Func RunDVRTest($TestSummary, $DVR_pf)
 	Local $bPass = True
-	CollectSerialLogs("DvrSerial")    ; Start collection of serial log file (just in case it reboots)
+	CollectSerialLogs("DvrSerial", False)    ; Start collection of serial log file (just in case it reboots)
 	GUICtrlSetData($TestSummary, "==> DVR Test Started")
 	PF_Box("Running", $COLOR_BLUE, $DVR_pf)
 

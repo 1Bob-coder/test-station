@@ -3,6 +3,7 @@
 ; Includes for GUI buttons.
 #include-once
 #include <Date.au3>
+#include <AutoItConstants.au3>
 #include <ButtonConstants.au3>
 #include <ComboConstants.au3>
 #include <GUIConstantsEx.au3>

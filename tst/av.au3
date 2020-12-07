@@ -355,7 +355,7 @@ Func RunDripAstSerialTest($aUserVsActual, $sTestTitle, $sDebugSearch, $sStatsSea
 	Local $iSize = UBound($aUserVsActual, $UBOUND_ROWS)  ; Compute size of array
 	For $iCount = 1 To $iSize
 		Local $sSubtestTitle = $iCount & ") " & $sTestTitle & ": "
-		CollectSerialLogs("serial")        ; Start collecting the serial.txt file
+		CollectSerialLogs("serial", False)   ; Start collecting the serial.txt file
 		RunDripTest("cmd")                ; Run the cmd.drip file
 		Sleep(3000)                            ; Sleep for 3 seconds
 		WinKill("COM")                    ; Stop collecting the serial.txt file

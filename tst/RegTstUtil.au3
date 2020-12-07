@@ -92,6 +92,20 @@ Func GetVctId()
 	EndIf
 EndFunc   ;==>GetVctId
 
+
+; Purpose:  Get Diagnostics information
+; DiagScreenLineItem - Something like "A,5,2" for Diag A, Line 5, Item 2, or just "A", or "A,5"
+; ItemName - Something like "NumChannels =" which is the name of the item as reported to the Drip Client
+; Returns a string with the value.
+Func GetDiagData($sDiagScreenLineItem, $sItemName)
+	; Get the number of channels from diag A.
+	MakeRmtCmdDrip("diag:" & $sDiagScreenLineItem, 1000)
+	RunDripTest("cmd")
+	Local $sValue = FindNextStringInFile($sItemName, "cmd")
+	Return $sValue
+EndFunc   ;==>GetDiagData
+
+
 ; Purpose:  Search for a string, and return a string +/- it's position, of specified length
 ; sWhichString - The string to search for
 ; sWhichTest - The .log file
@@ -431,13 +445,18 @@ EndFunc   ;==>ChanChangeDrip
 
 
 ; Purpose: Run TeraTerm and collect a serial log file.
+; bShow - True if you want the serial port session to be displayed
 ; Notes: Useful for collecting logs in case the system reboots.
 ;        Only one TeraTerm session per com port can be run at any given time.
 ;        To end, use WinKill("COM").
-Func CollectSerialLogs($sWhichTest)
+Func CollectSerialLogs($sWhichTest, $bShow)
 	Local $sWhichLog = $sLogDir & $sWhichTest & ".log" ; log file
 	FileDelete($sWhichLog)
-	Run($sTeraTerm & " /C=" & $sComPort & " /W=" & $sWhichTest & " /L=" & $sWhichLog, "", @SW_MINIMIZE)
+	If $bShow Then
+		Run($sTeraTerm & " /C=" & $sComPort & " /W=" & $sWhichTest & " /L=" & $sWhichLog)
+	Else
+		Run($sTeraTerm & " /C=" & $sComPort & " /W=" & $sWhichTest & " /L=" & $sWhichLog, "", @SW_MINIMIZE)
+	EndIf
 EndFunc   ;==>CollectSerialLogs
 
 ; Purpose: Run TeraTerm with the ast.ttl macro and save to ast.log

@@ -21,9 +21,10 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 		$sNumChans = 5
 	Else
 		; Get the number of channels from diag A.
-		MakeRmtCmdDrip("diag:A,5,2", 1000)
-		RunDripTest("cmd")
-		$sNumChans = FindNextStringInFile("NumChannels =", "cmd")
+		$sNumChans = GetDiagData("A,5,2", "NumChannels =")
+		;MakeRmtCmdDrip("diag:A,5,2", 1000)
+		;RunDripTest("cmd")
+		;$sNumChans = FindNextStringInFile("NumChannels =", "cmd")
 	EndIf
 
 	GUICtrlSetData($hTestSummary, "Running Tuning Test on " & $sNumChans & " channels." & @CRLF)

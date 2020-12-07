@@ -6,7 +6,7 @@
 
 Func RunVCOTest($TestSummary, $VCO_pf)
 	Local $bPass = True
-	CollectSerialLogs("VcoSerial")    ; Start collection of serial log file (just in case it reboots)
+	CollectSerialLogs("VcoSerial", False)    ; Start collection of serial log file (just in case it reboots)
 	GUICtrlSetData($TestSummary, "==> VCO Test Started")
 	PF_Box("Running", $COLOR_BLUE, $VCO_pf)
 
