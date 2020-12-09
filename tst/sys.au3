@@ -50,8 +50,8 @@ Func RunSysControlTest($hTestSummary, $hSystemControl_pf)
 EndFunc   ;==>RunSysControlTest
 
 
+; Purpose:  Display a progress bar.  Put window always on top, moveable.
 Func ShowProgressWindow()
-	; Display a progress bar window.
 	ProgressOn("Rebooting Now", "Wait 2 minutes for box to boot up.", "0%", -1, -1, $DLG_MOVEABLE)
 
 	; Update the progress value of the progress bar window every second.

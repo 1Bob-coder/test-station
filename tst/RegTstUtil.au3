@@ -6,7 +6,6 @@
 #include <ColorConstants.au3>
 #include <Array.au3>
 
-
 $sBindAddr = ""  ; Binding address for the NIC card
 
 ; Get the current working directory.  This is the test-center directory.
@@ -17,24 +16,21 @@ $sTestDir = StringReplace($sTestDir, " ", "")
 $sTestDir = StringReplace($sTestDir, @CRLF, "")
 FileDelete("dir.log")
 
-; Location of files
-ConsoleWrite("TestDir is AutoIt, located at " & $sTestDir & @CRLF)
-;$sTestCenter = $sTestDir & "\.."
-;ConsoleWrite("TestCenter is test-station, located at " & $sTestCenter & @CRLF)
+; Location of TeraTerm and Python files
 $sTeraTerm = "c:\Program Files (x86)\teraterm\ttermpro.exe "   ; TeraTerm exe file
 $sPython = "C:\Python27\python.exe "                           ; Python exe file
 
-$sLogDir = $sTestDir & "\logs\"               ; log directory
-$sDripScripts = $sTestDir & "\DripScripts\"    ; DRIP scripts directory
+$sLogDir = $sTestDir & "\logs\"                   ; log directory
+$sDripScripts = $sTestDir & "\DripScripts\"        ; DRIP scripts directory
+$sTtlDir = $sTestDir & "\TtlScripts\"            ; TeraTerm scripts directory
+$sDripClientDir = $sTestDir & "\DripClient\"    ; Drip Client directory
 
-$sAstTTL = $sTestDir & "\TtlScripts\ast.ttl"    ; ttl file for running the ast command
-$sAstLog = $sLogDir & "ast.log"   ; log file
-$sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a single command
-$sCmdLog = $sLogDir & "cmd.log"   ; log file
-$sPyDrip = $sTestDir & "\DripClient\DripClient.py"       ; Python DRIP Client program
-$sWinDrip = $sTestDir & "\DripClient\DRIP_client_5.5.exe"  ; Windows DRIP Client program
-ConsoleWrite("sCmdLog = " & $sCmdLog & @CRLF)
-ConsoleWrite("sCmdDrip = " & $sCmdDrip & @CRLF)
+$sAstTTL = $sTtlDir & "ast.ttl"                ; ttl file for running the ast command
+$sAstLog = $sLogDir & "ast.log"               ; log file for the ast command
+$sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a command
+$sCmdLog = $sLogDir & "cmd.log"               ; Drip cmd log file
+$sPyDrip = $sDripClientDir & "DripClient.py"               ; Python DRIP Client program
+$sWinDrip = $sDripClientDir & "DRIP_client_5.5.exe"      ; Windows DRIP Client program
 
 $sIpAddress = ""
 $sComPort = ""                ; e.g., COM1
@@ -80,25 +76,23 @@ Func FindBoxVer($hBoxVersion)
 	EndIf
 EndFunc   ;==>FindBoxVer
 
+
 ; Purpose:  Gets the VCT_ID.  Useful for VCO and SD channel tests based on the VCT_ID.
 ; Found on Diag A, line 5, column 3, e.g.,  VCT_ID = 4380
 Func GetVctId()
 	If $sIpAddress == "" Or $sBindAddr == "" Then
 		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
 	Else
-		MakeRmtCmdDrip("diag:A,5,3", 1000)
-		RunDripTest("cmd")
-		$sVctId = FindNextStringInFile("VCT_ID =", "cmd")
+		Local $sVct1 = GetDiagData("A,5,3", "VCT_ID")
 	EndIf
 EndFunc   ;==>GetVctId
 
 
 ; Purpose:  Get Diagnostics information
 ; DiagScreenLineItem - Something like "A,5,2" for Diag A, Line 5, Item 2, or just "A", or "A,5"
-; ItemName - Something like "NumChannels =" which is the name of the item as reported to the Drip Client
+; ItemName - Something like "NumChannels" which is the name of the item as reported to the Drip Client
 ; Returns a string with the value.
 Func GetDiagData($sDiagScreenLineItem, $sItemName)
-	; Get the number of channels from diag A.
 	MakeRmtCmdDrip("diag:" & $sDiagScreenLineItem, 1000)
 	RunDripTest("cmd")
 	Local $sValue = FindNextStringInFile($sItemName, "cmd")
@@ -215,12 +209,11 @@ Func RunDripTest($sWhichTest)
 		Local $sTestFile = $sDripScripts & $sWhichTest & ".drip"
 		Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
 				" /f " & $sTestFile & " /o " & $sLogFile
-		;ConsoleWrite($sTestCommand & @CRLF)
 		FileDelete($sLogFile)
 		;ConsoleWrite("RunDripTest delete " & $sLogFile & @CRLF)
-		RunWait($sTestCommand, "", @SW_HIDE)                       ; Run the test.
-		;RunWait($sTestCommand, "")                       ; Run the test.
-		;ConsoleWrite($sTestCommand & @CRLF)
+		ConsoleWrite($sTestCommand & @CRLF)
+		RunWait($sTestCommand, "", @SW_HIDE)    ; Run the test (minimized).
+		;RunWait($sTestCommand, "")				; Run the test (show Python box).
 	EndIf
 EndFunc   ;==>RunDripTest
 
@@ -247,6 +240,7 @@ Func FindStringInFile($sWhichString, $sWhichTest)
 	EndIf
 	Return ($iPosition)
 EndFunc   ;==>FindStringInFile
+
 
 ; Purpose: To find a set of strings in a file.  An array is passed back with the
 ; the next word after the string (separated by space or :), + or - the position indicated.
@@ -283,6 +277,7 @@ Func FindAllStringsInFile($sWhichString, $sWhichTest, $iOffset)
 	Return ($lStrings)
 EndFunc   ;==>FindAllStringsInFile
 
+
 ; Purpose: To search for a string, if found return the next string after it.
 ; Note:  Useful for returning a value given by the stats commands.
 ; sWhichString - which string to search for
@@ -291,33 +286,6 @@ Func FindNextStringInFile($sWhichString, $sWhichTest)
 	$sNextWord = FindNthStringInFile($sWhichString, $sWhichTest, 1)
 	Return $sNextWord
 EndFunc   ;==>FindNextStringInFile
-#comments-start
-	Local $iPosition = 0, $sChop = " ", $sNextWord = "", $aSplit = []
-	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
-	ConsoleWrite("FindNextStringInFile Try to read " & $sLogFile & @CRLF)
-	Local $sRead = FileRead($sLogFile)
-	If @error Then
-		ConsoleWrite("FindNextStringInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
-	Else
-		$iPosition = StringInStr($sRead, $sWhichString)
-		If $iPosition Then
-			$sChop = StringTrimLeft($sRead, $iPosition + StringLen($sWhichString))
-			$aSplit = StringSplit($sChop, " :" & @CRLF)  ; Array of strings where spaces and colons are separators
-
-			If $aSplit[0] Then
-				$sNextWord = $aSplit[1]
-				ConsoleWrite("next two words after " & $sWhichString & " 1 " & $sNextWord & " 2 " & $aSplit[2] & @CRLF)
-			Else
-				ConsoleWrite("No split")
-			EndIf
-		Else
-			ConsoleWrite("Did not find string " & $sWhichString & " in file" & @CRLF)
-		EndIf
-	EndIf
-	;ConsoleWrite($sNextWord & @CRLF)
-	Return $sNextWord
-EndFunc   ;==>FindNextStringInFile
-#comments-end
 
 
 ; Purpose: To search for a string, if found return the Nth string after it.
@@ -328,7 +296,6 @@ EndFunc   ;==>FindNextStringInFile
 Func FindNthStringInFile($sWhichString, $sWhichTest, $iWhichOne)
 	Local $iPosition = 0, $sChop = " ", $sNextWord = "", $aSplit = []
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
-	;ConsoleWrite("FindNextStringInFile Try to read " & $sLogFile & @CRLF)
 	Local $sRead = FileRead($sLogFile)
 	If @error Then
 		ConsoleWrite("FindNextStringInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
@@ -356,7 +323,6 @@ Func FindNthStringInFile($sWhichString, $sWhichTest, $iWhichOne)
 	;ConsoleWrite($sNextWord & @CRLF)
 	Return $sNextWord
 EndFunc   ;==>FindNthStringInFile
-
 
 
 ; Purpose: Returns true if the checkbox is checked.
@@ -406,7 +372,6 @@ Func MakeRmtCmdDrip($sDripCmd, $timeout)
 EndFunc   ;==>MakeRmtCmdDrip
 
 
-
 ; Purpose:  Creates cmd.drip file to be run with Drip.
 ; Note:  This currently holds a maximum of 7 entries.
 ; aDripCmd - Array of Drip commands, e.g., "wait:500; rmt:SKIP_BACK"
@@ -428,7 +393,6 @@ EndFunc   ;==>MakeCmdDrip
 ; Channel change to a particular channel.
 ; sKey - The three key commands, e.g. 'rmt:DIGIT0' for '0'
 Func ChanChangeDrip($sKey1, $sKey2, $sKey3)
-	;ConsoleWrite("ChanChangeDrip" & @CRLF)
 	$hFilehandle = FileOpen($sCmdDrip, $FO_OVERWRITE)  ; Open and delete any existing content
 	If FileExists($sCmdDrip) Then
 		FileWrite($hFilehandle, "wait:500; " & $sKey1 & @CRLF)
@@ -436,7 +400,6 @@ Func ChanChangeDrip($sKey1, $sKey2, $sKey3)
 		FileWrite($hFilehandle, "wait:500; " & $sKey3 & @CRLF)
 		FileWrite($hFilehandle, "wait:6000; sea:all" & @CRLF)  ; Wait 6 seconds for chan change to be done
 		FileClose($hFilehandle)
-		;ConsoleWrite("Run the Drip Test with file " & $sCmdDrip & @CRLF)
 		RunDripTest("cmd")
 	Else
 		MsgBox($MB_SYSTEMMODAL, $sCmdDrip, "Does not exist")
@@ -459,9 +422,9 @@ Func CollectSerialLogs($sWhichTest, $bShow)
 	EndIf
 EndFunc   ;==>CollectSerialLogs
 
+
 ; Purpose: Run TeraTerm with the ast.ttl macro and save to ast.log
 Func RunAstTtl()
 	FileDelete($sAstLog)      ; Delete ast.log
 	RunWait($sTeraTerm & " /C=" & $sComPort & " /W=" & "COM_" & $sComPort & " /M=" & $sAstTTL & " /L=" & $sAstLog, "", @SW_MINIMIZE)
-	;RunWait($sTeraTerm & " /C=" & $sComPort & " /W=" & "COM_" & $sComPort & " /M=" & $sAstTTL & " /L=" & $sAstLog, "")
 EndFunc   ;==>RunAstTtl

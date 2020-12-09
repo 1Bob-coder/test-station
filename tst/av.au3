@@ -142,6 +142,7 @@ Func RunVideoOutputMode($hTestSummary)
 	Return ($bPassFail)
 EndFunc   ;==>RunVideoOutputMode
 
+
 ; Purpose:  Runs a VideoOutput Test for 1080p, 1080i, etc. and returns a pass/fail result.
 Func RunVideoOutput($aDripCmd, $sTestString, $hTestSummary)
 	Local $bPassFail = True     ; True for pass
