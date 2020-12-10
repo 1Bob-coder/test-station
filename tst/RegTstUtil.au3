@@ -36,7 +36,7 @@ $sIpAddress = ""
 $sComPort = ""                ; e.g., COM1
 $sCodeVer = ""                ; e.g., DSR830 sprint04 70.09e
 $sSITSpreadsheet = ""
-$sVctId = ""
+Global $sVctId = ""
 
 Global $aTestArray
 
@@ -83,7 +83,8 @@ Func GetVctId()
 	If $sIpAddress == "" Or $sBindAddr == "" Then
 		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
 	Else
-		Local $sVct1 = GetDiagData("A,5,3", "VCT_ID")
+		Local $sVctId = GetDiagData("A,5,3", "VCT_ID")
+		ConsoleWrite("Diag A VCT_ID = " & $sVctId & @CRLF)
 	EndIf
 EndFunc   ;==>GetVctId
 
@@ -210,8 +211,6 @@ Func RunDripTest($sWhichTest)
 		Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
 				" /f " & $sTestFile & " /o " & $sLogFile
 		FileDelete($sLogFile)
-		;ConsoleWrite("RunDripTest delete " & $sLogFile & @CRLF)
-		ConsoleWrite($sTestCommand & @CRLF)
 		RunWait($sTestCommand, "", @SW_HIDE)    ; Run the test (minimized).
 		;RunWait($sTestCommand, "")				; Run the test (show Python box).
 	EndIf

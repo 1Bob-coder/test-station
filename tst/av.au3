@@ -36,6 +36,8 @@ EndFunc   ;==>RunAVPresentationTest
 ; Purpose:  To cycle through the aspect ratios Zoom/Stretch/Normal
 Func RunVideoAspectOverride($hTestSummary)
 	Local $bPass
+	Local $sVctId = GetDiagData("A,5,3", "VCT_ID")
+
 	; Press EXIT twice to get out of any screens.
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
 	RunDripTest("cmd")
@@ -169,6 +171,7 @@ Func RunSdAspectRatio($hTestSummary)
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
 	RunDripTest("cmd")
 	RunDripTest("cmd")
+	Local $sVctId = GetDiagData("A,5,3", "VCT_ID")
 
 	If $sVctId = "4380" Then        ; Use channel 485 - This channel is 480i.
 		ChanChangeDrip("rmt:DIGIT4", "rmt:DIGIT8", "rmt:DIGIT5")
