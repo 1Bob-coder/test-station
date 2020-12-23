@@ -40,6 +40,41 @@ Global $sVctId = ""
 
 Global $aTestArray
 
+; Purpose:  To get the list of com ports on the PC and set the GUI box.
+Func UpdateComPortList($hComPort)
+	; Get List of ComPorts
+	RunWait(@ComSpec & " /c " & "mode > com_ports.log", "", @SW_HIDE)
+	FileCopy("com_ports.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
+	$lComPorts = FindAllStringsInFile("Status for device COM", "com_ports", -4)
+	FileDelete("com_ports.log")
+	GUICtrlSetData($hComPort, "|Com Port|" & $lComPorts, "Com Port")
+EndFunc   ;==>UpdateComPortList
+
+
+; Purpose: To get the list of NIC cards on the PC for choosing the binding address for DRIP.
+Func UpdateBindingList($hBindAddr)
+	; Get List of IP Addresses for binding.
+	RunWait(@ComSpec & " /c " & "ipconfig > ip_addr.log", "", @SW_HIDE)
+	FileCopy("ip_addr.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
+	$lIpAddr = FindAllStringsInFile("IPv4 Address. . . . . . . . . . . :", "ip_addr", 0)
+	FileDelete("ip_addr.log")
+	GUICtrlSetData($hBindAddr, "|Binding Address|" & $lIpAddr, "Binding Address")
+EndFunc   ;==>UpdateBindingList
+
+;Purpose:  To handle hotkeys.
+; Note: ALT+x will exit
+Func HandleHotKey()
+	Switch @HotKeyPressed ; The last hotkey pressed.
+
+		Case "!x" ; String is the Shift-Alt-d hotkey.
+			$idButton = MsgBox($MB_OKCANCEL + $MB_SYSTEMMODAL, "", "Program will exit.")
+			If $idButton == $IDOK Then
+				Exit
+			EndIf
+
+	EndSwitch
+EndFunc   ;==>HandleHotKey
+
 
 ; Purpose:  Open the serial log files to look at.  Useful in case there is a reboot.
 Func OpenLogFiles()
@@ -136,6 +171,17 @@ Func PF_Box($sWhichString, $whichColor, $hWhichBox_pf)
 	GUICtrlSetData($hWhichBox_pf, $sWhichString)
 	GUICtrlSetColor($hWhichBox_pf, $whichColor)
 EndFunc   ;==>PF_Box
+
+
+; Purpose:  Display Pass/Fail on the PF_Box.
+; bPass - True if pass
+Func DisplayPassFail($bPass, $hWhichBox_pf)
+	If $bPass Then
+		PF_Box("Pass", $COLOR_GREEN, $hWhichBox_pf)
+	Else
+		PF_Box("Fail", $COLOR_RED, $hWhichBox_pf)
+	EndIf
+EndFunc   ;==>DisplayPassFail
 
 
 ; Purpose:  This will run a Drip script and test the log file for a certain word.

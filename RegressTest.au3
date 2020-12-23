@@ -13,6 +13,9 @@
 
 #Region ### START Koda GUI section ### Form=
 $hForm = GUICreate("Regression Tests", 674, 563, 192, 124)
+$FileMenu = GUICtrlCreateMenu("&File")
+$hUpdateComPorts = GUICtrlCreateMenuItem("Update Com Port Listing", $FileMenu)
+$hExitMenuItem = GUICtrlCreateMenuItem("Exit (Alt+x)", $FileMenu)
 $hAllTests = GUICtrlCreateCheckbox("All Tests", 32, 104, 73, 17)
 $hAV_Presentation = GUICtrlCreateCheckbox("A/V Presentation", 32, 144, 105, 17)
 $hAccessControl = GUICtrlCreateCheckbox("Access Control", 32, 168, 105, 17)
@@ -79,20 +82,10 @@ GUISetState(@SW_SHOW)
 #include <tst/usb.au3>  ; USB tests
 #include <tst/vco.au3> ; VCO tests
 
+HotKeySet("!x", "HandleHotKey") ; Alt-x
 
-; Get List of ComPorts
-RunWait(@ComSpec & " /c " & "mode > com_ports.log", "", @SW_HIDE)
-FileCopy("com_ports.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
-$lComPorts = FindAllStringsInFile("Status for device COM", "com_ports", -4)
-FileDelete("com_ports.log")
-GUICtrlSetData($hComPort, $lComPorts)
-
-; Get List of IP Addresses for binding.
-RunWait(@ComSpec & " /c " & "ipconfig > ip_addr.log", "", @SW_HIDE)
-FileCopy("ip_addr.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
-$lIpAddr = FindAllStringsInFile("IPv4 Address. . . . . . . . . . . :", "ip_addr", 0)
-FileDelete("ip_addr.log")
-GUICtrlSetData($hBindAddr, $lIpAddr)
+UpdateComPortList($hComPort)
+UpdateBindingList($hBindAddr)
 
 
 While 1
@@ -101,6 +94,12 @@ While 1
 
 		Case $hTestSummaryButton
 			DisplayTestSummary()
+
+		Case $hUpdateComPorts
+			UpdateComPortList($hComPort)
+
+		Case $hExitMenuItem
+			Exit
 
 		Case $hComPort                            ; Changing the com port will change IPAddress and BoxVersion
 			$sComboRead = GUICtrlRead($hComPort)
