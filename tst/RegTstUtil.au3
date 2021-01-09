@@ -25,6 +25,8 @@ $sDripScripts = $sTestDir & "\DripScripts\"        ; DRIP scripts directory
 $sTtlDir = $sTestDir & "\TtlScripts\"            ; TeraTerm scripts directory
 $sDripClientDir = $sTestDir & "\DripClient\"    ; Drip Client directory
 
+$sWaitTTL = $sTtlDir & "wait.ttl"
+$sWaitLog = $sLogDir & "wait.log"
 $sAstTTL = $sTtlDir & "ast.ttl"                ; ttl file for running the ast command
 $sAstLog = $sLogDir & "ast.log"               ; log file for the ast command
 $sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a command
@@ -118,7 +120,7 @@ Func GetVctId()
 	If $sIpAddress == "" Or $sBindAddr == "" Then
 		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
 	Else
-		Local $sVctId = GetDiagData("A,5,3", "VCT_ID")
+		$sVctId = GetDiagData("A,5,3", "VCT_ID")
 		ConsoleWrite("Diag A VCT_ID = " & $sVctId & @CRLF)
 	EndIf
 EndFunc   ;==>GetVctId
@@ -242,7 +244,6 @@ Func FindBoxIPAddress($hBoxIPAddress)
 	GUICtrlSetData($hBoxIPAddress, $sIpAddress)
 EndFunc   ;==>FindBoxIPAddress
 
-
 ; Purpose:  Run the Drip test on the box.
 ; sWhichTest - Name of the .drip file, e.g., 'cmd'
 Func RunDripTest($sWhichTest)
@@ -261,6 +262,24 @@ Func RunDripTest($sWhichTest)
 		;RunWait($sTestCommand, "")				; Run the test (show Python box).
 	EndIf
 EndFunc   ;==>RunDripTest
+
+
+; Purpose:  Run the Drip command on the box and immediately continue on.
+; Note:  This is useful with the RunWaitTtl() function.
+Func RunDripCmdNoLog()
+	; Run the specified test.
+	If $sIpAddress == "" Then
+		MsgBox($MB_SYSTEMMODAL, "IP Address of Box", "Does not exist")
+	ElseIf $sBindAddr == "" Then
+		MsgBox($MB_SYSTEMMODAL, "Binding Address of Network Card", "Does not exist")
+	Else
+		Local $sTestFile = $sDripScripts & "cmd.drip"
+		Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
+				" /f " & $sTestFile
+		RunWait($sTestCommand, "", @SW_HIDE)    ; Run the test (minimized).
+		;RunWait($sTestCommand, "")				; Run the test (show Python box).
+	EndIf
+EndFunc   ;==>RunDripCmdNoLog
 
 
 ; Purpose:  Run the DRIP Client 5.5 for Windows.
@@ -399,6 +418,28 @@ Func MakeAstTtl($sAstCmd, $timeout)
 	EndIf
 EndFunc   ;==>MakeAstTtl
 
+; Purpose: Creates the wait.ttl file to be run.
+; Note:  This will be run by a TeraTerm session.
+; sWaitCmd - The string to wait for, e.g., "TRANSPORT_LOCKED"
+; timeout - Just in case the string never happens (in seconds)
+Func MakeWaitTtl($aWaitStrings, $timeout = 90)
+	$hFilehandle = FileOpen($sWaitTTL, $FO_OVERWRITE + $FO_CREATEPATH)
+	If FileExists($sWaitTTL) Then
+		FileWrite($hFilehandle, "timeout = " & $timeout & @CRLF)
+		FileWrite($hFilehandle, 'sendln ""' & @CRLF)
+		FileWrite($hFilehandle, 'sendln ""' & @CRLF)
+		FileWrite($hFilehandle, 'wait "#"' & @CRLF)
+		Local $iSize = UBound($aWaitStrings)
+		For $i = 0 To $iSize - 1
+			FileWrite($hFilehandle, "wait " & ' "' & $aWaitStrings[$i] & '"' & @CRLF)
+		Next
+		FileWrite($hFilehandle, "closett" & @CRLF)
+		FileWrite($hFilehandle, "end" & @CRLF)
+		FileClose($hFilehandle)
+	Else
+		MsgBox($MB_SYSTEMMODAL, $sWaitTTL, "Does not exist")
+	EndIf
+EndFunc   ;==>MakeWaitTtl
 
 ; Purpose:  Creates cmd.drip file to be run with a single Drip command.
 ; Note:  This will be run by a Drip session.
@@ -416,6 +457,16 @@ Func MakeRmtCmdDrip($sDripCmd, $timeout)
 	EndIf
 EndFunc   ;==>MakeRmtCmdDrip
 
+; Purpose: Creates cmd.drip file for single command.  Will not collect log file.
+Func MakeDripCmdNoLog($sDripCmd)
+	$hFilehandle = FileOpen($sCmdDrip, $FO_OVERWRITE)  ; Delete any existing content
+	If FileExists($sCmdDrip) Then
+		FileWrite($hFilehandle, "wait:1000; " & $sDripCmd & @CRLF)  ; The particular command we want to send
+		FileClose($hFilehandle)
+	Else
+		MsgBox($MB_SYSTEMMODAL, $sCmdDrip, "Does not exist")
+	EndIf
+EndFunc   ;==>MakeDripCmdNoLog
 
 ; Purpose:  Creates cmd.drip file to be run with Drip.
 ; Note:  This currently holds a maximum of 7 entries.
@@ -473,3 +524,10 @@ Func RunAstTtl()
 	FileDelete($sAstLog)      ; Delete ast.log
 	RunWait($sTeraTerm & " /C=" & $sComPort & " /W=" & "COM_" & $sComPort & " /M=" & $sAstTTL & " /L=" & $sAstLog, "", @SW_MINIMIZE)
 EndFunc   ;==>RunAstTtl
+
+
+; Purpose: Run TeraTerm with the wait.ttl macro and save to wait.log
+Func RunWaitTtl()
+	FileDelete($sWaitLog)      ; Delete wait.log
+	RunWait($sTeraTerm & " /C=" & $sComPort & " /W=" & "COM_" & $sComPort & " /M=" & $sWaitTTL & " /L=" & $sWaitLog, "", @SW_MINIMIZE)
+EndFunc   ;==>RunWaitTtl

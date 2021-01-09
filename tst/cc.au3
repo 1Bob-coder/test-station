@@ -33,7 +33,7 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 
 	; Do the Playback test.  Record the current program.
 	; Press RECORD, RIGHT_ARROW, ENTER, wait 10 seconds, then stop the recording.
-	GUICtrlSetData($TestSummary, "Record the current program, RECORD, RIGHT, ENTER" & @CRLF)
+	GUICtrlSetData($TestSummary, "cc - Record the current program, RECORD, RIGHT, ENTER" & @CRLF)
 	Local $aStartRecord[] = [ _
 			"wait:1000; rmt:STOP", _
 			"wait:5000; rmt:RECORD", _
@@ -44,7 +44,7 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 	Sleep(10000)
 
 	; Stop the recording.
-	GUICtrlSetData($TestSummary, "Stop recording. INTERACTIVE, R E R E E DOWN E EXIT" & @CRLF)
+	GUICtrlSetData($TestSummary, "cc - Stop recording. INTERACTIVE, R E R E E DOWN E EXIT" & @CRLF)
 
 	Local $aStopRecord[] = [ _
 			"wait:4000; rmt:INTERACTIVE", _
