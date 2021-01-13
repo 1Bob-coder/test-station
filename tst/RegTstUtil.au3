@@ -237,11 +237,13 @@ EndFunc   ;==>SaveTestResult
 
 ; Purpose:  Run 'ifconfig', and get the ip address.
 ; hBoxIPAddress - handle for text box display
-Func FindBoxIPAddress($hBoxIPAddress)
+Func FindBoxIPAddress($hBoxIPAddress = 0)
 	MakeAstTtl("ifconfig", 1)  ; make the "ifconfig" command, 1 second timeout in case of no response.
 	RunAstTtl()
 	$sIpAddress = FindNextStringInFile("inet addr", "ast")
-	GUICtrlSetData($hBoxIPAddress, $sIpAddress)
+	If $hBoxIPAddress <> 0 Then
+		GUICtrlSetData($hBoxIPAddress, $sIpAddress)
+	EndIf
 EndFunc   ;==>FindBoxIPAddress
 
 ; Purpose:  Run the Drip test on the box.
@@ -315,11 +317,13 @@ EndFunc   ;==>FindStringInFile
 ; sWhichString - The string to search for
 ; sWhichTest - The .log file to search in
 ; iOffset - Number of characters after or before end of string to skip
+; iArray - If not set or 0, then return list.  If 1, then return array.
 ; Returns an array of strings.
-Func FindAllStringsInFile($sWhichString, $sWhichTest, $iOffset)
+Func FindAllStringsInFile($sWhichString, $sWhichTest, $iOffset, $iArray = 0)
 	Local $iPosition = 1, $sChop = " ", $sNextWord = "", $aSplit = [], $lStrings = ""
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
 	Local $sRead = FileRead($sLogFile)
+	Local $aStrings[0]
 
 	If @error Then
 		ConsoleWrite("FindStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
@@ -338,7 +342,14 @@ Func FindAllStringsInFile($sWhichString, $sWhichTest, $iOffset)
 			EndIf
 		WEnd
 	EndIf
-	Return ($lStrings)
+	$lStrings = StringTrimRight($lStrings, 1)
+
+	If $iArray == 0 Then
+		Return ($lStrings)
+	Else
+		_ArrayAdd($aStrings, $lStrings)
+		Return ($aStrings)
+	EndIf
 EndFunc   ;==>FindAllStringsInFile
 
 
@@ -531,3 +542,29 @@ Func RunWaitTtl()
 	FileDelete($sWaitLog)      ; Delete wait.log
 	RunWait($sTeraTerm & " /C=" & $sComPort & " /W=" & "COM_" & $sComPort & " /M=" & $sWaitTTL & " /L=" & $sWaitLog, "", @SW_MINIMIZE)
 EndFunc   ;==>RunWaitTtl
+
+
+; Purpose:  Reboot the box.
+Func RebootBox()
+	MakeRmtCmdDrip("send:22,2", 5000)
+	RunDripTest("cmd")
+	CollectSerialLogs("RebootSerial", True) ; Collect serial log and show it in real time.
+	ShowProgressWindow()
+	WinKill("COM")                            ; End collection of serial log file
+	FindBoxIPAddress()        ; Get the IP address of the box in case it changed.
+EndFunc   ;==>RebootBox
+
+
+; Purpose:  Display a progress bar.  Put window always on top, moveable.
+Func ShowProgressWindow()
+	ProgressOn("Rebooting Now", "Wait 2 minutes for box to boot up.", "0%", -1, -1, $DLG_MOVEABLE)
+	; Update the progress value of the progress bar window every second.
+	For $i = 1 To 120 Step 1
+		Sleep(1000)
+		ProgressSet($i * 100 / 120, $i & " seconds")
+	Next
+	; Set the "subtext" and "maintext" of the progress bar window.
+	ProgressSet(100, "Done", "Complete")
+	Sleep(5000)
+	ProgressOff()    ; Close the progress window.
+EndFunc   ;==>ShowProgressWindow

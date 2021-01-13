@@ -42,12 +42,7 @@ Func RunRebootTest($hTestSummary)
 	GUICtrlSetData($hTestSummary, "Before Reboot: Num Channels = " & $sNumChans1 & ", VCT_ID = " & $sVct1 & @CRLF)
 
 	; Reboot the box.
-	MakeRmtCmdDrip("send:22,2", 5000)
-	RunDripTest("cmd")
-	CollectSerialLogs("RebootSerial", True) ; Collect serial log and show it in real time.
-	ShowProgressWindow()
-	WinKill("COM")                            ; End collection of serial log file
-	FindBoxIPAddress($hBoxIPAddress)        ; Get the IP address of the box in case it changed.
+	RebootBox()
 
 	; Get Diagnostics
 	Local $sNumChans2 = GetDiagData("A,5,2", "NumChannels")
@@ -62,23 +57,6 @@ Func RunRebootTest($hTestSummary)
 	EndIf
 	Return $bPass
 EndFunc   ;==>RunRebootTest
-
-
-; Purpose:  Display a progress bar.  Put window always on top, moveable.
-Func ShowProgressWindow()
-	ProgressOn("Rebooting Now", "Wait 2 minutes for box to boot up.", "0%", -1, -1, $DLG_MOVEABLE)
-
-	; Update the progress value of the progress bar window every second.
-	For $i = 1 To 120 Step 1
-		Sleep(1000)
-		ProgressSet($i * 100 / 120, $i & " seconds")
-	Next
-
-	; Set the "subtext" and "maintext" of the progress bar window.
-	ProgressSet(100, "Done", "Complete")
-	Sleep(5000)
-	ProgressOff()    ; Close the progress window.
-EndFunc   ;==>ShowProgressWindow
 
 
 ; Purpose: Collect SF counter metrics for various Table ID values.

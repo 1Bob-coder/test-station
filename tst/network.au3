@@ -35,6 +35,9 @@ Func RunNetworkingTest($hTestSummary, $hNetworking_pf)
 				MakeRmtCmdDrip("rmt:GREEN", 1000)
 				RunDripTest("cmd")
 				$bIsConnected = IsWiFiConnected($hTestSummary, "Test_" & $ii & " After - ")
+				If $bIsConnected Then
+					GUICtrlSetData($hTestSummary, "Fail - WiFi did not toggle off." & @CRLF)
+				EndIf
 				$bPass = $bPass And Not $bIsConnected
 			Else
 				; Toggle on
@@ -44,7 +47,10 @@ Func RunNetworkingTest($hTestSummary, $hNetworking_pf)
 				Sleep(20000) ; sleep for 20 seconds
 				RunDripTest("cmd")
 				$bIsConnected = IsWiFiConnected($hTestSummary, "Test_" & $ii & " After - ")
-				$bPass = $bPass And $bPass
+				If Not $bIsConnected Then
+					GUICtrlSetData($hTestSummary, "Fail - WiFi did not toggle on." & @CRLF)
+				EndIf
+				$bPass = $bPass And $bIsConnected
 			EndIf
 		Next
 	Else
