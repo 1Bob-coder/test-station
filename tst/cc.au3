@@ -25,11 +25,12 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 
 	; Do the Live test
 	Local $bPass = CcCounterTest("Live test", $TestSummary)
-
+	SavePassFailTestResult("DSR SI&T.Closed Caption.DVR:002-001", $bPass)
 	; Do the LOD test
 	MakeRmtCmdDrip("rmt:SKIP_BACK", 1000)
 	RunDripTest("cmd")
-	$bPass = CcCounterTest("LOD test", $TestSummary) And $bPass
+	Local $bPassFail = CcCounterTest("LOD test", $TestSummary)
+	$bPass = $bPass And $bPassFail
 
 	; Do the Playback test.  Record the current program.
 	; Press RECORD, RIGHT_ARROW, ENTER, wait 10 seconds, then stop the recording.
@@ -66,7 +67,9 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 			"wait:2000; rmt;ENTER"]
 	MakeCmdDrip($aPlayback)
 	RunDripTest("cmd")
-	$bPass = CcCounterTest("Playback test", $TestSummary) And $bPass
+	$bPassFail = CcCounterTest("Playback test", $TestSummary)
+	SavePassFailTestResult("DSR SI&T.Closed Caption.DVR:002-001", $bPass)
+	$bPass = $bPass And $bPassFail
 
 	; Stop the playback
 	Local $aStopPlayback[] = [ _

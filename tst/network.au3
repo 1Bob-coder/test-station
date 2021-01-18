@@ -58,7 +58,6 @@ Func RunNetworkingTest($hTestSummary, $hNetworking_pf)
 		GUICtrlSetData($hTestSummary, "No Wireless Capability - Failure" & @CRLF)
 	EndIf
 
-
 	GUICtrlSetData($hTestSummary, "<== Networking Test Done")
 	DisplayPassFail($bPass, $hNetworking_pf)
 EndFunc   ;==>RunNetworkingTest

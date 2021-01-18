@@ -9,14 +9,16 @@
 #include-once
 #include <RegTstUtil.au3>
 
-Local $aTuneResults[1][7] = [["--", "--", "--", "--", "--", "--", "--"]]
 
 ; Purpose:  The main entry point for running all of the tuning tests.
 Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
-	Local $bPass = True
+	Local $bPass = True, $bPassFail = True, $iNumChannels = 5
 	PF_Box("Running", $COLOR_BLUE, $hTuning_pf)
 	GUICtrlSetData($hTestSummary, "==> Tuning Test Started")
 
+	If $iTestType = 1 Then
+		$iNumChannels = 0          ; Channel change across all channels
+	EndIf
 
 	; For VCT_ID of 4380, start at channel 964.  Use 216 for CSS channel testing.
 	If $sVctId = "4380" Then
@@ -29,7 +31,7 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 	EndIf
 
 	; Perform the channel change test across multiple channels with various a/v parameters.
-	$bPass = PerformChannelChanges($hTestSummary, $iTestType, $aChanNumTune, "Tune Test")
+	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $aChanNumTune, "Tune Test")
 
 	; Perform CSS Testing
 	$bIsCss = IsThisCssUnit($hTestSummary)
@@ -43,115 +45,54 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 		$aSlotsBeforeReboot = GetUbSlots($hTestSummary)
 		BringUpCssScreen()
 		PickNoCss()                ; Turn off CSS
+
 		PickCssAuto()           ; Turn on "CSS Auto" mode.
-		$bPass = PerformChannelChanges($hTestSummary, 0, $aChanNumCss, "CSS Auto") And $bPass
+		$bPassFail = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Auto")
+		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-001", $bPassFail)
+		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-002", $bPassFail)
+		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:003-001", $bPassFail)
+		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:003-002", $bPassFail)
+		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:003-003", $bPassFail)
+		$bPass = $bPass And $bPassFail
+
 		BringUpCssScreen()
 		PickCssRefresh()        ; Choose "CSS Refresh" mode
-		$bPass = PerformChannelChanges($hTestSummary, 0, $aChanNumCss, "CSS Refresh") And $bPass
+		$bPass = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Refresh") And $bPass
 		; Reboot the box.  Then check if CSS configuration was retained.
 		RebootBox()
 		$bIsCss = IsThisCssUnit($hTestSummary)
 		If $bIsCss Then
 			GUICtrlSetData($hTestSummary, "Box rebooted.  This is a CSS Unit." & @CRLF)
 			$aSlotsAfterReboot = GetUbSlots($hTestSummary)
-			If $aSlotsBeforeReboot[0] == $aSlotsAfterReboot[0] And $aSlotsBeforeReboot[1] == $aSlotsAfterReboot[1] Then
-				GUICtrlSetData($hTestSummary, "Slots remained the same after reboot." & @CRLF)
-				$bPass = PerformChannelChanges($hTestSummary, 0, $aChanNumCss, "CSS Reboot") And $bPass
+			$bPassFail = False
+			If $sBoxType == "DSR800" Then
+				If $aSlotsBeforeReboot[0] == $aSlotsAfterReboot[0] Then
+					$bPassFail = True
+				EndIf
 			Else
-				$bPass = False
-				GUICtrlSetData($hTestSummary, "Failed on CSS Reboot Test - Slots are different")
+				If $aSlotsBeforeReboot[0] == $aSlotsAfterReboot[0] And $aSlotsBeforeReboot[1] == $aSlotsAfterReboot[1] Then
+					$bPassFail = True
+				EndIf
+			EndIf
+			If $bPassFail Then
+				GUICtrlSetData($hTestSummary, "Slots remained the same after reboot.  BoxType = " & $sBoxType & @CRLF)
+				$bPassFail = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Reboot")
+			Else
+				GUICtrlSetData($hTestSummary, "Failed on CSS Reboot Test - Slots are different.  BoxType = " & $sBoxType & @CRLF)
 			EndIf
 		Else
-			$bPass = False
-			GUICtrlSetData($hTestSummary, "Failed on CSS Reboot - No slots detected")
+			$bPassFail = False
+			GUICtrlSetData($hTestSummary, "Failed on CSS Reboot - No slots detected.  BoxType = " & $sBoxType & @CRLF)
 		EndIf
+		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-017", $bPassFail)
+		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-018", $bPassFail)
+		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-021", $bPassFail)
+		$bPass = $bPass And $bPassFail
 	EndIf
 
-	If $bPass Then
-		PF_Box("Pass", $COLOR_GREEN, $hTuning_pf)
-	Else
-		PF_Box("Fail", $COLOR_RED, $hTuning_pf)
-	EndIf
+	DisplayPassFail($bPass, $hTuning_pf)
 	GUICtrlSetData($hTestSummary, "<== Tuning Test Done")
 EndFunc   ;==>RunTuningTest
-
-
-; Purpose:  Channel change across multiple channels and gather the data.
-; iTestType = 0 for short test, 1 for long test
-; aChanNum - Channel Number, in array format to make Drip script.
-; Note: All channels are MPEG4, Ac3, 8PSK, 20.5 MBPS Symbol Rate, 1.92 code rate
-; 	Data collection parameters are:
-; 	Nexus  Source Format          : 720P  --> or 1080I, or 480I
-; 	Nexus Aspect Ratio            : 4x3(1.3) derived with Sar x:y:(x*w/y*h)=10:11:1.33333  --> or 16x9 (1.7)
-; 	Freq from 995250000* to 1435250000* (all frequency descriptors)
-Func PerformChannelChanges($hTestSummary, $iTestType, $aChanNum, $sTitle)
-	Local $bPass = True
-	; Is Test Type a "short" or "long" test?
-	If $iTestType = 0 Then        ; "short" test, do  5 channels
-		$sNumChans = 5
-	Else                        ; "long" test, do all channels
-		; Get the number of channels from diag A.
-		$sNumChans = GetDiagData("A,5,2", "NumChannels =")
-	EndIf
-
-	GUICtrlSetData($hTestSummary, $sTitle & " - Running Tuning Test on " & $sNumChans & " channels." & @CRLF)
-	$iNumMinutes = $sNumChans * 10 / 60
-	GUICtrlSetData($hTestSummary, $sTitle & " - This will take approximately " & Round($iNumMinutes, 1) & " minutes" & @CRLF)
-
-	; Press EXIT twice to get out of any screens.
-	MakeRmtCmdDrip("rmt:EXIT", 1000)
-	RunDripTest("cmd")
-	RunDripTest("cmd")
-
-	ChanChangeDrip($aChanNum[0], $aChanNum[1], $aChanNum[2])
-	MakeRmtCmdDrip("rmt:CHAN_UP", 5000)        ; Chan Up, collect logs for 5 seconds
-
-	For $ii = 1 To $sNumChans
-		$sLocked = "NoLock"
-		$sPassFail = ""
-		RunDripTest("cmd")            ; Run chan_up
-		MakeAstTtl("ast vi", 2)     ; Get the video stats
-		RunAstTtl()
-		$sChanNum = FindNextStringInFile("CH :", "cmd")
-		If $sChanNum == "" Then
-			$sChanNum = FindNextStringInFile("CHANNEL:", "cmd")
-			If $sChanNum == "" Then
-				$sChanNum = "?" & $ii & "?"
-			EndIf
-		EndIf
-		If FindStringInFile("TRANSPORT_LOCKED", "cmd") Then
-			$sLocked = "Lock"
-		EndIf
-		$sVideoSource = FindNextStringInFile("Nexus  Source Format", "ast")
-		$sAspectRatio = FindNextStringInFile("Nexus Aspect Ratio", "ast")
-		$sAuthState = FindNthStringInFile("notifyServiceInfo", "cmd", 2)    ; Skips one string and returns the next one.
-		$sAuthWhy = FindNthStringInFile("displayAuthReason", "cmd", 1)        ; Same as FindNextStringInFile
-		If $sAuthState == "" Then
-			$bPass = False
-			$sPassFail = " Fail, No AuthReason"
-		EndIf
-
-		MakeAstTtl("ast chan " & $sChanNum, 2)         ; Get the chan stats and the frequency.
-		RunAstTtl()
-		$sFreq = FindNthStringInFile("Frequency", "ast", 24) ; Skips to the 24 string and returns it.
-		GUICtrlSetData($hTestSummary, $sTitle & " - Chan " & $sChanNum & " " & $sLocked & " " & $sVideoSource & " " & _
-				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & $sPassFail & @CRLF)
-		Local $vRow[1][7] = [[$sChanNum, $sLocked, $sFreq, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
-		_ArrayAdd($aTuneResults, $vRow)
-		Sleep(1000)  ; Sleep for 1 second
-		FileDelete($sLogDir & $sChanNum & ".log")
-		FileCopy($sLogDir & "cmd.log", $sLogDir & $sChanNum & ".log")
-	Next
-	_FileWriteFromArray("logs\TuneTestResults.txt", $aTuneResults)
-	;_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Frequency|Vid Src|Aspect|Authorization|AuthWhy")
-	Return $bPass
-EndFunc   ;==>PerformChannelChanges
-
-
-; Purpose:  To show a pop-up array with the results of the channel change tuning test.
-Func ShowTuneTestLogs()
-	_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Locked|Frequency|Vid Src|Aspect|Authorization|AuthWhy")
-EndFunc   ;==>ShowTuneTestLogs
 
 
 ; Purpose:  Check if CSS Tests should be run.

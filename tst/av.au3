@@ -23,7 +23,7 @@ Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 			"wait:1000; sea:all"]
 	MakeCmdDrip($aDebugs)
 	RunDripTest("cmd")
-
+	SavePassFailTestResult("DSR SI&T.A/V Presentation.Audio:001-001", $bPassFail)
 	If $bPassFail Then
 		PF_Box("Pass", $COLOR_GREEN, $AV_Presentation_pf)
 	Else
@@ -68,11 +68,7 @@ Func RunVideoAspectOverride($hTestSummary)
 			"wait:1000; rmt:ASPECT"]
 	MakeCmdDrip($aAspect)        ; Make cmd.drip file to be run with Drip.
 	$bPass = RunDripAstSerialTest($aUserVsActual, "Video Aspect Override", "conversion", "User Conversion Preference", $hTestSummary)
-	If $bPass Then
-		SaveTestResult("DSR SI&T.A/V Presentation.Video:007-001", "Pass")
-	Else
-		SaveTestResult("DSR SI&T.A/V Presentation.Video:007-001", "Fail")
-	EndIf
+	SavePassFailTestResult("DSR SI&T.A/V Presentation.Audio:007-001", $bPass)
 
 	Return ($bPass)
 EndFunc   ;==>RunVideoAspectOverride
@@ -205,6 +201,8 @@ Func RunSdAspectRatio($hTestSummary)
 			["NORMAL-BARS", "NORMAL"]]
 	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
 	$bPass = RunDripAstSerialTest($aAVResults, "SD Aspect Ratio: ", "4:3 source on 16:9 TV -", "User Conversion Preference", $hTestSummary)
+	SavePassFailTestResult("DSR SI&T.A/V Presentation.Video:001-002", $bPass)
+	SavePassFailTestResult("DSR SI&T.A/V Presentation.Video:001-004", $bPass)
 	Return ($bPass)
 EndFunc   ;==>RunSdAspectRatio
 

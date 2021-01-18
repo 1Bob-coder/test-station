@@ -37,10 +37,11 @@ $sWinDrip = $sDripClientDir & "DRIP_client_5.5.exe"      ; Windows DRIP Client p
 $sIpAddress = ""
 $sComPort = ""                ; e.g., COM1
 $sCodeVer = ""                ; e.g., DSR830 sprint04 70.09e
+Global $sBoxType = ""		  ; e.g., DSR830, DSR800, DSR830_p2
 $sSITSpreadsheet = ""
 Global $sVctId = ""
-
 Global $aTestArray
+Global $aTuneResults[1][7] = [["--", "--", "--", "--", "--", "--", "--"]]
 
 ; Purpose:  To get the list of com ports on the PC and set the GUI box.
 Func UpdateComPortList($hComPort)
@@ -101,10 +102,13 @@ Func FindBoxVer($hBoxVersion)
 		GUICtrlSetData($hBoxVersion, $sCodeVer)
 		If StringInStr($sCodeVer, "DSR800 ") Then
 			$sSITSpreadsheet = $sTestDir & "\docs\Gomesia_800.txt"
+			$sBoxType = "DSR800"
 		ElseIf StringInStr($sCodeVer, "DSR830 ") Then
 			$sSITSpreadsheet = $sTestDir & "\docs\Gomesia_830.txt"
+			$sBoxType = "DSR830"
 		Else
 			$sSITSpreadsheet = $sTestDir & "\docs\Gomesia_830_p2.txt"
+			$sBoxType = "DSR830_p2"
 		EndIf
 		_FileReadToArray($sSITSpreadsheet, $aTestArray, $FRTA_NOCOUNT, @TAB)
 		If @error <> 0 Then
@@ -160,7 +164,6 @@ EndFunc   ;==>GetStringInFile
 
 ; Purpose:  Display the test spreadsheet with final results.
 Func DisplayTestSummary()
-	;SaveTestResult("A/V Presentation.Audio:001-003", "Passed")
 	_ArrayDisplay($aTestArray, "DSR8xx Regression Test Plan", "", 64, 0, "Level|Test Case|Case Description|Results")
 EndFunc   ;==>DisplayTestSummary
 
@@ -220,6 +223,18 @@ Func TestForString($sWhichTest, $sWhichString, $sTestTitle, $hTestSummary, $hTes
 	EndIf
 	Return ($bPassFail)
 EndFunc   ;==>TestForString
+
+
+; Purpose:  Save Test Result as Pass/Fail
+; sTestCase: String to look for, e.g., "DSR SI&T.A/V Presentation.Video:007-001"
+; bPass - True if pass, False if fail
+Func SavePassFailTestResult($sTestCase, $bPass)
+	If $bPass Then
+		SaveTestResult($sTestCase, "Pass")
+	Else
+		SaveTestResult($sTestCase, "Fail")
+	EndIf
+EndFunc
 
 
 ; Purpose:  Save the test result into the array.
@@ -568,3 +583,83 @@ Func ShowProgressWindow()
 	Sleep(5000)
 	ProgressOff()    ; Close the progress window.
 EndFunc   ;==>ShowProgressWindow
+
+
+
+; Purpose:  Channel change across multiple channels and gather the data.
+; iNumChans = 0 for all channels, otherwise number of channels
+; aChanNum - Channel Number, in array format to make Drip script.
+; sTitle - Test Title
+; Note: All channels are MPEG4, Ac3, 8PSK, 20.5 MBPS Symbol Rate, 1.92 code rate
+; 	Data collection parameters are:
+; 	Nexus  Source Format          : 720P  --> or 1080I, or 480I
+; 	Nexus Aspect Ratio            : 4x3(1.3) derived with Sar x:y:(x*w/y*h)=10:11:1.33333  --> or 16x9 (1.7)
+; 	Freq from 995250000* to 1435250000* (all frequency descriptors)
+Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle)
+	Local $bPass = True
+	If $iNumChans = 0 Then        ; do all channels
+		; Get the number of channels from diag A.
+		$sNumChans = GetDiagData("A,5,2", "NumChannels =")
+	Else
+		$sNumChans = $iNumChans
+	EndIf
+
+	GUICtrlSetData($hTestSummary, $sTitle & " - Running Tuning Test on " & $sNumChans & " channels." & @CRLF)
+	$iNumMinutes = $sNumChans * 10 / 60
+	GUICtrlSetData($hTestSummary, $sTitle & " - This will take approximately " & Round($iNumMinutes, 1) & " minutes" & @CRLF)
+
+	; Press EXIT twice to get out of any screens.
+	MakeRmtCmdDrip("rmt:EXIT", 1000)
+	RunDripTest("cmd")
+	RunDripTest("cmd")
+
+	ChanChangeDrip($aChanNum[0], $aChanNum[1], $aChanNum[2])
+	MakeRmtCmdDrip("rmt:CHAN_UP", 5000)        ; Chan Up, collect logs for 5 seconds
+
+	For $ii = 1 To $sNumChans
+		$sLocked = "NoLock"
+		$sPassFail = ""
+		RunDripTest("cmd")            ; Run chan_up
+		MakeAstTtl("ast vi", 2)     ; Get the video stats
+		RunAstTtl()
+		$sChanNum = FindNextStringInFile("CH :", "cmd")
+		If $sChanNum == "" Then
+			$sChanNum = FindNextStringInFile("CHANNEL:", "cmd")
+			If $sChanNum == "" Then
+				$sChanNum = "?" & $ii & "?"
+			EndIf
+		EndIf
+		If FindStringInFile("TRANSPORT_LOCKED", "cmd") Then
+			$sLocked = "Lock"
+		EndIf
+		$sVideoSource = FindNextStringInFile("Nexus  Source Format", "ast")
+		$sAspectRatio = FindNextStringInFile("Nexus Aspect Ratio", "ast")
+		$sAuthState = FindNthStringInFile("notifyServiceInfo", "cmd", 2)    ; Skips one string and returns the next one.
+		$sAuthWhy = FindNthStringInFile("displayAuthReason", "cmd", 1)        ; Same as FindNextStringInFile
+		If $sAuthState == "" Then
+			$bPass = False
+			$sPassFail = " Fail, No AuthReason"
+		EndIf
+
+		MakeAstTtl("ast chan " & $sChanNum, 2)         ; Get the chan stats and the frequency.
+		RunAstTtl()
+		$sFreq = FindNthStringInFile("Frequency", "ast", 24) ; Skips to the 24 string and returns it.
+		GUICtrlSetData($hTestSummary, $sTitle & " - Chan " & $sChanNum & " " & $sLocked & " " & $sVideoSource & " " & _
+				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & $sPassFail & @CRLF)
+		Local $vRow[1][7] = [[$sChanNum, $sLocked, $sFreq, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
+		_ArrayAdd($aTuneResults, $vRow)
+		Sleep(1000)  ; Sleep for 1 second
+		FileDelete($sLogDir & $sChanNum & ".log")
+		FileCopy($sLogDir & "cmd.log", $sLogDir & $sChanNum & ".log")
+	Next
+	_FileWriteFromArray("logs\TuneTestResults.txt", $aTuneResults)
+	;_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Frequency|Vid Src|Aspect|Authorization|AuthWhy")
+	Return $bPass
+EndFunc   ;==>PerformChannelChanges
+
+
+; Purpose:  To show a pop-up array with the results of the channel change tuning test.
+Func ShowTuneTestLogs()
+	_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Locked|Frequency|Vid Src|Aspect|Authorization|AuthWhy")
+EndFunc   ;==>ShowTuneTestLogs
+

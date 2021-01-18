@@ -30,7 +30,7 @@ Func RunVCOTest($TestSummary, $VCO_pf)
 		;_ArrayAdd($aVcoCmd, "wait:6000; vco:35,121,64874,2,555")
 		_ArrayAdd($aVcoCmd, "wait:6000; vco:35,121,64820,2,863")  ; Override 121 with channel 252
 		_ArrayAdd($aVcoCmd, "wait:7000; sea:all")
-	Else
+	ElseIf $sVctId = "4188" Then
 		; VCO for 55 seconds on channel 66, override with chan 166.
 		; For channel 166 --> Source_ID=64869 (fd65), Transponder=2, ServiceNum=788 (VCT_ID 4188)
 		$sFrom = 66
@@ -38,6 +38,11 @@ Func RunVCOTest($TestSummary, $VCO_pf)
 		ChanChangeDrip("rmt:DIGIT0", "rmt:DIGIT6", "rmt:DIGIT6")
 		_ArrayAdd($aVcoCmd, "wait:6000; vco:35,66,64869,2,788")
 		_ArrayAdd($aVcoCmd, "wait:7000; sea:all")
+	Else
+		GUICtrlSetData($TestSummary, "VCT_ID is " & $sVctId & ", Need either 4188 or 4380 to run test." & @CRLF)
+		GUICtrlSetData($TestSummary, "<== VCO Test Done")
+		PF_Box("Skipped", $COLOR_GREEN, $VCO_pf)
+		Return
 	EndIf
 
 	MakeCmdDrip($aVcoCmd)                    ; Make cmd.drip file to be run with Drip.
