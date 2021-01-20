@@ -11,6 +11,10 @@
 ; Finally, get counter data from two different timeperiods and compare them.
 ; $hTestSummary - place to print the test summary
 ; $hClosedCaptions_pf - place to print pass/fail
+; Test Matrix Requirement:
+; 3	DSR SI&T.Closed Caption.DVR:001-001	"Reconstruct L21, F1 & F2 of the VBI during playback of Retained content (LOD) at Normal Speed."
+; 3	DSR SI&T.Closed Caption.DVR:002-001	Render closed captions during playback of Retained content at Normal Speed.
+; 3	DSR SI&T.Closed Caption.DVR:004-001	"Render closed captions during playback of Recorded content, at Normal Speed."
 Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 	PF_Box("Running...", $COLOR_BLUE, $ClosedCaptions_pf)
 	GUICtrlSetData($TestSummary, "Closed Captions Test Started")
@@ -25,7 +29,6 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 
 	; Do the Live test
 	Local $bPass = CcCounterTest("Live test", $TestSummary)
-	SavePassFailTestResult("DSR SI&T.Closed Caption.DVR:002-001", $bPass)
 	; Do the LOD test
 	MakeRmtCmdDrip("rmt:SKIP_BACK", 1000)
 	RunDripTest("cmd")

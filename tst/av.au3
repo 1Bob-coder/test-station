@@ -3,7 +3,16 @@
 #include-once
 #include <RegTstUtil.au3>
 
-
+; Purpose:  Entry point into the AV tests.
+; Test Matrix Requirement:
+; 1	DSR SI&T.A/V Presentation.Audio:001-001	Audio setting menu and sanity test
+; 3	DSR SI&T.A/V Presentation.Video:007-001	16:9 Zoom Modes
+; 3	DSR SI&T.A/V Presentation.Video:001-012	4:3 Stretch mode order
+; 3	DSR SI&T.A/V Presentation.Video:001-002	4:3 Stretch & Normal settings
+; 4	DSR SI&T.A/V Presentation.Video:001-004	4:3 Zoom setting
+; 3	DSR SI&T.A/V Presentation.Audio:003-004	Independently configure output of digital audio outputs
+; 3	DSR SI&T.A/V Presentation.Audio:007-001	Transcode stereo digital audio format to AC-3 Stereo
+; 3	DSR SI&T.A/V Presentation.Audio:007-002	Transcode multichannel digital audio format to AC-3_5.1
 Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 	Local $bPassFail = True
 	PF_Box("Running", $COLOR_BLUE, $AV_Presentation_pf)
@@ -34,6 +43,9 @@ EndFunc   ;==>RunAVPresentationTest
 
 
 ; Purpose:  To cycle through the aspect ratios Zoom/Stretch/Normal
+; Test Matrix Requirement:
+; 3	DSR SI&T.A/V Presentation.Video:007-001	16:9 Zoom Modes
+; 3	DSR SI&T.A/V Presentation.Video:001-012	4:3 Stretch mode order
 Func RunVideoAspectOverride($hTestSummary)
 	Local $bPass
 	Local $sVctId = GetDiagData("A,5,3", "VCT_ID")
@@ -68,13 +80,15 @@ Func RunVideoAspectOverride($hTestSummary)
 			"wait:1000; rmt:ASPECT"]
 	MakeCmdDrip($aAspect)        ; Make cmd.drip file to be run with Drip.
 	$bPass = RunDripAstSerialTest($aUserVsActual, "Video Aspect Override", "conversion", "User Conversion Preference", $hTestSummary)
-	SavePassFailTestResult("DSR SI&T.A/V Presentation.Audio:007-001", $bPass)
+	SavePassFailTestResult("DSR SI&T.A/V Presentation.Video:007-001", $bPass)
+	SavePassFailTestResult("DSR SI&T.A/V Presentation.Video:007-012", $bPass)
 
 	Return ($bPass)
 EndFunc   ;==>RunVideoAspectOverride
 
 
 ; Purpose:  Cycle through 1080p, 1080i, 720p, 480p, and 480i output modes.
+; Test Matrix Requirement: (None)
 Func RunVideoOutputMode($hTestSummary)
 	$bPassFail = True  ; True for Pass
 	; OPTIONS-4-2-DOWN-ENTER
@@ -161,6 +175,9 @@ EndFunc   ;==>RunVideoOutput
 
 
 ; Purpose: Cycle through the various SD Aspect Ratio settings of Stretch, Zoom, and Normal.
+; Test Matrix Requirement:
+; 3	DSR SI&T.A/V Presentation.Video:001-002	4:3 Stretch & Normal settings
+; 4	DSR SI&T.A/V Presentation.Video:001-004	4:3 Zoom setting
 Func RunSdAspectRatio($hTestSummary)
 	Local $bPass = True
 	; Press Exit twice to get out of any GUI screens.
@@ -207,8 +224,8 @@ Func RunSdAspectRatio($hTestSummary)
 EndFunc   ;==>RunSdAspectRatio
 
 
-; Purpose: Cycle through the various Audio Compression settings of
-; No Compression, HiFi (Light), and TV (Heavy).
+; Purpose: Cycle through the various Audio Compression settings of No Compression, HiFi (Light), and TV (Heavy).
+; Test Matrix Requirement: (None)
 Func RunAudioCompression($hTestSummary)
 	Local $bPass = True
 
@@ -246,8 +263,9 @@ Func RunAudioCompression($hTestSummary)
 EndFunc   ;==>RunAudioCompression
 
 
-; Purpose: Cycle through the HDMI Audio settings of
-; Pass Through, PCM and Auto.
+; Purpose: Cycle through the HDMI Audio settings: Pass Through, PCM and Auto.
+; Test Matrix Requirement:
+; 3	DSR SI&T.A/V Presentation.Audio:003-004	Independently configure output of digital audio outputs
 Func RunHdmiAudio($hTestSummary)
 	Local $bPass = True
 	; OPTIONS-4-2-DOWN-DOWN-DOWN-DOWN-DOWN
@@ -273,11 +291,14 @@ Func RunHdmiAudio($hTestSummary)
 			["PassThrough", "eAuto"]]
 	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
 	$bPass = RunDripAstSerialTest($aAVResults, "HDMI Audio", "HDMI Audio", "hdmi.outputMode", $hTestSummary)
+	SavePassFailTestResult("DSR SI&T.A/V Presentation.Audio:003-004", $bPass)
 	Return ($bPass)
 EndFunc   ;==>RunHdmiAudio
 
 
 ; Cycle throught the Analog Audio settings: Surround and Stereo.
+; Test Matrix Requirement:
+; 3	DSR SI&T.A/V Presentation.Audio:007-001	Transcode stereo digital audio format to AC-3 Stereo
 Func RunAnalogAudio($hTestSummary)
 	Local $bPass = True
 
@@ -311,11 +332,14 @@ Func RunAnalogAudio($hTestSummary)
 			["Surround", "eDolbySurroundCompatible"]]
 	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
 	$bPass = RunDripAstSerialTest($aAVResults, "Analog Audio", "Audio analog mode :", "Analog audio", $hTestSummary)
+	SavePassFailTestResult("DSR SI&T.A/V Presentation.Audio:007-001", $bPass)
 	Return ($bPass)
 EndFunc   ;==>RunAnalogAudio
 
 
 ; Cycle through the Optical Digital Audio settings: PCM and Dolby Digital.
+; Test Matrix Requirement:
+; 3	DSR SI&T.A/V Presentation.Audio:007-002	Transcode multichannel digital audio format to AC-3_5.1
 Func RunOpticalDigitalAudio($hTestSummary)
 	Local $bPass = True
 	; OPTIONS-4-2-DOWN-DOWN-DOWN-DOWN-DOWN
@@ -343,7 +367,7 @@ Func RunOpticalDigitalAudio($hTestSummary)
 	MakeRmtCmdDrip("rmt:ARROW_RIGHT", 2000)
 
 	$bPass = RunDripAstSerialTest($aAVResults, "Optical Digital Audio", "Spidif mode:", "spdif.outputMode      =", $hTestSummary)
-
+	SavePassFailTestResult("DSR SI&T.A/V Presentation.Audio:007-002", $bPass)
 	Return ($bPass)
 EndFunc   ;==>RunOpticalDigitalAudio
 
