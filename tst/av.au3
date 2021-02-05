@@ -25,7 +25,10 @@ Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 	$bPassFail = RunAudioCompression($hTestSummary) And $bPassFail
 	$bPassFail = RunHdmiAudio($hTestSummary) And $bPassFail
 	$bPassFail = RunAnalogAudio($hTestSummary) And $bPassFail
-	$bPassFail = RunOpticalDigitalAudio($hTestSummary) And $bPassFail
+
+	If $sBoxType = "DSR830" Or $sBoxType = "DSR830_p2" Then
+		$bPassFail = RunOpticalDigitalAudio($hTestSummary) And $bPassFail
+	EndIf
 
 	Local $aDebugs[] = [ _
 			"wait:1000; ses:3", _

@@ -11,6 +11,12 @@
 
 
 ; Purpose:  The main entry point for running all of the tuning tests.
+; This satisfies the following tests
+; 4	DSR SI&T.Tuning.Acquisition:001-010	Tuner offset frequency
+; 1	DSR SI&T.Tuning.Acquisition:003-001	Acquired any 8PSK signal in the L-Band input frequency range of 950-2150 MHz
+; 3	DSR SI&T.Tuning.Acquisition:003-005	8PSK signal acquisition
+; 1	DSR SI&T.Tuning.Acquisition:003-006	8-PSK Received Eb/No (dB)
+; 3	DSR SI&T.Tuning.Acquisition:003-014	Auto tune to 8PSK Rate Symbol Rate 20.50 Code Rate 1.92
 Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 	Local $bPass = True, $bPassFail = True, $iNumChannels = 5
 	PF_Box("Running", $COLOR_BLUE, $hTuning_pf)
@@ -32,6 +38,11 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 
 	; Perform the channel change test across multiple channels with various a/v parameters.
 	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $aChanNumTune, "Tune Test")
+	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:001-010", $bPass)
+	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-001", $bPass)
+	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-005", $bPass)
+	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-006", $bPass)
+	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-014", $bPass)
 
 	; Perform CSS Testing
 	$bIsCss = IsThisCssUnit($hTestSummary)

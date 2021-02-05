@@ -3,7 +3,7 @@
 #include-once
 #include <RegTstUtil.au3>
 
-
+; Purpose:  Main entry point for Sys tests.
 Func RunSysControlTest($hTestSummary, $hSystemControl_pf)
 	Local $bPass = True
 	PF_Box("Running", $COLOR_BLUE, $hSystemControl_pf)
@@ -32,6 +32,16 @@ Func RunSysControlTest($hTestSummary, $hSystemControl_pf)
 EndFunc   ;==>RunSysControlTest
 
 ; Purpose: Reboot the box.  The VCT_ID and Number of Channels should not change.
+; This tests the following
+; 5	"DSR SI&T.System Control.Power Up, Down, Reset:005-004"	EMM provider ID
+; 5	"DSR SI&T.System Control.Power Up, Down, Reset:005-006"	CDT
+; 5	"DSR SI&T.System Control.Power Up, Down, Reset:005-007"	MMT
+; 5	"DSR SI&T.System Control.Power Up, Down, Reset:005-008"	SIT
+; 5	"DSR SI&T.System Control.Power Up, Down, Reset:005-009"	TDTs
+; 5	"DSR SI&T.System Control.Power Up, Down, Reset:005-010"	Virtual Channel Records
+; 5	"DSR SI&T.System Control.Power Up, Down, Reset:005-016"	Firmware Code Version
+; 2	"DSR SI&T.System Control.Power Up, Down, Reset:006-001"	Boot code execution from flash within 15 seconds of application of power.
+; 1	"DSR SI&T.System Control.Power Up, Down, Reset:006-002"	DSR should power on from internal flash memory.
 Func RunRebootTest($hTestSummary)
 	Local $bPass = True
 	Global $hBoxIPAddress
@@ -55,6 +65,16 @@ Func RunRebootTest($hTestSummary)
 		GUICtrlSetData($hTestSummary, "Reboot Test - Fail")
 		$bPass = False
 	EndIf
+	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:005-004"', $bPass)
+	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:005-006"', $bPass)
+	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:005-007"', $bPass)
+	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:005-008"', $bPass)
+	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:005-009"', $bPass)
+	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:005-010"', $bPass)
+	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:005-016"', $bPass)
+	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:006-001"', $bPass)
+	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:006-002"', $bPass)
+
 	Return $bPass
 EndFunc   ;==>RunRebootTest
 

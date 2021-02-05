@@ -10,6 +10,13 @@ Func RunDVRTest($TestSummary, $DVR_pf)
 	GUICtrlSetData($TestSummary, "==> DVR Test Started")
 	PF_Box("Running", $COLOR_BLUE, $DVR_pf)
 
+	If $sBoxType = "DSR800" Then
+		GUICtrlSetData($TestSummary, "BoxType is DSR800.  No tests run." & @CRLF)
+		GUICtrlSetData($TestSummary, "<== DVR Test Done")
+		PF_Box("NA", $COLOR_BLUE, $DVR_pf)
+		Return
+	EndIf
+
 	; Turn on Video/Info debugs, "sea all", "ses 3"
 	Local $aDebugs[] = [ _
 			"wait:1000; sea:all", _
@@ -49,6 +56,8 @@ EndFunc   ;==>RunDVRTest
 
 
 ;Purpose: Test RW, FF, PLAY, and STOP
+; This tests the following:
+; 3	DSR SI&T.DVR.DVR Response Time:001-001	DVR Playback Response Time
 Func RunTrickPlays($TestSummary, $DVR_pf, $sTest)
 	MakeRmtCmdDrip("rmt:REWIND", 3000)
 	Local $bPass = RunTestCriteria("cmd", "SEND VIDEO_COMPONENT_START_SUCCESS", @CRLF & "1. " & $sTest & "RW", $TestSummary, $DVR_pf)
@@ -79,12 +88,32 @@ Func RunTrickPlays($TestSummary, $DVR_pf, $sTest)
 
 	MakeRmtCmdDrip("rmt:EXIT", 2000)
 	RunDripTest("cmd")
+	SavePassFailTestResult("DSR SI&T.DVR.DVR Response Time:001-001", $bPass)
 
 	Return $bPass
 EndFunc   ;==>RunTrickPlays
 
 
 ; Purpose:  Record two shows at the same time and make sure both play back.
+; This tests the following cases:
+; 3	DSR SI&T.DVR.Dual Record Feature:001-001	Independent AV Stream
+; 3	DSR SI&T.DVR.Dual Record Feature:001-002	Associated AV stream
+; 3	DSR SI&T.DVR.Dual Record Feature:001-003	Watch video from tuner
+; 1	DSR SI&T.DVR.Legacy DVR:001-001	Simple background record
+; 3	DSR SI&T.DVR.Legacy DVR:001-002	Watch while recording a different service
+; 2	DSR SI&T.DVR.Legacy DVR:001-003	Watch while recording the same service
+; 3	DSR SI&T.DVR.Legacy DVR:001-004	Dual record
+; 3	DSR SI&T.DVR.Legacy DVR:001-006	Record Service while playing back a different recording
+; 3	DSR SI&T.DVR.Legacy DVR:001-007	Record Service while playing back the same service
+; 3	DSR SI&T.DVR.Legacy DVR:001-008	"Watch Service 1 With Trick Play, Record Service 2"
+; 3	DSR SI&T.DVR.Legacy DVR:003-004	MPEG4 LOD check
+; 1	DSR SI&T.DVR.MPEG4:001-001	Simple background record & playback
+; 3	DSR SI&T.DVR.MPEG4:001-002	Watch while recording a different service
+; 3	DSR SI&T.DVR.MPEG4:001-004	Dual record
+; 3	DSR SI&T.DVR.MPEG4:001-006	Record Service while playing back a different recording
+; 3	DSR SI&T.DVR.MPEG4:001-007	Record Service while playing back the same service
+; 3	DSR SI&T.DVR.MPEG4:001-008	"Watch Service 1 With Trick Play, Record Service 2"
+; 3	DSR SI&T.DVR.MPEG4:001-009	LOD operation
 Func RunDualDvrTest($TestSummary, $DVR_pf)
 	GUICtrlSetData($TestSummary, "Run Dual Record Test")
 
@@ -148,8 +177,27 @@ Func RunDualDvrTest($TestSummary, $DVR_pf)
 	RunDripTest("cmd")
 
 	; Run trick plays on it.
-	Sleep(20000)    ; Wait 20 seconds
+	Sleep(20000)     ; Wait 20 seconds
 	$bPass = RunTrickPlays($TestSummary, $DVR_pf, "DVR Playback: ") And $bPass
+
+	SavePassFailTestResult("DSR SI&T.DVR.Dual Record Feature:001-001", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Dual Record Feature:001-002", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Dual Record Feature:001-003", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Legacy DVR:001-001", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Legacy DVR:001-002", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Legacy DVR:001-003", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Legacy DVR:001-004", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Legacy DVR:001-006", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Legacy DVR:001-007", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Legacy DVR:001-008", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.Legacy DVR:003-004", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-001", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-002", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-004", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-006", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-007", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-008", $bPass)
+	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-009", $bPass)
 	Return $bPass
 EndFunc   ;==>RunDualDvrTest
 

@@ -10,6 +10,7 @@
 #include <GUIListBox.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
+#include <File.au3>
 
 #Region ### START Koda GUI section ### Form=
 $hForm = GUICreate("Regression Tests", 674, 563, 192, 124)
@@ -239,6 +240,9 @@ While 1
 					RunVCOTest($hTestSummary, $hVCO_pf)
 				EndIf
 
+				_FileWriteFromArray($sSITSpreadsheetResults, $aTestArray, Default, Default, ";")
+				_FileWriteToLine($sSITSpreadsheetResults, 1, "sep=;", False)
+				; ShellExecute($sSITSpreadsheetResults)
 				GUICtrlSetData($hTestSummary, "-- Regression Test End -- " & _NowTime() & @CRLF)
 			EndIf
 

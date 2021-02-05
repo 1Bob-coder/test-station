@@ -4,6 +4,12 @@
 #include <RegTstUtil.au3>
 
 
+; Purpose:  Entry point to WiFi Network testing.
+; Note: WiFi Config needs to be set prior to running tests.
+; This performs the following tests
+; 3	DSR SI&T.Networking.WiFi:001-001	WiFi Network Detection
+; 2	DSR SI&T.Networking.WiFi:001-002	Join a WiFi Network
+; 3	DSR SI&T.Networking.WiFi:001-003	Retain WiFi Config
 Func RunNetworkingTest($hTestSummary, $hNetworking_pf)
 	Local $bPass = True, $bConnected
 	Local $aDebugs[] = [ _
@@ -58,41 +64,13 @@ Func RunNetworkingTest($hTestSummary, $hNetworking_pf)
 		GUICtrlSetData($hTestSummary, "No Wireless Capability - Failure" & @CRLF)
 	EndIf
 
+	SavePassFailTestResult("DSR SI&T.Networking.WiFi:001-001", $bPass)
+	SavePassFailTestResult("DSR SI&T.Networking.WiFi:001-002", $bPass)
+	SavePassFailTestResult("DSR SI&T.Networking.WiFi:001-003", $bPass)
+
 	GUICtrlSetData($hTestSummary, "<== Networking Test Done")
 	DisplayPassFail($bPass, $hNetworking_pf)
 EndFunc   ;==>RunNetworkingTest
-
-; Purpose:  To search for a string provided the previous string conditions are met.
-; aStrings - Array of strings. Each must be satisfied in sequential order.
-; Return value - The next string after the last item in aStrings
-; Notes:  Useful if the string we are searching for appears multiple times, we but are
-; only interested in the case where it comes after certain preconditional set of strings.
-Func FindStringAfterStrings($aStrings, $sWhichTest)
-	Local $iPosition = 0, $sRetVal = "", $bFound = True
-	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
-	Local $sRead = FileRead($sLogFile)
-	If @error Then
-		ConsoleWrite("FindStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
-	Else
-		$iNumStrings = UBound($aStrings)
-		For $ii = 0 To $iNumStrings - 1 Step 1
-			$iPosition = StringInStr($sRead, $aStrings[$ii])
-			If $iPosition Then
-				$sRead = StringTrimLeft($sRead, $iPosition + StringLen($aStrings[$ii]))
-			Else
-				$bFound = False
-			EndIf
-			ConsoleWrite("Position = " & $iPosition & ", test = " & $sWhichTest & ", string = " & $aStrings[$ii] & @CRLF)
-		Next
-		If $bFound Then
-			Local $aSplit = StringSplit($sRead, " :=" & @CRLF)  ; Array of strings where spaces and colons are separators
-			If $aSplit[0] Then
-				$sRetVal = $aSplit[1]
-			EndIf
-		EndIf
-	EndIf
-	Return $sRetVal
-EndFunc   ;==>FindStringAfterStrings
 
 
 ; Purpose: To find out if the WiFi is connected.
