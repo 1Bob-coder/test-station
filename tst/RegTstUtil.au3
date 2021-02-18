@@ -36,7 +36,7 @@ $sWinDrip = $sDripClientDir & "DRIP_client_5.5.exe"      ; Windows DRIP Client p
 
 $sIpAddress = ""
 $sComPort = ""                ; e.g., COM1
-$sCodeVer = ""                ; e.g., DSR830 sprint04 70.09e
+Global $sCodeVer = ""         ; e.g., DSR830 sprint04 70.09e
 Global $sBoxType = ""		  ; e.g., DSR830, DSR800, DSR830_p2
 Global $sSITSpreadsheet = ""
 Global $sSITSpreadsheetResults = ""
@@ -304,7 +304,7 @@ EndFunc   ;==>RunDripCmdNoLog
 
 ; Purpose:  Run the DRIP Client 5.5 for Windows.
 Func RunDripClient55()
-	Run($sWinDrip & " /b " & $sBindAddr & " /i " & $sIpAddress)
+	Run($sWinDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & " /t " & "COM" & $sComPort & "_" & $sBoxType )
 EndFunc   ;==>RunDripClient55
 
 
