@@ -20,7 +20,14 @@
 Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 	Local $bPass = True, $bPassFail = True, $iNumChannels = 5
 	PF_Box("Running", $COLOR_BLUE, $hTuning_pf)
-	GUICtrlSetData($hTestSummary, "==> Tuning Test Started")
+	GUICtrlSetData($hTestSummary, "==> Tuning Test Started" & @CRLF)
+	; Check if CSS configured
+	$bIsCss = IsThisCssUnit($hTestSummary)
+	If $bIsCss Then
+		GUICtrlSetData($hTestSummary, "This is a CSS Unit" & @CRLF)
+	Else
+		GUICtrlSetData($hTestSummary, "This is an ODU, non-CSS, unit" & @CRLF)
+	EndIf
 
 	If $iTestType = 1 Then
 		$iNumChannels = 0          ; Channel change across all channels
@@ -37,28 +44,28 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 	EndIf
 
 	; Perform the channel change test across multiple channels with various a/v parameters.
-	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $aChanNumTune, "Tune Test")
+	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $aChanNumTune, "Tune Test", "TuneTestResults.txt")
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:001-010", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-001", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-005", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-006", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-014", $bPass)
 
-	; Perform CSS Testing
-	$bIsCss = IsThisCssUnit($hTestSummary)
-
 	; If this is a CSS unit, perform CSS testing.
 	; Turn off CSS, then turn on Auto and check by channel changing.
 	; Refresh CSS, then check with channel changes.
 	; Reboot.  Check if UB slots are the same.  Check with channel changes.
+	$bIsCss = IsThisCssUnit($hTestSummary)
 	If $bIsCss Then
 		GUICtrlSetData($hTestSummary, "Perform CSS Tests" & @CRLF)
-		$aSlotsBeforeReboot = GetUbSlots($hTestSummary)
+		$aSlotsBeforeReboot = GetCssSlots($hTestSummary, "Slots currently are: ")
 		BringUpCssScreen()
+		GUICtrlSetData($hTestSummary, "Turn off CSS, Standard ODU mode" & @CRLF)
 		PickNoCss()                ; Turn off CSS
-
+		GUICtrlSetData($hTestSummary, "Turn on CSS Auto mode, and do channel change test" & @CRLF)
 		PickCssAuto()           ; Turn on "CSS Auto" mode.
-		$bPassFail = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Auto")
+		$aSlotsBeforeReboot = GetCssSlots($hTestSummary, "Slots Auto Mode are: ")
+		$bPassFail = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Auto", "")
 		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-001", $bPassFail)
 		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-002", $bPassFail)
 		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:003-001", $bPassFail)
@@ -67,14 +74,17 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 		$bPass = $bPass And $bPassFail
 
 		BringUpCssScreen()
+		GUICtrlSetData($hTestSummary, "Turn on CSS Refresh, and do channel change test." & @CRLF)
 		PickCssRefresh()        ; Choose "CSS Refresh" mode
-		$bPass = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Refresh") And $bPass
+		$aSlotsBeforeReboot = GetCssSlots($hTestSummary, "Slots After CSS Refresh are: ")
+		$bPass = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Refresh", "") And $bPass
 		; Reboot the box.  Then check if CSS configuration was retained.
+		GUICtrlSetData($hTestSummary, "Reboot box and test for same slots: " & $aSlotsBeforeReboot[0] & ", " & $aSlotsBeforeReboot[1] & @CRLF)
 		RebootBox()
 		$bIsCss = IsThisCssUnit($hTestSummary)
 		If $bIsCss Then
 			GUICtrlSetData($hTestSummary, "Box rebooted.  This is a CSS Unit." & @CRLF)
-			$aSlotsAfterReboot = GetUbSlots($hTestSummary)
+			$aSlotsAfterReboot = GetCssSlots($hTestSummary, "Slots after reboot are: ")
 			$bPassFail = False
 			If $sBoxType == "DSR800" Then
 				If $aSlotsBeforeReboot[0] == $aSlotsAfterReboot[0] Then
@@ -87,7 +97,7 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 			EndIf
 			If $bPassFail Then
 				GUICtrlSetData($hTestSummary, "Slots remained the same after reboot.  BoxType = " & $sBoxType & @CRLF)
-				$bPassFail = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Reboot")
+				$bPassFail = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Reboot", "")
 			Else
 				GUICtrlSetData($hTestSummary, "Failed on CSS Reboot Test - Slots are different.  BoxType = " & $sBoxType & @CRLF)
 			EndIf
@@ -127,6 +137,25 @@ Func GetUbSlots($hTestSummary)
 	$aUbSlots = FindAllStringsInFile("UB slot (hex):", "ast", 0, 1)            ; Returns an array of UbSlots
 	Return $aUbSlots
 EndFunc   ;==>GetUbSlots
+
+
+; Purpose:  Prints CSS slots assigned.  Used to check CSS slot assignment requirements.
+Func GetCssSlots($hTestSummary, $sTitle)
+	Local $bIsCss = IsThisCssUnit($hTestSummary)
+	If $bIsCss Then
+		$aSlots = GetUbSlots($hTestSummary)
+		$iNumSlots = UBound($aSlots)
+		If $iNumSlots == 1 Then
+			GUICtrlSetData($hTestSummary, $sTitle & $aSlots[0] & @CRLF)
+		ElseIf $iNumSlots == 2 Then
+			GUICtrlSetData($hTestSummary, $sTitle & $aSlots[0] & ", " & $aSlots[1] & @CRLF)
+		EndIf
+	Else
+		GUICtrlSetData($hTestSummary, $sTitle & " No slots - Non CSS Unit" & @CRLF)
+	EndIf
+	Return $aSlots
+EndFunc   ;==>GetCssSlots
+
 
 ; Purpose:  Puts up the CSS Screen.
 Func BringUpCssScreen()

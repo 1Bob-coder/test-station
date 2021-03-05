@@ -1,23 +1,55 @@
-pause 5
+; Purpose: TeraTerm Macro for flashing the box.
+; Note: This makes use of Shaw's package_loader command.
+; Modify the next three lines as needed.
+mount_command = "mount 10.73.76.57:/extra/nfs/mgi1788/dsr8xx /mnt/nfs "
+package_DSR800 = "package_loader /mnt/nfs/packages/package_DSR800.bin"
+package_DSR830 = "package_loader /mnt/nfs/packages/package_DSR830.bin"
+
+timeout = 10   ; "wait" commands have 10 second timeout
+nfs_count = 0
+
+pause 1
 
 sendln ""
+pause 1
 sendln ""
+pause 1
 
-timeout = 90   ; switch to 90 second timeout
-
+:nfs_mount
+nfs_count = nfs_count + 1
 ; nfs mount the drive
-sendln "mount 10.77.2.235:/extra/nfs/mgi1788/dsr8xx /mnt/nfs "
+sendln mount_command
 sendln ""
 wait "#"
+
+if result = 0 then
+	; Not getting the prompt.  Try to nfs mount the drive again.
+	if nfs_count < 4 goto nfs_mount
+
+	gettitle titletext                ; get the title
+	sprintf2 message "Not getting prompt #, unable to nfs mount %s" titletext
+	messagebox message "Error"
+	goto error
+endif
+
+timeout = 60   ; switch to 60 second timeout
+
+sendln ""
+pause 1
 sendln "ls /mnt/nfs"
 wait "packages"
 
 if result = 0 then
+	; Not getting a list of packages.  Try to nfs mount the drive again.
+	if nfs_count < 4 goto nfs_mount
+
 	gettitle titletext                ; get the title
 	sprintf2 message "Not able to nfs mount %s" titletext
 	messagebox message "Error"
 	goto error
 endif
+
+timeout = 120   ; switch to 120 second timeout
 
 pause 2
 sendln ""
@@ -29,9 +61,9 @@ wait "DSR830" "DSR800"    ; wait for one of these two strings
 
 ; Call the package_loader with the package to flash
 if result = 1 then
-	sendln "package_loader /mnt/nfs/packages/package_DSR830.bin"
+	sendln package_DSR830
 elseif result=2 then
-	sendln "package_loader /mnt/nfs/packages/package_DSR800.bin"
+	sendln package_DSR800
 else
 	gettitle titletext                ; get the title
 	sprintf2 message "Not able to flash %s" titletext
@@ -39,34 +71,25 @@ else
 	goto error
 endif
 
-timeout = 120  ; switch to 2 minute timeout
+timeout = 120   ; switch to 120 second timeout
 
-; Wait till finished, then reboot.
+; Wait till finished, then reboot.  PL_FlashImage:FINISHED
 waitrecv 'PL_FlashImage:FINISHED' 22 1
+pause 2
+sendln ""
+pause 1
 sendln "reboot"
+pause 2
+
 
 ; Wait for box to boot up, then get the version of the code.
-; Save the version to a log file.
 wait "SYS INIT FINISHED"          ; wait for text
 pause 60                          ; wait 60 seconds
-gettime timestr "%Y%m%d-%H%M%S"   ; get the date and time
-gettitle titletext                ; get the title
-sprintf2 filename 'C:\Users\dsr\Documents\TestCenter\logs\%s_ver_%s.log' titletext timestr
-logopen filename 0 0              ; open a logfile
-timeout = 10
-pause 5
 sendln "ver"
-waitrecv 'sprint' 6 1
-pause 2
-logclose                          ; close the logfile
-
-; send memory command ?
-; clear debug log files ?
-
-:error
+pause 5
 
 ; Close TeraTerm
 closett
-
+:error
 end
 

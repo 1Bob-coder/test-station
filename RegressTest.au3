@@ -16,6 +16,7 @@
 $hForm = GUICreate("Regression Tests", 674, 563, 192, 124)
 $FileMenu = GUICtrlCreateMenu("&File")
 $hUpdateComPorts = GUICtrlCreateMenuItem("Update Com Port Listing", $FileMenu)
+$hFlashBox = GUICtrlCreateMenuItem("Flash Box with Code", $FileMenu)
 $hExitMenuItem = GUICtrlCreateMenuItem("Exit (Alt+x)", $FileMenu)
 $hAllTests = GUICtrlCreateCheckbox("All Tests", 32, 104, 73, 17)
 $hAV_Presentation = GUICtrlCreateCheckbox("A/V Presentation", 32, 144, 105, 17)
@@ -98,6 +99,9 @@ While 1
 
 		Case $hUpdateComPorts
 			UpdateComPortList($hComPort)
+
+		Case $hFlashBox
+			FlashBoxWithCode($hBoxVersion)
 
 		Case $hExitMenuItem
 			Exit

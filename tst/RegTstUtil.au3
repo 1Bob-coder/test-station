@@ -28,6 +28,7 @@ $sDripClientDir = $sTestDir & "\DripClient\"    ; Drip Client directory
 $sWaitTTL = $sTtlDir & "wait.ttl"
 $sWaitLog = $sLogDir & "wait.log"
 $sAstTTL = $sTtlDir & "ast.ttl"                ; ttl file for running the ast command
+$sFlashTTL = $sTtlDir & "flash.ttl"            ; flash.ttl file for flashing code into box
 $sAstLog = $sLogDir & "ast.log"               ; log file for the ast command
 $sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a command
 $sCmdLog = $sLogDir & "cmd.log"               ; Drip cmd log file
@@ -37,7 +38,7 @@ $sWinDrip = $sDripClientDir & "DRIP_client_5.5.exe"      ; Windows DRIP Client p
 $sIpAddress = ""
 $sComPort = ""                ; e.g., COM1
 Global $sCodeVer = ""         ; e.g., DSR830 sprint04 70.09e
-Global $sBoxType = ""		  ; e.g., DSR830, DSR800, DSR830_p2
+Global $sBoxType = ""          ; e.g., DSR830, DSR800, DSR830_p2
 Global $sSITSpreadsheet = ""
 Global $sSITSpreadsheetResults = ""
 Global $sVctId = ""
@@ -69,15 +70,28 @@ EndFunc   ;==>UpdateBindingList
 ; Note: ALT+x will exit
 Func HandleHotKey()
 	Switch @HotKeyPressed ; The last hotkey pressed.
-
-		Case "!x" ; String is the Shift-Alt-d hotkey.
+		Case "!x" ; String is the Alt-x hotkey.
 			$idButton = MsgBox($MB_OKCANCEL + $MB_SYSTEMMODAL, "", "Program will exit.")
 			If $idButton == $IDOK Then
 				Exit
 			EndIf
-
 	EndSwitch
 EndFunc   ;==>HandleHotKey
+
+
+Func FlashBoxWithCode($hBoxVersion)
+	If $sComPort == "" Or $sIpAddress == "" Then
+		MsgBox($MB_SYSTEMMODAL, "Error", "COM port or IP Address not defined.")
+	Else
+		$idButton = MsgBox($MB_OKCANCEL + $MB_SYSTEMMODAL, "Flash Code", "This will flash the box with code." & @CRLF & _
+				"Make sure TtlScripts\flash.ttl file is correct" & @CRLF & _
+				"and points to your mounting location and file to flash")
+		If $idButton == $IDOK Then
+			RunWait($sTeraTerm & " /C=" & $sComPort & " /W=" & "COM_" & $sComPort & " /M=" & $sFlashTTL)
+			FindBoxVer($hBoxVersion)
+		EndIf
+	EndIf
+EndFunc   ;==>FlashBoxWithCode
 
 
 ; Purpose:  Open the serial log files to look at.  Useful in case there is a reboot.
@@ -237,7 +251,7 @@ Func SavePassFailTestResult($sTestCase, $bPass)
 	Else
 		SaveTestResult($sTestCase, "Fail")
 	EndIf
-EndFunc
+EndFunc   ;==>SavePassFailTestResult
 
 
 ; Purpose:  Save the test result into the array.
@@ -269,15 +283,16 @@ EndFunc   ;==>FindBoxIPAddress
 Func RunDripTest($sWhichTest)
 	; Run the specified test.
 	If $sIpAddress == "" Then
-		MsgBox($MB_SYSTEMMODAL, "IP Address of Box", "Does not exist")
+		MsgBox($MB_SYSTEMMODAL, "DRIP Error COM" & $sComPort, "IP Address of Box does not exist")
 	ElseIf $sBindAddr == "" Then
-		MsgBox($MB_SYSTEMMODAL, "Binding Address of Network Card", "Does not exist")
+		MsgBox($MB_SYSTEMMODAL, "DRIP Error COM" & $sComPort, "Binding Address of Network Card does not exist")
 	Else
 		Local $sLogFile = $sLogDir & $sWhichTest & ".log"
+		FileDelete($sLogFile)
 		Local $sTestFile = $sDripScripts & $sWhichTest & ".drip"
 		Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
 				" /f " & $sTestFile & " /o " & $sLogFile
-		FileDelete($sLogFile)
+		;FileDelete($sLogFile)
 		RunWait($sTestCommand, "", @SW_HIDE)    ; Run the test (minimized).
 		;RunWait($sTestCommand, "")				; Run the test (show Python box).
 	EndIf
@@ -289,9 +304,9 @@ EndFunc   ;==>RunDripTest
 Func RunDripCmdNoLog()
 	; Run the specified test.
 	If $sIpAddress == "" Then
-		MsgBox($MB_SYSTEMMODAL, "IP Address of Box", "Does not exist")
+		MsgBox($MB_SYSTEMMODAL, "DRIP Error COM" & $sComPort, "IP Address of Box does not exist")
 	ElseIf $sBindAddr == "" Then
-		MsgBox($MB_SYSTEMMODAL, "Binding Address of Network Card", "Does not exist")
+		MsgBox($MB_SYSTEMMODAL, "DRIP Error COM" & $sComPort, "Binding Address of Network Card does not exist")
 	Else
 		Local $sTestFile = $sDripScripts & "cmd.drip"
 		Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
@@ -304,7 +319,7 @@ EndFunc   ;==>RunDripCmdNoLog
 
 ; Purpose:  Run the DRIP Client 5.5 for Windows.
 Func RunDripClient55()
-	Run($sWinDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & " /t " & "COM" & $sComPort & "_" & $sBoxType )
+	Run($sWinDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & " /t " & "COM" & $sComPort & "_" & $sBoxType)
 EndFunc   ;==>RunDripClient55
 
 
@@ -396,7 +411,7 @@ Func FindNthStringInFile($sWhichString, $sWhichTest, $iWhichOne)
 		$iPosition = StringInStr($sRead, $sWhichString)
 		If $iPosition Then
 			$sChop = StringTrimLeft($sRead, $iPosition + StringLen($sWhichString))
-			$aSplit = StringSplit($sChop, " :=" & @CRLF)  ; Array of strings where spaces and colons are separators
+			$aSplit = StringSplit($sChop, " :=," & @CRLF)  ; Array of strings where spaces and colons are separators
 			$iWhichOne = $iWhichOne + 1 ; Skip the first element in the array (the original searched-for word)
 			If $aSplit[0] > $iWhichOne Then
 				Local $aNewArray[] = []
@@ -597,6 +612,7 @@ EndFunc   ;==>RunWaitTtl
 
 ; Purpose:  Reboot the box.
 Func RebootBox()
+	Sleep(2000)                ; Put 2 second delay to make sure serial port was closed down.
 	MakeRmtCmdDrip("send:22,2", 5000)
 	RunDripTest("cmd")
 	CollectSerialLogs("RebootSerial", True) ; Collect serial log and show it in real time.
@@ -608,11 +624,11 @@ EndFunc   ;==>RebootBox
 
 ; Purpose:  Display a progress bar.  Put window always on top, moveable.
 Func ShowProgressWindow()
-	ProgressOn("Rebooting Now", "Wait 2 minutes for box to boot up.", "0%", -1, -1, $DLG_MOVEABLE)
+	ProgressOn("Rebooting Now", "Wait 2.5 minutes for box to boot up.", "0%", -1, -1, $DLG_MOVEABLE)
 	; Update the progress value of the progress bar window every second.
-	For $i = 1 To 120 Step 1
+	For $i = 1 To 150 Step 1
 		Sleep(1000)
-		ProgressSet($i * 100 / 120, $i & " seconds")
+		ProgressSet($i * 100 / 150, $i & " seconds")
 	Next
 	; Set the "subtext" and "maintext" of the progress bar window.
 	ProgressSet(100, "Done", "Complete")
@@ -626,12 +642,13 @@ EndFunc   ;==>ShowProgressWindow
 ; iNumChans = 0 for all channels, otherwise number of channels
 ; aChanNum - Channel Number, in array format to make Drip script.
 ; sTitle - Test Title
+; sFilename - Save data to this file, blank if not to save.
 ; Note: All channels are MPEG4, Ac3, 8PSK, 20.5 MBPS Symbol Rate, 1.92 code rate
 ; 	Data collection parameters are:
 ; 	Nexus  Source Format          : 720P  --> or 1080I, or 480I
 ; 	Nexus Aspect Ratio            : 4x3(1.3) derived with Sar x:y:(x*w/y*h)=10:11:1.33333  --> or 16x9 (1.7)
 ; 	Freq from 995250000* to 1435250000* (all frequency descriptors)
-Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle)
+Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFilename)
 	Local $bPass = True
 	If $iNumChans = 0 Then        ; do all channels
 		; Get the number of channels from diag A.
@@ -640,9 +657,8 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle)
 		$sNumChans = $iNumChans
 	EndIf
 
-	GUICtrlSetData($hTestSummary, $sTitle & " - Running Tuning Test on " & $sNumChans & " channels." & @CRLF)
-	$iNumMinutes = $sNumChans * 10 / 60
-	GUICtrlSetData($hTestSummary, $sTitle & " - This will take approximately " & Round($iNumMinutes, 1) & " minutes" & @CRLF)
+	$iNumMinutes = $sNumChans * 12 / 60        ; About 12 seconds per channel change.
+	GUICtrlSetData($hTestSummary, $sTitle & " - Channel Change Test on " & $sNumChans & " channels (approximately " & Round($iNumMinutes, 1) & " minutes)" & @CRLF)
 
 	; Press EXIT twice to get out of any screens.
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
@@ -650,7 +666,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle)
 	RunDripTest("cmd")
 
 	ChanChangeDrip($aChanNum[0], $aChanNum[1], $aChanNum[2])
-	MakeRmtCmdDrip("rmt:CHAN_UP", 5000)        ; Chan Up, collect logs for 5 seconds
+	MakeRmtCmdDrip("rmt:CHAN_UP", 8000)        ; Chan Up, collect logs for 8 seconds
 
 	For $ii = 1 To $sNumChans
 		$sLocked = "NoLock"
@@ -671,6 +687,12 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle)
 		$sVideoSource = FindNextStringInFile("Nexus  Source Format", "ast")
 		$sAspectRatio = FindNextStringInFile("Nexus Aspect Ratio", "ast")
 		$sAuthState = FindNthStringInFile("notifyServiceInfo", "cmd", 2)    ; Skips one string and returns the next one.
+		If $sAuthState == "" Then
+			; Sometimes notifyServiceInfo does not come out.
+			; Try "PlayerObserver.cpp:704:update: SEND SERVICE_AUTHORIZED" instead.
+			$sAuthState = FindNthStringInFile("PlayerObserver.cpp", "cmd", 4)
+		EndIf
+
 		$sAuthWhy = FindNthStringInFile("displayAuthReason", "cmd", 1)        ; Same as FindNextStringInFile
 		If $sAuthState == "" Then
 			$bPass = False
@@ -684,11 +706,13 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle)
 				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & $sPassFail & @CRLF)
 		Local $vRow[1][7] = [[$sChanNum, $sLocked, $sFreq, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
 		_ArrayAdd($aTuneResults, $vRow)
-		Sleep(1000)  ; Sleep for 1 second
+		Sleep(500)  ; Sleep for .5 second
 		FileDelete($sLogDir & $sChanNum & ".log")
 		FileCopy($sLogDir & "cmd.log", $sLogDir & $sChanNum & ".log")
 	Next
-	_FileWriteFromArray("logs\TuneTestResults.txt", $aTuneResults)
+	If $sFilename <> "" Then
+		_FileWriteFromArray("logs\" & $sFilename, $aTuneResults)
+	EndIf
 	;_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Frequency|Vid Src|Aspect|Authorization|AuthWhy")
 	Return $bPass
 EndFunc   ;==>PerformChannelChanges
