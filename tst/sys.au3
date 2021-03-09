@@ -82,6 +82,8 @@ EndFunc   ;==>RunRebootTest
 ; Purpose: Collect SF counter metrics for various Table ID values.
 ; Note: We are only interested in TableID's 0, 1, and 2 for this test.
 ;       Other TableID's are shown for further verification of messages being received.
+; This tests the following:
+; 3	DSR SI&T.System Control.PrivMessg:001-001	Verify that private messages are processed
 Func RunPrivStreamMsgTest($hTestSummary)
 	Local $bPass = True
 	Local $aSfStats[12][5] = [ _
@@ -129,6 +131,7 @@ Func RunPrivStreamMsgTest($hTestSummary)
 		EndIf
 		GUICtrlSetData($hTestSummary, $sHeading & $aSfStats[$ii][0] & " " & $aSfStats[$ii][3] & ": " & $aSfStats[$ii][1] & " / " & $aSfStats[$ii][2] & $sPassFail & @CRLF)
 	Next
+	SavePassFailTestResult('DSR SI&T.System Control.PrivMessg:001-001', $bPass)
 
 	Return $bPass
 EndFunc   ;==>RunPrivStreamMsgTest

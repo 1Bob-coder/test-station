@@ -705,7 +705,9 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		GUICtrlSetData($hTestSummary, $sTitle & " - Chan " & $sChanNum & " " & $sLocked & " " & $sVideoSource & " " & _
 				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & $sPassFail & @CRLF)
 		Local $vRow[1][7] = [[$sChanNum, $sLocked, $sFreq, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
-		_ArrayAdd($aTuneResults, $vRow)
+		If $sFilename <> "" Then
+			_ArrayAdd($aTuneResults, $vRow)
+		EndIf
 		Sleep(500)  ; Sleep for .5 second
 		FileDelete($sLogDir & $sChanNum & ".log")
 		FileCopy($sLogDir & "cmd.log", $sLogDir & $sChanNum & ".log")
