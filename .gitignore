@@ -5,3 +5,6 @@ ast.ttl
 cmd.drip
 DripClientConfig.txt
 Drip_Output.txt
+*Results*.*
+wait.ttl
+tst/*.exe
