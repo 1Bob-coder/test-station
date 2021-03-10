@@ -1,7 +1,0 @@
-timeout = 90
-sendln ""
-sendln ""
-wait "#"
-wait  "TRANSPORT_LOCKED"
-closett
-end
