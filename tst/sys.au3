@@ -102,7 +102,7 @@ Func RunPrivStreamMsgTest($hTestSummary)
 
 	Local $iSize = UBound($aSfStats, $UBOUND_ROWS) - 1 ; Compute size of array
 
-	MakeAstTtl("ast sf", 3)
+	MakeAstTtl("ast sf", 5)
 	RunAstTtl()
 	For $ii = 0 To $iSize Step 1
 		$aSfStats[$ii][1] = FindNextStringInFile("tableID " & $aSfStats[$ii][0], "ast")

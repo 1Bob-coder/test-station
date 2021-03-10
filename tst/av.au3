@@ -194,7 +194,7 @@ Func RunSdAspectRatio($hTestSummary)
 	EndIf
 
 	; make the 'ast vi' command with 3 second timeout for Video Stats
-	MakeAstTtl("ast vi", 3)
+	MakeAstTtl("ast vi", 5)
 
 	; Turn on Video/Info debugs, "sea vi", "ses 2"
 	Local $aDebugs[] = [ _

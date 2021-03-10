@@ -28,7 +28,7 @@ Func RunNetworkingTest($hTestSummary, $hNetworking_pf)
 
 	; Detect if WiFi connected.  Check for "wlan0" in "ifconfig".
 	Sleep(15000)       ; Sleep for 15 seconds.
-	MakeAstTtl("ifconfig", 1)  ; make the "ifconfig" command, 1 second timeout in case of no response.
+	MakeAstTtl("ifconfig", 3)  ; make the "ifconfig" command, 3 second timeout in case of no response.
 	RunAstTtl()
 	$iFoundLocation = FindStringInFile("wlan0", "ast")
 	If $iFoundLocation Then
@@ -79,7 +79,7 @@ Func IsWiFiConnected($hTestSummary, $sTitle)
 	Local $sNextString = ""
 	Local $bConnected = False
 	Local $aStrings[] = ["wlan0", "inet addr"]
-	MakeAstTtl("ifconfig", 1)      ; make the "ifconfig" command, 1 second timeout in case of no response.
+	MakeAstTtl("ifconfig", 3)      ; make the "ifconfig" command, 3 second timeout in case of no response.
 	RunAstTtl()
 	$sNextString = FindStringAfterStrings($aStrings, "ast")
 	If $sNextString == "" Then
