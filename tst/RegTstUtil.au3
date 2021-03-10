@@ -672,7 +672,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		$sLocked = "NoLock"
 		$sPassFail = ""
 		RunDripTest("cmd")            ; Run chan_up
-		MakeAstTtl("ast vi", 2)     ; Get the video stats
+		MakeAstTtl("ast vi", 5)     ; Get the video stats
 		RunAstTtl()
 		$sChanNum = FindNextStringInFile("CH :", "cmd")
 		If $sChanNum == "" Then
@@ -699,7 +699,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 			$sPassFail = " Fail, No AuthReason"
 		EndIf
 
-		MakeAstTtl("ast chan " & $sChanNum, 2)         ; Get the chan stats and the frequency.
+		MakeAstTtl("ast chan " & $sChanNum, 5)         ; Get the chan stats and the frequency.
 		RunAstTtl()
 		$sFreq = FindNthStringInFile("Frequency", "ast", 24) ; Skips to the 24 string and returns it.
 		GUICtrlSetData($hTestSummary, $sTitle & " - Chan " & $sChanNum & " " & $sLocked & " " & $sVideoSource & " " & _

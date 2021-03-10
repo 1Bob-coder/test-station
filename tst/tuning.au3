@@ -79,7 +79,11 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 		$aSlotsBeforeReboot = GetCssSlots($hTestSummary, "Slots After CSS Refresh are: ")
 		$bPass = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Refresh", "") And $bPass
 		; Reboot the box.  Then check if CSS configuration was retained.
-		GUICtrlSetData($hTestSummary, "Reboot box and test for same slots: " & $aSlotsBeforeReboot[0] & ", " & $aSlotsBeforeReboot[1] & @CRLF)
+		If $sBoxType == "DSR800" Then
+			GUICtrlSetData($hTestSummary, "Reboot box and test for same slots: " & $aSlotsBeforeReboot[0] & @CRLF)
+		Else
+			GUICtrlSetData($hTestSummary, "Reboot box and test for same slots: " & $aSlotsBeforeReboot[0] & ", " & $aSlotsBeforeReboot[1] & @CRLF)
+		EndIf
 		RebootBox()
 		$bIsCss = IsThisCssUnit($hTestSummary)
 		If $bIsCss Then
@@ -121,7 +125,7 @@ EndFunc   ;==>RunTuningTest
 Func IsThisCssUnit($hTestSummary)
 	; Only run the CSS test if on a CSS unit.
 	Local $bIsCss = True
-	MakeAstTtl("ast tu", 10)
+	MakeAstTtl("ast tu", 5)
 	RunAstTtl()
 	; ast tu produces "System Mode: Disabled" if not connected, and "System Mode: Auto" if connected.
 	$sValue = FindNextStringInFile("System Mode", "ast")
