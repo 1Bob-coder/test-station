@@ -189,8 +189,8 @@ Func RunSdAspectRatio($hTestSummary)
 	RunDripTest("cmd")
 	Local $sVctId = GetDiagData("A,5,3", "VCT_ID")
 
-	If $sVctId = "4380" Then        ; Use channel 485 - This channel is 480i.
-		ChanChangeDrip("rmt:DIGIT4", "rmt:DIGIT8", "rmt:DIGIT5")
+	If $sVctId = "4380" Then        ; Use channel 130 - This channel is 480i.
+		ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT3", "rmt:DIGIT0")
 	EndIf
 
 	; make the 'ast vi' command with 3 second timeout for Video Stats
@@ -387,7 +387,7 @@ Func RunDripAstSerialTest($aUserVsActual, $sTestTitle, $sDebugSearch, $sStatsSea
 		CollectSerialLogs("serial", False)   ; Start collecting the serial.txt file
 		RunDripTest("cmd")                ; Run the cmd.drip file
 		Sleep(3000)                            ; Sleep for 3 seconds
-		WinKill("COM")                    ; Stop collecting the serial.txt file
+		WinKill("COM" & $sComPort)                            ; End collection of serial log file
 		RunAstTtl()            ; Run the ast stats command
 		$sValueActual = FindNextStringInFile($sStatsSearch, "ast")
 		$sValueUser = FindNextStringInFile($sDebugSearch, "serial")

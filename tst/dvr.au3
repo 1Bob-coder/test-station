@@ -3,6 +3,8 @@
 #include-once
 #include <RegTstUtil.au3>
 
+$bHasExternalHD = True
+
 
 Func RunDVRTest($TestSummary, $DVR_pf)
 	Local $bPass = True
@@ -15,6 +17,19 @@ Func RunDVRTest($TestSummary, $DVR_pf)
 		PF_Box("NA", $COLOR_BLUE, $DVR_pf)
 		Return
 	EndIf
+
+	Local $aHDs = GetHDs()
+	$iArraySize = UBound($aHDs)
+	GUICtrlSetData($TestSummary, "Number of HDs = " & $iArraySize - 1 & @CRLF)
+	If $iArraySize > 2 Then
+		$bHasExternalHD = True
+	Else
+		$bHasExternalHD = False
+	EndIf
+
+	For $i = 1 To $iArraySize - 1
+		GUICtrlSetData($TestSummary, "HD = " & $aHDs[$i] & @CRLF)
+	Next
 
 	CollectSerialLogs("DvrSerial", False)    ; Start collection of serial log file (just in case it reboots)
 
@@ -44,7 +59,7 @@ Func RunDVRTest($TestSummary, $DVR_pf)
 
 	GUICtrlSetData($TestSummary, "<== DVR Test Done")
 
-	WinKill("COM")        ; End collection of serial log file
+	WinKill("COM" & $sComPort)                            ; End collection of serial log file
 
 	If $bPass Then
 		PF_Box("Pass", $COLOR_GREEN, $DVR_pf)
@@ -115,6 +130,20 @@ EndFunc   ;==>RunTrickPlays
 ; 3	DSR SI&T.DVR.MPEG4:001-007	Record Service while playing back the same service
 ; 3	DSR SI&T.DVR.MPEG4:001-008	"Watch Service 1 With Trick Play, Record Service 2"
 ; 3	DSR SI&T.DVR.MPEG4:001-009	LOD operation
+; For External Hard Drive, the following are tested:
+; 3 DSR SI&T.DVR.eMSD:001-001 eMSD formatted on a different Integrated Receiver/Decoder (IRD);
+; 3 DSR SI&T.DVR.eMSD:001-002 use case 1: Drive pre-formatted on different IRD does not impair iMSD recording;
+; 3 DSR SI&T.DVR.eMSD:001-003 use case 2: interchanging a pre-formatted drive;
+; 3 DSR SI&T.DVR.eMSD:002-001 New HDD discovery and format;
+; 3 DSR SI&T.DVR.eMSD:002-003 Factory reset reformat;
+; 3 DSR SI&T.DVR.eMSD:002-004 eMSD serial number display;
+; 3 DSR SI&T.DVR.eMSD:005-001 Dual recording;
+; 3 DSR SI&T.DVR.eMSD:005-002 eMSD Playback and record;
+; 3 DSR SI&T.DVR.eMSD:005-003 iMSD Playback and record;
+; 2 DSR SI&T.DVR.eMSD:005-004 Dual record with eMSD playback;
+; 3 DSR SI&T.DVR.eMSD:005-005 Dual record with iMSD playback;
+; 2 DSR SI&T.DVR.eMSD:007-005 LOD trickplay;
+; 3 DSR SI&T.DVR.eMSD:007-006 LOD record;
 Func RunDualDvrTest($TestSummary, $DVR_pf)
 	GUICtrlSetData($TestSummary, "Run Dual Record Test")
 
@@ -199,6 +228,19 @@ Func RunDualDvrTest($TestSummary, $DVR_pf)
 	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-007", $bPass)
 	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-008", $bPass)
 	SavePassFailTestResult("DSR SI&T.DVR.MPEG4:001-009", $bPass)
+
+	If $bHasExternalHD Then
+		SavePassFailTestResult("DSR SI&T.DVR.eMSD:005-001", $bPass)
+		SavePassFailTestResult("DSR SI&T.DVR.eMSD:005-002", $bPass)
+		SavePassFailTestResult("DSR SI&T.DVR.eMSD:005-004", $bPass)
+		SavePassFailTestResult("DSR SI&T.DVR.eMSD:007-005", $bPass)
+		SavePassFailTestResult("DSR SI&T.DVR.eMSD:007-006", $bPass)
+	Else
+		SavePassFailTestResult("DSR SI&T.DVR.eMSD:005-003", $bPass)
+		SavePassFailTestResult("DSR SI&T.DVR.eMSD:005-005", $bPass)
+	EndIf
+
 	Return $bPass
 EndFunc   ;==>RunDualDvrTest
+
 

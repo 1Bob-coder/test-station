@@ -92,7 +92,7 @@ Func RunVCOTest($TestSummary, $VCO_pf)
 
 	GUICtrlSetData($TestSummary, "<== VCO Test Done")
 	Sleep(6000)  ; Sleep 6 seconds just in case it crashes.
-	WinKill("COM")    ; End collection of serial log file
+	WinKill("COM" & $sComPort)                            ; End collection of serial log file
 
 	If $bPass Then
 		PF_Box("Pass", $COLOR_GREEN, $VCO_pf)

@@ -617,7 +617,7 @@ Func RebootBox()
 	RunDripTest("cmd")
 	CollectSerialLogs("RebootSerial", True) ; Collect serial log and show it in real time.
 	ShowProgressWindow()
-	WinKill("COM")                            ; End collection of serial log file
+	WinKill("COM" & $sComPort)                            ; End collection of serial log file
 	FindBoxIPAddress()        ; Get the IP address of the box in case it changed.
 EndFunc   ;==>RebootBox
 
@@ -725,3 +725,29 @@ Func ShowTuneTestLogs()
 	_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Locked|Frequency|Vid Src|Aspect|Authorization|AuthWhy")
 EndFunc   ;==>ShowTuneTestLogs
 
+; Purpose:  Get the a listing of Hard Drives.
+; Returns an array of HDs, with the first item in the array as the
+; number of items following, and the next items as the HD listing.
+; (e.g., if the first array item is 0, there are no HD's)
+Func GetHDs()
+	; sea fm, ses 1, do a channel change.
+	; Search for hard drive, e.g., "getLocationID:HDD: WDE5TY5K"
+	Local $aFmChanChange[] = [ _
+			"wait:500; sea:fm", _
+			"wait:500; ses:1", _
+			"wait:500; rmt:CHAN_UP", _
+			"wait:4000; ses:3", _
+			"wait:500; sea:all"]
+	MakeCmdDrip($aFmChanChange)
+	; Collect serial log data.
+	CollectSerialLogs("GetHDs", False) ; Collect serial log
+	RunDripTest("cmd")
+	ConsoleWrite("com port = " & "COM" & $sComPort & @CRLF)
+	WinKill("COM" & $sComPort)                            ; End collection of serial log file
+
+	; Look at GetHDs.log file for "getLocationID" debug and store values.
+	$aAllHardDrives = FindAllStringsInFile("getLocationID:HDD:", "GetHDs", 0, 1)
+	; The debugs have many duplicate lines, so get rid of them.
+	$aUniqueHDs = _ArrayUnique($aAllHardDrives)
+	Return $aUniqueHDs
+EndFunc   ;==>GetNumHDs
