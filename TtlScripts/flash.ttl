@@ -7,6 +7,8 @@ package_DSR830 = "package_loader /mnt/nfs/packages/package_DSR830.bin"
 
 timeout = 10   ; "wait" commands have 10 second timeout
 nfs_count = 0
+reboot_count = 0
+box_is_flashed = 0
 
 pause 1
 
@@ -24,15 +26,14 @@ wait "#"
 
 if result = 0 then
 	; Not getting the prompt.  Try to nfs mount the drive again.
-	if nfs_count < 4 goto nfs_mount
+	if nfs_count < 2 goto nfs_mount
+	if reboot_count = 0 goto reboot		; Sometimes the box needs to be rebooted to nfs mount the drive.
 
 	gettitle titletext                ; get the title
 	sprintf2 message "Not getting prompt #, unable to nfs mount %s" titletext
 	messagebox message "Error"
 	goto error
 endif
-
-timeout = 60   ; switch to 60 second timeout
 
 sendln ""
 pause 1
@@ -41,7 +42,8 @@ wait "packages"
 
 if result = 0 then
 	; Not getting a list of packages.  Try to nfs mount the drive again.
-	if nfs_count < 4 goto nfs_mount
+	if nfs_count < 2 goto nfs_mount
+	if reboot_count = 0 goto reboot		; Sometimes the box needs to be rebooted to nfs mount the drive.
 
 	gettitle titletext                ; get the title
 	sprintf2 message "Not able to nfs mount %s" titletext
@@ -70,23 +72,26 @@ else
 	messagebox message "Error"
 	goto error
 endif
+box_is_flashed = 1		; Mark that the box is flashed
 
 timeout = 120   ; switch to 120 second timeout
 
 ; Wait till finished, then reboot.  PL_FlashImage:FINISHED
 waitrecv 'PL_FlashImage:FINISHED' 22 1
+:reboot
 pause 2
 sendln ""
 pause 1
 sendln "reboot"
 pause 2
 
-
 ; Wait for box to boot up, then get the version of the code.
 wait "SYS INIT FINISHED"          ; wait for text
 pause 60                          ; wait 60 seconds
 sendln "ver"
 pause 5
+reboot_count = reboot_count + 1
+if box_is_flashed < 1 goto nfs_mount
 
 ; Close TeraTerm
 closett

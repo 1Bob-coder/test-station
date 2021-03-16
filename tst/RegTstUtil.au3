@@ -270,11 +270,15 @@ EndFunc   ;==>SaveTestResult
 ; Purpose:  Run 'ifconfig', and get the ip address.
 ; hBoxIPAddress - handle for text box display
 Func FindBoxIPAddress($hBoxIPAddress = 0)
-	MakeAstTtl("ifconfig", 1)  ; make the "ifconfig" command, 1 second timeout in case of no response.
-	RunAstTtl()
-	$sIpAddress = FindNextStringInFile("inet addr", "ast")
-	If $hBoxIPAddress <> 0 Then
-		GUICtrlSetData($hBoxIPAddress, $sIpAddress)
+	If $sIpAddress == "" Then
+		MakeAstTtl("ifconfig", 1) ; make the "ifconfig" command, 1 second timeout in case of no response.
+		RunAstTtl()
+		$sIpAddress = FindNextStringInFile("inet addr", "ast")
+		If $hBoxIPAddress <> 0 Then
+			GUICtrlSetData($hBoxIPAddress, $sIpAddress)
+		EndIf
+	Else
+		ConsoleWrite("IP Address already found. " & $sIpAddress & @CRLF)
 	EndIf
 EndFunc   ;==>FindBoxIPAddress
 
@@ -618,6 +622,7 @@ Func RebootBox()
 	CollectSerialLogs("RebootSerial", True) ; Collect serial log and show it in real time.
 	ShowProgressWindow()
 	WinKill("COM" & $sComPort)                            ; End collection of serial log file
+	$sIpAddress = ""		; Clear out old IP Address
 	FindBoxIPAddress()        ; Get the IP address of the box in case it changed.
 EndFunc   ;==>RebootBox
 
@@ -750,4 +755,4 @@ Func GetHDs()
 	; The debugs have many duplicate lines, so get rid of them.
 	$aUniqueHDs = _ArrayUnique($aAllHardDrives)
 	Return $aUniqueHDs
-EndFunc   ;==>GetNumHDs
+EndFunc   ;==>GetHDs
