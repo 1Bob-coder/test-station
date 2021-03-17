@@ -622,6 +622,7 @@ Func RebootBox()
 	CollectSerialLogs("RebootSerial", True) ; Collect serial log and show it in real time.
 	ShowProgressWindow()
 	WinKill("COM" & $sComPort)                            ; End collection of serial log file
+	Sleep(2000)		; sleep 2 seconds so that serial window can close all the way.
 	$sIpAddress = ""		; Clear out old IP Address
 	FindBoxIPAddress()        ; Get the IP address of the box in case it changed.
 EndFunc   ;==>RebootBox

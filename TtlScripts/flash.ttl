@@ -35,6 +35,8 @@ if result = 0 then
 	goto error
 endif
 
+timeout = 60	; switch to 60 second timeout
+
 sendln ""
 pause 1
 sendln "ls /mnt/nfs"
@@ -74,7 +76,7 @@ else
 endif
 box_is_flashed = 1		; Mark that the box is flashed
 
-timeout = 120   ; switch to 120 second timeout
+timeout = 200   ; switch to 200 second timeout
 
 ; Wait till finished, then reboot.  PL_FlashImage:FINISHED
 waitrecv 'PL_FlashImage:FINISHED' 22 1
