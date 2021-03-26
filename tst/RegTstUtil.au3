@@ -35,8 +35,8 @@ $sCmdLog = $sLogDir & "cmd.log"               ; Drip cmd log file
 $sPyDrip = $sDripClientDir & "DripClient.py"               ; Python DRIP Client program
 $sWinDrip = $sDripClientDir & "DRIP_client_5.5.exe"      ; Windows DRIP Client program
 
-$sIpAddress = ""
-$sComPort = ""                ; e.g., COM1
+Global $sIpAddress = ""
+Global $sComPort = ""                ; e.g., COM1
 Global $sCodeVer = ""         ; e.g., DSR830 sprint04 70.09e
 Global $sBoxType = ""          ; e.g., DSR830, DSR800, DSR830_p2
 Global $sSITSpreadsheet = ""
@@ -656,6 +656,7 @@ EndFunc   ;==>ShowProgressWindow
 ; 	Freq from 995250000* to 1435250000* (all frequency descriptors)
 Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFilename)
 	Local $bPass = True
+	Local $sChanNum = ""
 	If $iNumChans = 0 Then        ; do all channels
 		; Get the number of channels from diag A.
 		$sNumChans = GetDiagData("A,5,2", "NumChannels =")
@@ -680,11 +681,12 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		RunDripTest("cmd")            ; Run chan_up
 		MakeAstTtl("ast vi", 5)     ; Get the video stats
 		RunAstTtl()
+		$sOldChanNum = $sChanNum
 		$sChanNum = FindNextStringInFile("CH :", "cmd")
 		If $sChanNum == "" Then
 			$sChanNum = FindNextStringInFile("CHANNEL:", "cmd")
 			If $sChanNum == "" Then
-				$sChanNum = "?" & $ii & "?"
+				$sChanNum = "?" & $sOldChanNum & "+1?"
 			EndIf
 		EndIf
 		If FindStringInFile("TRANSPORT_LOCKED", "cmd") Then
@@ -703,6 +705,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		If $sAuthState == "" Then
 			$bPass = False
 			$sPassFail = " Fail, No AuthReason"
+			;Return False
 		EndIf
 
 		MakeAstTtl("ast chan " & $sChanNum, 5)         ; Get the chan stats and the frequency.

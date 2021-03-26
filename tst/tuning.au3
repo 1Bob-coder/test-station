@@ -50,6 +50,9 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-005", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-006", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-014", $bPass)
+	If $bPass == False Then
+		PF_Box("Running", $COLOR_RED, $hTuning_pf)
+	EndIf
 
 	; If this is a CSS unit, perform CSS testing.
 	; Turn off CSS, then turn on Auto and check by channel changing.
@@ -72,6 +75,9 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $iTestType)
 		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:003-002", $bPassFail)
 		SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:003-003", $bPassFail)
 		$bPass = $bPass And $bPassFail
+	If $bPass == False Then
+		PF_Box("Running", $COLOR_RED, $hTuning_pf)
+	EndIf
 
 		BringUpCssScreen()
 		GUICtrlSetData($hTestSummary, "Turn on CSS Refresh, and do channel change test." & @CRLF)
@@ -191,10 +197,9 @@ Func PickNoCss()
 			"wait:1000; rmt:SELECT"]
 	MakeCmdDrip($NoCss)
 	RunDripTest("cmd")
-	; Wait for TRANSPORT_LOCKED (1)
+	; Wait for TRANSPORT_LOCKED (1) and (0).
 	Local $aLocked_1[] = [ _
-			"TRANSPORT_LOCKED", _
-			"(1)"]
+			"TRANSPORT_LOCKED"]
 	MakeWaitTtl($aLocked_1)
 	RunWaitTtl()
 EndFunc   ;==>PickNoCss
@@ -212,10 +217,10 @@ Func PickCssAuto()
 			"wait:1000; rmt:SELECT"]
 	MakeCmdDrip($aCssAuto)
 	RunDripTest("cmd")
-	; Wait for TRANSPORT_LOCKED (1)
+	; Wait for TRANSPORT_LOCKED (1) and (0).
 	Local $aLocked_1[] = [ _
 			"TRANSPORT_LOCKED", _
-			"(1)"]
+			"TRANSPORT_LOCKED"]
 	MakeWaitTtl($aLocked_1)
 	RunWaitTtl()
 EndFunc   ;==>PickCssAuto

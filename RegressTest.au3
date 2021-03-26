@@ -109,6 +109,7 @@ While 1
 		Case $hComPort                            ; Changing the com port will change IPAddress and BoxVersion
 			$sComboRead = GUICtrlRead($hComPort)
 			$sComPort = StringReplace($sComboRead, "COM", "")  ; Save as 0, 1, 2, etc.
+			$sIpAddress = ""
 			FindBoxIPAddress($hBoxIPAddress)        ; IP Address used by DRIP
 			FindBoxVer($hBoxVersion)
 			GetVctId()
