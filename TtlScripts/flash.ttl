@@ -4,6 +4,9 @@
 mount_command = "mount 10.73.76.57:/extra/nfs/mgi1788/dsr8xx /mnt/nfs "
 package_DSR800 = "package_loader /mnt/nfs/packages/package_DSR800.bin"
 package_DSR830 = "package_loader /mnt/nfs/packages/package_DSR830.bin"
+;mount_command = "mount 10.73.76.57:/extra/nfs/mgi1788/regressiontest /mnt/nfs "
+;package_DSR800 = "package_loader /mnt/nfs/packages/package_DSR800.bin"
+;package_DSR830 = "package_loader /mnt/nfs/packages/package_DSR830.bin"
 
 timeout = 10   ; "wait" commands have 10 second timeout
 nfs_count = 0

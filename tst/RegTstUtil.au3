@@ -457,7 +457,7 @@ Func FindStringAfterStrings($aStrings, $sWhichTest)
 			Else
 				$bFound = False
 			EndIf
-			ConsoleWrite("Position = " & $iPosition & ", test = " & $sWhichTest & ", string = " & $aStrings[$ii] & @CRLF)
+			;ConsoleWrite("Position = " & $iPosition & ", test = " & $sWhichTest & ", string = " & $aStrings[$ii] & @CRLF)
 		Next
 		If $bFound Then
 			Local $aSplit = StringSplit($sRead, " :=" & @CRLF)  ; Array of strings where spaces and colons are separators
@@ -564,6 +564,7 @@ Func MakeCmdDrip($aDripCmd)
 	Else
 		MsgBox($MB_SYSTEMMODAL, $sCmdDrip, "Does not exist")
 	EndIf
+	ConsoleWrite($sCmdDrip & " was written" & @CRLF)
 EndFunc   ;==>MakeCmdDrip
 
 
