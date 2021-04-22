@@ -411,7 +411,7 @@ EndFunc   ;==>VCO_regress_001_013
 ; Purpose:  To test LOD, Trick Plays, and other recording functions.
 Func VCO_regress_TrickPlays($hTestSummary, $VCO_pf)
 	Local $bPass = True
-	Local $bPassTemp
+	Local $bPassTemp = True
 	If $sBoxType = "DSR800" Then
 		GUICtrlSetData($hTestSummary, "Box is DSR800.  LOD tests not run.")
 	Else
@@ -497,7 +497,7 @@ EndFunc   ;==>VCO_regress_TrickPlays
 ;	b) transition from non VCO to VCO back to non VCO.
 Func VCO_regress_Record($hTestSummary, $VCO_pf)
 	Local $bPass = True
-	Local $bPassTemp
+	Local $bPassTemp = True
 	If $sBoxType = "DSR800" Then
 		GUICtrlSetData($hTestSummary, "Box is DSR800.  LOD tests not run.")
 	Else
