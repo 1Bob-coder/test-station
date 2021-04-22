@@ -29,7 +29,6 @@ Func RunVCOTest($TestSummary, $VCO_pf)
 	RunDripTest("cmd")
 	RunDripTest("cmd")
 
-
 	MakeRmtCmdDrip("ses:3", 1000)
 	RunDripTest("cmd")
 	MakeRmtCmdDrip("sea:all", 1000)
@@ -52,56 +51,20 @@ Func RunVCOTest($TestSummary, $VCO_pf)
 
 	InitVcoInfo()
 
-	;$bPass = VCO_regress_001_001($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_002($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_003($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_004($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_005($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_007($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_008($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_009($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_010($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_012($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_001_013($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_001($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_002($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_003($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_004($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_005($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_007($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_008($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_009($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_010($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_012($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_001_013($TestSummary, $VCO_pf) And $bPass
 	$bPass = VCO_regress_TrickPlays($TestSummary, $VCO_pf) And $bPass
-	;$bPass = VCO_regress_Test($TestSummary, $VCO_pf) And $bPass
+	$bPass = VCO_regress_Record($TestSummary, $VCO_pf) And $bPass
 
-
-
-	#comments-start
-		If $sBoxType = "DSR800" Then
-			MakeRmtCmdDrip("sea:all", 30000)    ; Collect data for 30 seconds for VCO to end.
-		Else
-			; Box is an 830.  Now do some trick plays.
-			MakeRmtCmdDrip("rmt:REWIND", 3000)
-			$bPass = RunTestCriteria("cmd", "SEND VIDEO_COMPONENT_START_SUCCESS", "2. RW", $TestSummary, $VCO_pf) And $bPass
-			MakeRmtCmdDrip("rmt:FAST_FWD", 2000)
-			$bPass = RunTestCriteria("cmd", "SEND VIDEO_COMPONENT_START_SUCCESS", "3. FF", $TestSummary, $VCO_pf) And $bPass
-			MakeRmtCmdDrip("rmt:PLAY", 2000)
-			$bPass = RunTestCriteria("cmd", "SEND VIDEO_COMPONENT_START_SUCCESS", "4. Play (video)", $TestSummary, $VCO_pf) And $bPass
-			$bPass = TestForString("cmd", "SEND AUDIO_COMPONENT_START_SUCCESS", "4. Play (audio)", $TestSummary, $VCO_pf) And $bPass
-			MakeRmtCmdDrip("rmt:STOP", 2000)
-			$bPass = RunTestCriteria("cmd", "SEND VIDEO_COMPONENT_START_SUCCESS", "5. Stop (video)", $TestSummary, $VCO_pf) And $bPass
-			$bPass = TestForString("cmd", "SEND AUDIO_COMPONENT_START_SUCCESS", "5. Stop (audio)", $TestSummary, $VCO_pf) And $bPass
-			GUICtrlSetData($TestSummary, "Wait 10 seconds for VCO to end." & @CRLF)
-			MakeRmtCmdDrip("sea:all", 10000) ; Wait 10 seconds for VCO to end
-		EndIf
-
-		; The RunTestCriteria will run the 'cmd' file which collects log data for 30 seconds and then checks for the video start string for pass/fail criteria.
-		$bPass = RunTestCriteria("cmd", "SEND VIDEO_COMPONENT_START_SUCCESS, CH: " & $sFrom, "VCO Return (video CH " & $sFrom & ")", $TestSummary, $VCO_pf) And $bPass
-		$bPass = TestForString("cmd", "SEND AUDIO_COMPONENT_START_SUCCESS, CH: " & $sFrom, "VCO Return (audio CH " & $sFrom & ")", $TestSummary, $VCO_pf) And $bPass
-
-		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-001", $bPass)
-		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-002", $bPass)
-		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-003", $bPass)
-		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-010", $bPass)
-		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-014", $bPass)
-		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-015", $bPass)
-
-		GUICtrlSetData($TestSummary, "<== VCO Test Done")
-		Sleep(6000)  ; Sleep 6 seconds just in case it crashes.
-		;WinKill("COM" & $sComPort)                            ; End collection of serial log file
-	#comments-end
 	GUICtrlSetData($TestSummary, "<== VCO Test Done")
 
 	If $bPass Then
@@ -188,12 +151,11 @@ Func MakeCmdVCO($iStartTime, $sDurHex, $sLogDuration, $sCondition, $bInclusive)
 	Local $Duration = 32        ; Make VCO duration 32 seconds.
 	Local $sLen1, $sLen2
 	Local $sStartTime = ComputeStartTime($iStartTime)
-
+	Local $sSeqNum = StringFormat("%.2d", Random(1, 99, 1))      ; Need to randomize a sequence number
 	$iCondLen = Int(StringLen($sCondition)) / 3
 	$sMsgLen = Hex(Int($iCondLen + 44), 2) & ","
 	$sLen1 = Hex(Int($iCondLen + 14), 2) & ","
 	$sLen2 = Hex(Int($iCondLen + 11), 2) & ","
-	ConsoleWrite("CondLen=" & $iCondLen & " MsgLen=" & $sMsgLen & " sLen1=" & $sLen1 & " sLen2=" & $sLen2 & " DurHex=" & $sDurHex & @CRLF)
 
 	If $bInclusive = True Then
 		$sInclusive = "0e,"    ; first term, eol (inclusive)
@@ -201,7 +163,7 @@ Func MakeCmdVCO($iStartTime, $sDurHex, $sLogDuration, $sCondition, $bInclusive)
 		$sInclusive = "0d,"    ; not, first term (exclusive)
 	EndIf
 
-	Local $aVcoCmd[2] = ["wait:1000; msp:92,00," & _
+	Local $sVcoMsg = "msp:92,00," & _
 			$sMsgLen & _
 			"20," & _
 			$sLen1 & _
@@ -210,11 +172,15 @@ Func MakeCmdVCO($iStartTime, $sDurHex, $sLogDuration, $sCondition, $bInclusive)
 			$sInclusive & _
 			"ee,ee,ee,ee,ee,ee,ee,ee,ee,01," & _
 			$sCondition & _
-			"00,00,00,45,0e,00," & _
+			"00,00,00," & $sSeqNum & ",0e,00," & _
 			$sStartTime & _
 			"00,00," & $sDurHex & _
 			$sVctIdHex & _
-			$sVCN & "40," & $sSrcId & "61," & $sXpndr & StringTrimRight($sSvcNum, 1), _
+			$sVCN & "40," & $sSrcId & "61," & $sXpndr & StringTrimRight($sSvcNum, 1)
+
+	ConsoleWrite("VCO_msg = " & $sVcoMsg & @CRLF)
+
+	Local $aVcoCmd[] = ["wait:1000; " & $sVcoMsg & ",", _
 			"wait:" & $sLogDuration & "; sea:all"]
 	MakeCmdDrip($aVcoCmd)
 EndFunc   ;==>MakeCmdVCO
@@ -270,10 +236,11 @@ Func VCO_regress_001_002($hTestSummary, $VCO_pf)
 		RunDripTest("cmd")
 		GUICtrlSetData($hTestSummary, "Go back to original channel, different tuner." & @CRLF)
 		If $sVctId = "4380" Then
-			ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT2", "rmt:DIGIT1")
+			ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT2", "rmt:DIGIT5")
 		Else
 			ChanChangeDrip("rmt:DIGIT0", "rmt:DIGIT6", "rmt:DIGIT6")
 		EndIf
+		Sleep(10000)    ; Sleep for 10 seconds.
 		MakeCmdVCO(0, "20,", "38000", "40,19," & $sXYZ, True)
 		GUICtrlSetData($hTestSummary, "Immediate Circle started on different tuner, should VCO" & @CRLF)
 		$bPass = RunAndTestForVideoStart($hTestSummary, "Alternate tuner", True) And $bPass
@@ -303,7 +270,7 @@ EndFunc   ;==>VCO_regress_001_003
 Func VCO_regress_001_004($hTestSummary, $VCO_pf)
 	Local $bPass = True
 	MakeCmdVCO(0, "20,", "38000", "1b," & $sRegion, True)
-	GUICtrlSetData($hTestSummary, "Regional VCO started, should VCO" & @CRLF)
+	GUICtrlSetData($hTestSummary, "Regional VCO started, " & $sRegion & ", should VCO" & @CRLF)
 	$bPass = RunAndTestForVideoStart($hTestSummary, "Regional", True) And $bPass
 	MakeCmdVCO(0, "20,", "10000", "1b,55,", True)  ; Different Region test, should not VCO
 	GUICtrlSetData($hTestSummary, "Different Regional VCO started, should not VCO" & @CRLF)
@@ -418,7 +385,7 @@ Func VCO_regress_001_012($hTestSummary, $VCO_pf)
 		$bPass = False
 		GUICtrlSetData($hTestSummary, " - Failed VCO still present after power cycle.")
 	EndIf
-	SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-0102", $bPass)
+	SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-012", $bPass)
 	Return $bPass
 EndFunc   ;==>VCO_regress_001_012
 
@@ -439,41 +406,6 @@ Func VCO_regress_001_013($hTestSummary, $VCO_pf)
 	SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-013", $bPass)
 	Return $bPass
 EndFunc   ;==>VCO_regress_001_013
-
-; Purpose:  To test LOD, Trick Plays, and other recording functions.
-Func VCO_regress_Test($hTestSummary, $VCO_pf)
-	Local $bPass = True
-	Local $bPassTemp
-	If $sBoxType = "DSR800" Then
-		GUICtrlSetData($hTestSummary, "Box is DSR800.  LOD tests not run.")
-	Else
-		MakeRmtCmdDrip("rmt:CHAN_UP", 3000)
-		RunDripTest("cmd")
-		MakeRmtCmdDrip("rmt:CHAN_UP", 3000)
-		RunDripTest("cmd")
-		MakeRmtCmdDrip("rmt:CHAN_DOWN", 3000)
-		RunDripTest("cmd")
-		MakeRmtCmdDrip("rmt:CHAN_DOWN", 3000)
-		RunDripTest("cmd")
-
-		; Pause LOD.
-		Sleep(10000)
-		GUICtrlSetData($hTestSummary, "PAUSE during Live" & @CRLF)
-		MakeRmtCmdDrip("rmt:PAUSE", 3000)
-		RunDripTest("cmd")
-		; Send VCO.
-		MakeCmdVCO(0, "30,", "5000", "40,19," & $sXYZ, True)    ; 0x30 = 48 seconds.  Make VCO to start immediately.
-		GUICtrlSetData($hTestSummary, "Start VCO, then do trick plays." & @CRLF)
-		RunDripTest("cmd")
-		GUICtrlSetData($hTestSummary, "PLAY and resume Live" & @CRLF)
-		MakeRmtCmdDrip("rmt:PLAY", 3000)
-		RunDripTest("cmd")
-		GUICtrlSetData($hTestSummary, "Wait 20 seconds for transition" & @CRLF)
-		MakeRmtCmdDrip("rmt:PLAY", 20000)
-		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "Delayed LOD entry to VCO ", True) & $bPassTemp
-	EndIf
-	Return $bPass
-EndFunc
 
 
 ; Purpose:  To test LOD, Trick Plays, and other recording functions.
@@ -512,13 +444,13 @@ Func VCO_regress_TrickPlays($hTestSummary, $VCO_pf)
 		; Trick play within VCO LOD use case
 		MakeRmtCmdDrip("rmt:FAST_FWD", 3000)
 		GUICtrlSetData($hTestSummary, "VCO FAST_FWD" & @CRLF)
-		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "Fast Forward test", True) & $bPassTemp
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "Fast Forward test", True) And $bPassTemp
 		MakeRmtCmdDrip("rmt:PLAY", 3000)
 		GUICtrlSetData($hTestSummary, "VCO PLAY" & @CRLF)
-		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "Play test", True) & $bPassTemp
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "Play test", True) And $bPassTemp
 		MakeRmtCmdDrip("rmt:REWIND", 3000)
 		GUICtrlSetData($hTestSummary, "VCO REWIND" & @CRLF)
-		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "Rewind test", True) & $bPassTemp
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "Rewind test", True) And $bPassTemp
 		MakeRmtCmdDrip("rmt:PLAY", 3000)
 		RunDripTest("cmd")
 		GUICtrlSetData($hTestSummary, "VCO PLAY " & @CRLF)
@@ -530,55 +462,171 @@ Func VCO_regress_TrickPlays($hTestSummary, $VCO_pf)
 		MakeRmtCmdDrip("rmt:PLAY", 25000)
 		GUICtrlSetData($hTestSummary, "VCO PLAY  " & @CRLF)
 		GUICtrlSetData($hTestSummary, "Look for end of VCO transition while LOD delayed" & @CRLF)
-		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "VCO transition when delayed", True) & $bPassTemp
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "VCO transition when delayed", True) And $bPassTemp
 		MakeRmtCmdDrip("rmt:STOP", 3000)
-		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "Stop test", True) & $bPassTemp
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "Stop test", True) And $bPassTemp
 		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-014", $bPassTemp)
 		; Note:  This also satisfies the following tests:
 		; Trick play across VCO show end boundary use case
 		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-015", $bPassTemp)
 		; Delayed video on VCO start and saved LOD recordings use case
 		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-016", $bPassTemp)
-		; Delayed video on VCO end use case
-		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-017", $bPassTemp)
+		; Delayed video on VCO end use case.  This fails always.  Hardcoded for now.
+		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-017", False)
 		; Immediate VCO and LOD use case
 		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-018", $bPassTemp)
 		; Delayed video and immediate VCO use case	EndIf
 		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-019", $bPassTemp)
-
-		; Record a show with a VCO.
-		; To test all situations,
-		; 1)  Start a recording
-		; 2) Send back-to-back VCO's on that channel.
-		; 3) Channel change
-		; 4) Start a recording.
-		; 5) Send a VCO
-		; 6) Wait until all VCOs are done, and then stop the recordings.
-		; 7) Play back both recordings.  Should see
-		;	a) transition from non VCO to VCO and see back-to-back VCO, then back to non VCO
-		;	b) transition from non VCO to VCO back to non VCO.
-		; DSR SI&T.System Control.VCO regress & DVR:001-022
-		; Simple background record use case
-		; DSR SI&T.System Control.VCO regress & DVR:001-023
-		; Back to back recording with a normal program use case
-		; DSR SI&T.System Control.VCO regress & DVR:001-024
-		; Back to back VCO recordings use case
-		; DSR SI&T.System Control.VCO regress & DVR:001-025
-		; Immediate VCO on background recording use case
-		; DSR SI&T.System Control.VCO regress & DVR:001-026
-		; Watch and record: single VCO use case
-		; DSR SI&T.System Control.VCO regress & DVR:001-027
-		; Watch and record: dual VCOs use case
-		; DSR SI&T.System Control.VCO regress & DVR:001-028
-		; Dual VCO recordings use case
-
-
 
 	EndIf
 
 	Return $bPass And $bPassTemp
 EndFunc   ;==>VCO_regress_TrickPlays
 
+
+; Purpose:  To perform the VCO tests involving recording the show.
+; To test all situations,
+; 1)  Start a recording
+; 2) Send back-to-back VCO's on that channel.
+; 3) Channel change
+; 4) Start a recording.
+; 5) Send a VCO
+; 6) Wait until all VCOs are done, and then stop the recordings.
+; 7) Play back both recordings.  Should see
+;	a) transition from non VCO to VCO and see back-to-back VCO, then back to non VCO
+;	b) transition from non VCO to VCO back to non VCO.
+Func VCO_regress_Record($hTestSummary, $VCO_pf)
+	Local $bPass = True
+	Local $bPassTemp
+	If $sBoxType = "DSR800" Then
+		GUICtrlSetData($hTestSummary, "Box is DSR800.  LOD tests not run.")
+	Else
+		MakeRmtCmdDrip("rmt:CHAN_UP", 3000)
+		RunDripTest("cmd")
+		MakeRmtCmdDrip("rmt:CHAN_UP", 3000)
+		RunDripTest("cmd")
+		MakeRmtCmdDrip("rmt:CHAN_DOWN", 3000)
+		RunDripTest("cmd")
+		MakeRmtCmdDrip("rmt:CHAN_DOWN", 10000)
+		RunDripTest("cmd")
+
+		; Start a back-to-back VCO
+		MakeCmdVCO(10, "20,", "2000", "11,00,", False)         ; VCO begins in 10 seconds, lasts for 0x20=32 seconds.
+		GUICtrlSetData($hTestSummary, "First back-to-back starts in 20 seconds, 32 seconds duration" & @CRLF)
+		RunDripTest("cmd")
+		MakeCmdVCO(38, "20,", "2000", "11,00,", False) ; Second VCO begins in 48 secs, lasts for 0x20=32 seconds.
+		GUICtrlSetData($hTestSummary, "Second back-to-back starts in 38 seconds, lasts 32 seconds" & @CRLF)
+		RunDripTest("cmd")
+		; Start a recording
+		GUICtrlSetData($hTestSummary, "Record current channel." & @CRLF)
+		Local $aStartRecording[] = [ _
+				"wait:2000; rmt:RECORD", _
+				"wait:3000; rmt:ARROW_RIGHT", _
+				"wait:2000; rmt:ENTER", _
+				"wait:2000; rmt:EXIT"]
+		MakeCmdDrip($aStartRecording)
+		RunDripTest("cmd")
+
+		; Channel change
+		GUICtrlSetData($hTestSummary, "Channel change up" & @CRLF)
+		MakeRmtCmdDrip("rmt:CHAN_UP", 3000)
+		RunDripTest("cmd")
+
+		; Send VCO for this channel.
+		Local $sVcnTemp = $sVCN
+		$sVCN = Hex(130, 2)
+		$sVCN = CommaSeparatedBytes($sVCN, 2)
+		GUICtrlSetData($hTestSummary, "Send VCO to second channel to begin in 20 seconds" & @CRLF)
+		MakeCmdVCO(20, "20,", "2000", "11,00,", False)         ; VCO begins in 20 seconds, lasts for 0x20=32 seconds.
+		RunDripTest("cmd")
+		$sVCN = $sVcnTemp
+
+		; Start a recording
+		GUICtrlSetData($hTestSummary, "Record current channel. " & @CRLF)
+		Local $aStartRecording[] = [ _
+				"wait:2000; rmt:RECORD", _
+				"wait:3000; rmt:ARROW_RIGHT", _
+				"wait:2000; rmt:ENTER", _
+				"wait:2000; rmt:EXIT"]
+		MakeCmdDrip($aStartRecording)
+		RunDripTest("cmd")
+
+		; Wait until all VCOs are done, and then stop the recordings.
+		GUICtrlSetData($hTestSummary, "Wait one minute and stop recordings." & @CRLF)
+		Sleep(60000)
+		GUICtrlSetData($hTestSummary, "Stop Recordings." & @CRLF)
+		Local $aStopRecordings[] = [ _
+				"wait:3000; rmt:INTERACTIVE", _
+				"wait:3000; rmt:ARROW_RIGHT", _
+				"wait:2000; rmt:ENTER", _
+				"wait:2000; rmt:ARROW_RIGHT", _
+				"wait:2000; rmt:ENTER", _
+				"wait:2000; rmt:YELLOW", _
+				"wait:2000; rmt:ARROW_LEFT", _
+				"wait:2000; rmt:ENTER", _
+				"wait:2000; rmt:YELLOW", _
+				"wait:2000; rmt:ARROW_LEFT", _
+				"wait:2000; rmt:ENTER", _
+				"wait:2000; rmt:EXIT", _
+				"wait:2000; rmt:EXIT"]
+		MakeCmdDrip($aStopRecordings)
+		RunDripTest("cmd")
+
+		; Play back both recordings.
+		GUICtrlSetData($hTestSummary, "Play back last recording. Wait for VCO transition." & @CRLF)
+		Local $aPlayBackFirst[] = [ _
+				"wait:3000; rmt:LIST", _
+				"wait:2000; rmt:ENTER", _
+				"wait:2000; rmt:ENTER", _
+				"wait:26000; ses:3"]
+		MakeCmdDrip($aPlayBackFirst)
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "VCO transition PVR Playback", True)
+
+		GUICtrlSetData($hTestSummary, "Wait 25 secs for VCO to end" & @CRLF)
+		MakeRmtCmdDrip("rmt:EXIT", 25000)
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "VCO end PVR Playback", True) And $bPassTemp
+
+		GUICtrlSetData($hTestSummary, "Wait 45 secs for end of playback" & @CRLF)
+		Sleep(45000)
+
+		GUICtrlSetData($hTestSummary, "Play back earlier recording. Wait 10 sec for VCO transition." & @CRLF)
+		Local $aPlayBackSecond[] = [ _
+				"wait:3000; rmt:ARROW_DOWN", _
+				"wait:2000; rmt:ENTER", _
+				"wait:2000; rmt:ENTER", _
+				"wait:10000; ses:3"]
+		MakeCmdDrip($aPlayBackSecond)
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "VCO transition PVR Playback ", True) And $bPassTemp
+
+		GUICtrlSetData($hTestSummary, "Wait 35 secs for VCO to VCO transition" & @CRLF)
+		MakeRmtCmdDrip("rmt:EXIT", 35000)
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "VCO to VCO PVR Playback", True) And $bPassTemp
+
+		GUICtrlSetData($hTestSummary, "Wait 35 secs for VCO to end. " & @CRLF)
+		MakeRmtCmdDrip("rmt:EXIT", 35000)
+		$bPassTemp = RunAndTestForVideoStart($hTestSummary, "VCO Playback end", True) And $bPassTemp
+		GUICtrlSetData($hTestSummary, "Wait 60 secs for second recording to end. " & @CRLF)
+		Sleep(60000)
+
+		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-022", $bPassTemp)
+		; Simple background record use case
+		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-023", $bPassTemp)
+		; Back to back recording with a normal program use case
+		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-024", $bPassTemp)
+		; Back to back VCO recordings use case
+		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-025", $bPassTemp)
+		; Immediate VCO on background recording use case
+		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-026", $bPassTemp)
+		; Watch and record: single VCO use case
+		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-027", $bPassTemp)
+		; Watch and record: dual VCOs use case
+		SavePassFailTestResult("DSR SI&T.System Control.VCO regress & DVR:001-028", $bPassTemp)
+		; Dual VCO recordings use case
+		SavePassFailTestResult("DSR SI&T.System Control.VCOs w Freq Descr:001-003", $bPassTemp)
+		; Source channel uses FD, Destination channel uses FD
+	EndIf
+	Return $bPass And $bPassTemp
+EndFunc   ;==>VCO_regress_Record
 
 ; Purpose:  This runs the VCO test condition and checks if it got a VideoStart event.
 ; $sTestType - The test description, for printing out.
@@ -588,7 +636,7 @@ Func RunAndTestForVideoStart($hTestSummary, $sTestType, $bShouldVco)
 	Local $bPass = True
 	RunDripTest("cmd")
 	Local $iStringInFile = FindStringInFile("SEND VIDEO_COMPONENT_START_SUCCESS, CH", "cmd")
-	ConsoleWrite("bShouldVco =" & $bShouldVco & ", FindString VIDEO COMPONENT =" & $iStringInFile & @CRLF)
+	;ConsoleWrite("bShouldVco = " & $bShouldVco & ", FindString VIDEO COMPONENT = " & $iStringInFile & @CRLF)
 	If ($bShouldVco And Not $iStringInFile) Or _
 			($iStringInFile And Not $bShouldVco) Then
 		$bPass = False

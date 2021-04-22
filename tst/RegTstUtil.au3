@@ -564,7 +564,7 @@ Func MakeCmdDrip($aDripCmd)
 	Else
 		MsgBox($MB_SYSTEMMODAL, $sCmdDrip, "Does not exist")
 	EndIf
-	ConsoleWrite($sCmdDrip & " was written" & @CRLF)
+	;ConsoleWrite($sCmdDrip & " was written" & @CRLF)
 EndFunc   ;==>MakeCmdDrip
 
 
