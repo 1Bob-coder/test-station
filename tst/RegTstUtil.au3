@@ -43,7 +43,7 @@ Global $sSITSpreadsheet = ""
 Global $sSITSpreadsheetResults = ""
 Global $sVctId = ""
 Global $aTestArray
-Global $aTuneResults[1][7] = [["--", "--", "--", "--", "--", "--", "--"]]
+Global $aTuneResults[1][8] = [["--", "--", "--", "--", "--", "--", "--", "--"]]
 
 ; Purpose:  To get the list of com ports on the PC and set the GUI box.
 Func UpdateComPortList($hComPort)
@@ -436,6 +436,35 @@ Func FindNthStringInFile($sWhichString, $sWhichTest, $iWhichOne)
 	Return $sNextWord
 EndFunc   ;==>FindNthStringInFile
 
+; Purpose: To search for a string, if found return the string offset by iNumChars
+; Note:  This can find a previous string.  For example, -10 will go back 10 characters and return that string.
+; sWhichString - which string to search for
+; sWhichTest - which .log file to search in
+; iNumChars - offset value, can be negative to be number of characters before given string.
+Func FindNthPositionInFile($sWhichString, $sWhichTest, $iNumChars)
+	Local $iPosition = 0, $sChop = " ", $sNextWord = "", $aSplit = []
+	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
+	Local $sRead = FileRead($sLogFile)
+	If @error Then
+		ConsoleWrite("FindNextStringInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
+	Else
+		$iPosition = StringInStr($sRead, $sWhichString)
+		If $iPosition Then
+			$sChop = StringTrimLeft($sRead, $iPosition + $iNumChars)
+			$aSplit = StringSplit($sChop, " :=," & @CRLF)  ; Array of strings where spaces and colons are separators
+			If $aSplit[0] > 0 Then
+				$sNextWord = $aSplit[1]
+			Else
+				ConsoleWrite("No split")
+			EndIf
+		Else
+			ConsoleWrite("Did not find string " & $sWhichString & " in file" & @CRLF)
+		EndIf
+	EndIf
+	ConsoleWrite($sWhichString & " - " & $iNumChars & " - " & $iPosition & " - " & $iPosition + $iNumChars & " gives " & $sNextWord & @CRLF)
+	Return $sNextWord
+EndFunc   ;==>FindNthPositionInFile
+
 
 ; Purpose:  To search for a string provided the previous string conditions are met.
 ; aStrings - Array of strings. Each must be satisfied in sequential order.
@@ -623,8 +652,8 @@ Func RebootBox()
 	CollectSerialLogs("RebootSerial", True) ; Collect serial log and show it in real time.
 	ShowProgressWindow()
 	WinKill("COM" & $sComPort)                            ; End collection of serial log file
-	Sleep(2000)		; sleep 2 seconds so that serial window can close all the way.
-	$sIpAddress = ""		; Clear out old IP Address
+	Sleep(2000)        ; sleep 2 seconds so that serial window can close all the way.
+	$sIpAddress = ""        ; Clear out old IP Address
 	FindBoxIPAddress()        ; Get the IP address of the box in case it changed.
 EndFunc   ;==>RebootBox
 
@@ -655,9 +684,11 @@ EndFunc   ;==>ShowProgressWindow
 ; 	Nexus  Source Format          : 720P  --> or 1080I, or 480I
 ; 	Nexus Aspect Ratio            : 4x3(1.3) derived with Sar x:y:(x*w/y*h)=10:11:1.33333  --> or 16x9 (1.7)
 ; 	Freq from 995250000* to 1435250000* (all frequency descriptors)
+;   Channel Change speed: from "STOP VIDEO DECODING" to "VIDEO_COMPONENT_START_SUCCESS"
 Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFilename)
 	Local $bPass = True
 	Local $sChanNum = ""
+	Local $sSecs = ""
 	If $iNumChans = 0 Then        ; do all channels
 		; Get the number of channels from diag A.
 		$sNumChans = GetDiagData("A,5,2", "NumChannels =")
@@ -678,6 +709,8 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 
 	For $ii = 1 To $sNumChans
 		$sLocked = "NoLock"
+		$sChanStartTime = ""
+		$sChanEndTime = ""
 		$sPassFail = ""
 		RunDripTest("cmd")            ; Run chan_up
 		MakeAstTtl("ast vi", 5)     ; Get the video stats
@@ -693,6 +726,20 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		If FindStringInFile("TRANSPORT_LOCKED", "cmd") Then
 			$sLocked = "Lock"
 		EndIf
+		$iTotalTime = 0
+		; Looking for secs in string "Apr 29 15:27:18 DSR830_0493309217 local1.notice : PLAYER:PLAYER:States.cpp:236:handleStop: STOP VIDEO DECODING: 0"
+		$iChanStartTime = FindNthPositionInFile("STOP VIDEO DECODING", "cmd", -79)
+		; Looking for secs in string "Apr 29 15:27:20 DSR830_0493309217 local1.notice : PLAYER:PLAYER:States.cpp:2781:handleNotification:SEND VIDEO_COMPONENT_START_SUCCESS, CH: 987, TUNER: 1"
+		$iChanEndTime = FindNthPositionInFile("VIDEO_COMPONENT_START_SUCCESS", "cmd", -92)
+		If $iChanStartTime <> "" And $iChanEndTime <> "" Then
+			If $iChanStartTime > $iChanEndTime Then
+				$iChanEndTime = $iChanEndTime + 60
+			EndIf
+			$iTotalTime = $iChanEndTime - $iChanStartTime
+		Else
+			$iTotalTime = "NA"
+		EndIf
+		GUICtrlSetData($hTestSummary, "StartTime = " & $iChanStartTime & ", EndTime = " & $iChanEndTime & ", TotalTime = " & $iTotalTime & @CRLF)
 		$sVideoSource = FindNextStringInFile("Nexus  Source Format", "ast")
 		$sAspectRatio = FindNextStringInFile("Nexus Aspect Ratio", "ast")
 		$sAuthState = FindNthStringInFile("notifyServiceInfo", "cmd", 2)    ; Skips one string and returns the next one.
@@ -714,7 +761,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		$sFreq = FindNthStringInFile("Frequency", "ast", 24) ; Skips to the 24 string and returns it.
 		GUICtrlSetData($hTestSummary, $sTitle & " - Chan " & $sChanNum & " " & $sLocked & " " & $sVideoSource & " " & _
 				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & $sPassFail & @CRLF)
-		Local $vRow[1][7] = [[$sChanNum, $sLocked, $sFreq, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
+		Local $vRow[1][8] = [[$sChanNum, $sLocked, $sFreq, $iTotalTime, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
 		If $sFilename <> "" Then
 			_ArrayAdd($aTuneResults, $vRow)
 		EndIf
@@ -732,7 +779,7 @@ EndFunc   ;==>PerformChannelChanges
 
 ; Purpose:  To show a pop-up array with the results of the channel change tuning test.
 Func ShowTuneTestLogs()
-	_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Locked|Frequency|Vid Src|Aspect|Authorization|AuthWhy")
+	_ArrayDisplay($aTuneResults, "Channel Change Tuning Test", "", 64, 0, "Chan|Locked|Frequency|Secs|Vid Src|Aspect|Authorization|AuthWhy")
 EndFunc   ;==>ShowTuneTestLogs
 
 ; Purpose:  Get the a listing of Hard Drives.
@@ -761,3 +808,19 @@ Func GetHDs()
 	$aUniqueHDs = _ArrayUnique($aAllHardDrives)
 	Return $aUniqueHDs
 EndFunc   ;==>GetHDs
+
+
+; Purpose - Takes a hex value, strips off the 0x if necessary, and separates into bytes.
+; Note: Useful for creating a msp message.
+Func CommaSeparatedBytes($sHexValue, $numBytes)
+	Local $sCommaSepVal = ""
+	; First, strip off any 0x from string
+	$sHexValue = StringRegExpReplace($sHexValue, "0x", "")
+	; Next, separate into comma separated bytes.
+	$sHexValue = Dec($sHexValue, $NUMBER_AUTO)
+	$sHexValue = Hex($sHexValue, $numBytes * 2)
+	For $i = 1 To $numBytes
+		$sCommaSepVal = $sCommaSepVal & StringMid($sHexValue, $i * 2 - 1, 2) & ","
+	Next
+	Return $sCommaSepVal
+EndFunc   ;==>CommaSeparatedBytes

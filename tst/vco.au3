@@ -117,21 +117,6 @@ Func InitVcoInfo()
 	;ConsoleWrite("Xpndr, SvcNum = " & $sXpndr & ", " & $sSvcNum & @CRLF)
 EndFunc   ;==>InitVcoInfo
 
-; Purpose - Takes a hex value, strips off the 0x if necessary, and separates into bytes.
-; Note: Useful for creating a msp message.
-Func CommaSeparatedBytes($sHexValue, $numBytes)
-	Local $sCommaSepVal = ""
-	; First, strip off any 0x from string
-	$sHexValue = StringRegExpReplace($sHexValue, "0x", "")
-	; Next, separate into comma separated bytes.
-	$sHexValue = Dec($sHexValue, $NUMBER_AUTO)
-	$sHexValue = Hex($sHexValue, $numBytes * 2)
-	For $i = 1 To $numBytes
-		$sCommaSepVal = $sCommaSepVal & StringMid($sHexValue, $i * 2 - 1, 2) & ","
-	Next
-	Return $sCommaSepVal
-EndFunc   ;==>CommaSeparatedBytes
-
 
 ; Purpose - Make the VCO.
 ; $iStartTime - 0 for immediate, -/+ secs for past/future start time, e.g., 10 means it will start 10 seconds from now.

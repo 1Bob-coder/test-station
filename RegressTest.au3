@@ -60,9 +60,10 @@ $hBindAddr = GUICtrlCreateCombo("Binding Address", 344, 72, 145, 25, BitOR($CBS_
 $hDripClient = GUICtrlCreateButton("DRIP Client", 544, 72, 75, 25)
 $hSerialLogs = GUICtrlCreateButton("Serial Logs", 120, 504, 75, 25)
 $hTuneTest = GUICtrlCreateButton("Tune Results", 216, 504, 75, 25)
+$hSkipCSS = GUICtrlCreateCheckbox("Skip CSS", 144, 416, 97, 17)
 $TuningGroup = GUICtrlCreateGroup("", 40, 400, 97, 41)
-$hShortTest = GUICtrlCreateRadio("Short Test", 48, 408, 113, 17)
-$hLongTest = GUICtrlCreateRadio("Long Test", 48, 424, 113, 17)
+$hShortTest = GUICtrlCreateRadio("Short Test", 48, 408, 80, 17)
+$hLongTest = GUICtrlCreateRadio("Long Test", 48, 424, 80, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
@@ -137,7 +138,8 @@ While 1
 				GUICtrlSetState($hSystemControl, $GUI_CHECKED)
 				GUICtrlSetState($hTextMessaging, $GUI_CHECKED)
 				GUICtrlSetState($hTuning, $GUI_CHECKED)
-			GUICtrlSetState($hShortTest, $GUI_CHECKED)
+				GUICtrlSetState($hSkipCSS, $GUI_CHECKED)
+				GUICtrlSetState($hShortTest, $GUI_CHECKED)
 				GUICtrlSetState($hUSB, $GUI_CHECKED)
 				GUICtrlSetState($hVCO, $GUI_CHECKED)
 			Else
@@ -164,6 +166,7 @@ While 1
 
 		Case $hTuning
 			GUICtrlSetState($hShortTest, $GUI_CHECKED)
+			GUICtrlSetState($hSkipCSS, $GUI_CHECKED)
 
 		Case $hRunTests
 			GUICtrlSetData($hAV_Presentation_pf, "")
@@ -230,11 +233,9 @@ While 1
 				EndIf
 
 				If _IsChecked($hTuning) Then
-					If _IsChecked($hShortTest) Then
-						RunTuningTest($hTestSummary, $hTuning_pf, 0)
-					Else
-						RunTuningTest($hTestSummary, $hTuning_pf, 1)
-					EndIf
+					$bSkipCss = _IsChecked($hSkipCSS)
+					$bLongTest = _IsChecked($hLongTest)
+					RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 				EndIf
 
 				If _IsChecked($hUSB) Then
