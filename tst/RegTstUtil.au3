@@ -689,11 +689,21 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 	Local $bPass = True
 	Local $sChanNum = ""
 	Local $sSecs = ""
+	Local $iStartOffset, $iStopOffset
+
 	If $iNumChans = 0 Then        ; do all channels
 		; Get the number of channels from diag A.
 		$sNumChans = GetDiagData("A,5,2", "NumChannels =")
 	Else
 		$sNumChans = $iNumChans
+	EndIf
+
+	If $sBoxType = "DSR800" Then
+		$iStopOffset = -80
+		$iStartOffset = -93
+	Else
+		$iStopOffset = -79
+		$iStartOffset = -92
 	EndIf
 
 	$iNumMinutes = $sNumChans * 12 / 60        ; About 12 seconds per channel change.
@@ -728,9 +738,9 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		EndIf
 		$iTotalTime = 0
 		; Looking for secs in string "Apr 29 15:27:18 DSR830_0493309217 local1.notice : PLAYER:PLAYER:States.cpp:236:handleStop: STOP VIDEO DECODING: 0"
-		$iChanStartTime = FindNthPositionInFile("STOP VIDEO DECODING", "cmd", -79)
+		$iChanStartTime = FindNthPositionInFile("STOP VIDEO DECODING", "cmd", $iStopOffset)
 		; Looking for secs in string "Apr 29 15:27:20 DSR830_0493309217 local1.notice : PLAYER:PLAYER:States.cpp:2781:handleNotification:SEND VIDEO_COMPONENT_START_SUCCESS, CH: 987, TUNER: 1"
-		$iChanEndTime = FindNthPositionInFile("VIDEO_COMPONENT_START_SUCCESS", "cmd", -92)
+		$iChanEndTime = FindNthPositionInFile("VIDEO_COMPONENT_START_SUCCESS", "cmd", $iStartOffset)
 		If $iChanStartTime <> "" And $iChanEndTime <> "" Then
 			If $iChanStartTime > $iChanEndTime Then
 				$iChanEndTime = $iChanEndTime + 60
@@ -739,7 +749,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		Else
 			$iTotalTime = "NA"
 		EndIf
-		GUICtrlSetData($hTestSummary, "StartTime = " & $iChanStartTime & ", EndTime = " & $iChanEndTime & ", TotalTime = " & $iTotalTime & @CRLF)
+		;GUICtrlSetData($hTestSummary, "StartTime = " & $iChanStartTime & ", EndTime = " & $iChanEndTime & ", TotalTime = " & $iTotalTime & @CRLF)
 		$sVideoSource = FindNextStringInFile("Nexus  Source Format", "ast")
 		$sAspectRatio = FindNextStringInFile("Nexus Aspect Ratio", "ast")
 		$sAuthState = FindNthStringInFile("notifyServiceInfo", "cmd", 2)    ; Skips one string and returns the next one.
@@ -759,7 +769,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		MakeAstTtl("ast chan " & $sChanNum, 5)         ; Get the chan stats and the frequency.
 		RunAstTtl()
 		$sFreq = FindNthStringInFile("Frequency", "ast", 24) ; Skips to the 24 string and returns it.
-		GUICtrlSetData($hTestSummary, $sTitle & " - Chan " & $sChanNum & " " & $sLocked & " " & $sVideoSource & " " & _
+		GUICtrlSetData($hTestSummary, $ii & $sTitle & " Chan " & $sChanNum & " " & $sLocked & " " & $iTotalTime & " secs " & $sVideoSource & " " & _
 				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & $sPassFail & @CRLF)
 		Local $vRow[1][8] = [[$sChanNum, $sLocked, $sFreq, $iTotalTime, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
 		If $sFilename <> "" Then

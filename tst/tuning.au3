@@ -45,11 +45,11 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 	EndIf
 
 	; Find the average channel change speed.
-	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $aChanNumCss, "Tune Test", "TuneTestResults.txt")
+	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $aChanNumCss, "Tune", "TuneTestResults.txt")
 	ComputeAvgChanSpeed($hTestSummary)
 
 	; Perform the channel change test across multiple channels with various a/v parameters.
-	$bPass = PerformChannelChanges($hTestSummary, 5, $aChanNumTune, "Tune Test", "TuneTestResults.txt")
+	$bPass = PerformChannelChanges($hTestSummary, 5, $aChanNumTune, "Tune2", "TuneTestResults2.txt")
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:001-010", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-001", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-005", $bPass)
