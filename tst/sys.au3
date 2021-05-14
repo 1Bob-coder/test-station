@@ -230,7 +230,7 @@ Func DST_regress_001_009($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	EndIf
 	GUICtrlSetData($hTestSummary, "East coast hours: " & $aEastCoast[0] & " West coast hours: " & $aWestCoast[0])
 	GUICtrlSetData($hTestSummary, "Timezone test = " & $sPassFail)
-	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-008', $bPass)
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-009', $bPass)
 	Return $bPass
 EndFunc   ;==>DST_regress_001_009
 
