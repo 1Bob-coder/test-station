@@ -20,6 +20,9 @@ Func RunSysControlTest($hTestSummary, $hSystemControl_pf)
 	MakeRmtCmdDrip("rmt:POWER", 5000)
 	$bPass = RunTestCriteria("cmd", ":ALL VIDEO OUTPUTS: ENABLED", "Power On", $hTestSummary, $hSystemControl_pf) And $bPass
 
+	; Run the DST Tests
+	$bPass = RunDstTests($hTestSummary) And $bPass
+
 	; Send the Reboot command
 	$bPass = RunRebootTest($hTestSummary) And $bPass
 
@@ -30,6 +33,332 @@ Func RunSysControlTest($hTestSummary, $hSystemControl_pf)
 		PF_Box("Fail", $COLOR_Red, $hSystemControl_pf)
 	EndIf
 EndFunc   ;==>RunSysControlTest
+
+
+; Purpose:  To run the Daylight Savings Tests
+Func RunDstTests($hTestSummary)
+	Local $bPass = True
+	Local $aDstOrigValues[] = [0, 0, 0]     ; Save the original entry/exit timezone values.  Revert back when done with tests.
+	Local $aDstDiagHex[] = [0, 0, 0, 0, 0]     ; Hexidecimal Array : UA, gps, entry, exit, tz_field
+	Local $aDstDiagDec[] = [0, 0, 0, 0, 0]     ; Decimal Array : state, gps, entry, exit, timezone
+	Local $aSysTime[] = ["", "", ""]        ; hours, minutes, seconds
+
+	; Save off the original entry/exit times.
+	GetDstData($hTestSummary, $aDstDiagHex, $aDstDiagDec)
+	$aDstOrigValues[0] = $aDstDiagHex[2]
+	$aDstOrigValues[1] = $aDstDiagHex[3]
+	$aDstOrigValues[2] = $aDstDiagHex[4]
+
+	GUICtrlSetData($hTestSummary, "Begin DST Tests")
+	MakeAstTtl("ast sea none", 2)
+	RunAstTtl()
+	$bPass = DST_regress_001_001($hTestSummary, $aDstDiagHex, $aDstDiagDec) And $bPass
+	$bPass = DST_regress_001_002($hTestSummary, $aDstDiagHex, $aDstDiagDec) And $bPass
+	$bPass = DST_regress_001_003($hTestSummary, $aDstDiagHex, $aDstDiagDec) And $bPass
+	$bPass = DST_regress_001_004($hTestSummary, $aDstDiagHex, $aDstDiagDec) And $bPass
+	$bPass = DST_regress_001_005($hTestSummary, $aDstDiagHex, $aDstDiagDec) And $bPass
+	$bPass = DST_regress_001_006($hTestSummary, $aDstDiagHex, $aDstDiagDec) And $bPass
+	$bPass = DST_regress_001_007($hTestSummary, $aDstDiagHex, $aDstDiagDec) And $bPass
+	$bPass = DST_regress_001_008($hTestSummary, $aDstDiagHex, $aDstDiagDec) And $bPass
+	$bPass = DST_regress_001_009($hTestSummary, $aDstDiagHex, $aDstDiagDec) And $bPass
+	MakeAstTtl("ast sea all", 2)
+	RunAstTtl()
+
+	; Revert UIM back to original values.
+	$aDstDiagHex[2] = $aDstOrigValues[0]
+	$aDstDiagHex[3] = $aDstOrigValues[1]
+	$aDstDiagHex[4] = $aDstOrigValues[2]
+	SendDstUim($hTestSummary, $aDstDiagHex)
+	Return $bPass
+EndFunc   ;==>RunDstTests
+
+; Note:  The following conditons are tested:
+;   a) Proper system time for all possible entry and exit times
+;   b) Proper system time during transition across boundary.
+; Condition=A-F - X=current_time : Pass_conditon
+;           A - X-Exit----Entry : X=DST
+;           B - Entry--X--Exit : X=DST
+;           C - Exit----Entry-X : X=DST
+;           D - X-Entry----Exit : X=STD
+;           E - Exit--X--Entry  : X=STD
+;           F - Entry----Exit-X : X=STD
+
+; 5	DSR SI&T.System Control.DST & Related Settings:001-001	"DST Entry Past, In DST, DST Exit Future (State B -> StateA xsition)"
+Func DST_regress_001_001($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	Local $bPass = True
+	; Configure so Entry time is in the past and Exit time is in the future.
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST ")
+	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
+	; Exit time is in the near future and the Entry time is in that far future
+	GUICtrlSetData($hTestSummary, "Test A - X-Exit----Entry : X=DST ")
+	SendEntryExitUim($hTestSummary, 60 * 60 * 24 * 20, 60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-001', $bPass)
+	Return $bPass
+EndFunc   ;==>DST_regress_001_001
+
+; 3	DSR SI&T.System Control.DST & Related Settings:001-002	"In STD Time, DST Entry Future,  DST Exit Future (Ahead of Entry) (State F -> State D xsition)"
+Func DST_regress_001_002($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	Local $bPass = True
+	; Configure so Entry time is in the far past and Exit time is in the near past.
+	GUICtrlSetData($hTestSummary, "Test F - Entry----Exit-X : X=STD ")
+	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 20, -60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
+	; Entry time is in the near future and the Exit time is in that far future
+	GUICtrlSetData($hTestSummary, "Test D - X-Entry----Exit : X=STD ")
+	SendEntryExitUim($hTestSummary, 60 * 60 * 24 * 2, 60 * 60 * 24 * 20, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-002', $bPass)
+	Return $bPass
+EndFunc   ;==>DST_regress_001_002
+
+; 5 DSR SI&T.System Control.DST & Related Settings:001-003	DST Entry in far future after Exit. (State A -> E xsition)
+Func DST_regress_001_003($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	Local $bPass = True
+	; Configure so Entry time is in the far future and Exit time is in the near future.
+	GUICtrlSetData($hTestSummary, "Test A - X-Exit----Entry : X=DST  ")
+	SendEntryExitUim($hTestSummary, 60 * 60 * 24 * 20, 20, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
+	; Allow the unit to transition to STD time (across Exit time).
+	GUICtrlSetData($hTestSummary, "Wait 20 seconds, then test transition DST into STD")
+	Sleep(20000)    ; Wait for 20 seconds
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-003', $bPass)
+	Return $bPass
+EndFunc   ;==>DST_regress_001_003
+
+; 3	DSR SI&T.System Control.DST & Related Settings:001-004	DST Entry Transition (State D -> State B xsition)
+Func DST_regress_001_004($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	Local $bPass = True
+	; Configure so Entry time is in the near future and Exit time is in the far future.
+	GUICtrlSetData($hTestSummary, "Test D - X-Entry----Exit : X=DST  ")
+	SendEntryExitUim($hTestSummary, 20, 60 * 60 * 24 * 20, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
+	; Allow the unit to cross into the DST Entry time.
+	GUICtrlSetData($hTestSummary, "Wait 20 seconds, then test transition STD into DST.")
+	Sleep(20000)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-004', $bPass)
+	Return $bPass
+EndFunc   ;==>DST_regress_001_004
+
+; 3	DSR SI&T.System Control.DST & Related Settings:001-005	DST Exit Transition (State B -> State F xsition)
+Func DST_regress_001_005($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	Local $bPass = True
+	; Configure so Entry time is in the near future and Exit time is in the far future.
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST   ")
+	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 20, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
+	; Entry time is in the past and the Exit time is in the future
+	GUICtrlSetData($hTestSummary, "Wait 20 seconds, then test transition DST into STD ")
+	Sleep(20000)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-005', $bPass)
+	Return $bPass
+EndFunc   ;==>DST_regress_001_005
+
+; 5	DSR SI&T.System Control.DST & Related Settings:001-006	Unit in STD time. SAC DST Flag: Unchecked/Checked
+Func DST_regress_001_006($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	Local $bPass = True
+	; Configure so Entry time is in the near future and Exit time is in the far future.
+	GUICtrlSetData($hTestSummary, "Test E - Exit--X--Entry  : X=STD   ")
+	SendEntryExitUim($hTestSummary, 60 * 60 * 24 * 2, -60 * 60 * 24 * 20, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
+	;  Set the SAC condition such that the DST flag is Unchecked.
+	SendModifiedTzUim($hTestSummary, $aDstDiagDec[4], 0, 1, $aDstDiagHex, $aDstDiagDec)    ; DST_enabled = 0, TZ_defined = 1
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
+	SendModifiedTzUim($hTestSummary, $aDstDiagDec[4], 1, 1, $aDstDiagHex, $aDstDiagDec)    ; DST_enabled = 1, TZ_defined = 1
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-006', $bPass)
+	Return $bPass
+EndFunc   ;==>DST_regress_001_006
+
+; 5	DSR SI&T.System Control.DST & Related Settings:001-007	Unit in DST time. SAC DST Flag: Unchecked/Checked
+Func DST_regress_001_007($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	Local $bPass = True
+	; Configure so Entry time is in the near future and Exit time is in the far future.
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST    ")
+	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 60 * 60 * 24 * 20, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
+	;  Set the SAC condition such that the DST flag is Unchecked.
+	GUICtrlSetData($hTestSummary, "aDstDiagDec[4]=" & $aDstDiagDec[4] & ", number=" & Number($aDstDiagDec[4]))
+	SendModifiedTzUim($hTestSummary, $aDstDiagDec[4], 0, 1, $aDstDiagHex, $aDstDiagDec)    ; DST_enabled = 0, TZ_defined = 1
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass        ; verify it is in STD
+	;  Set the SAC condition such that the DST flag is Checked.
+	SendModifiedTzUim($hTestSummary, $aDstDiagDec[4], 1, 1, $aDstDiagHex, $aDstDiagDec)    ; DST_enabled = 1, TZ_defined = 1
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass        ; verify it is in DST
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-007', $bPass)
+	Return $bPass
+EndFunc   ;==>DST_regress_001_007
+
+; 5	DSR SI&T.System Control.DST & Related Settings:001-008	"In STD time. Exit time in past, Entry in future (State E -> C xsition)"
+Func DST_regress_001_008($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	Local $bPass = True
+	; Configure so Entry time is in the near future and Exit time is in the far future.
+	GUICtrlSetData($hTestSummary, "Test E - Exit--X--Entry  : X=STD")
+	SendEntryExitUim($hTestSummary, 20, -60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
+	; Entry time is in the future by 20 secs and the Exit time is in the past.
+	GUICtrlSetData($hTestSummary, "Wait 20 seconds, then test transition STD into DST ")
+	Sleep(20000)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-008', $bPass)
+	Return $bPass
+EndFunc   ;==>DST_regress_001_008
+
+; 3	DSR SI&T.System Control.DST & Related Settings:001-009	DSR time tracks timezone changes
+Func DST_regress_001_009($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	Local $bPass = True
+	Local $sPassFail = "Pass"
+	Local $aEastCoast = ["", "", ""]    ; Hours Minutes Secs
+	Local $aWestCoast = ["", "", ""]    ; Hours Minutes Secs
+	; Configure so Entry time is in the past and Exit time is in the future.
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST ")
+	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
+	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
+	; At the SAC, set the postal code to east coast (19131).
+	GUICtrlSetData($hTestSummary, "Set timezone to east coast.")
+	Local $iTZ = $aDstDiagDec[4]    ; save off old value.
+	SendModifiedTzUim($hTestSummary, -300, 1, 1, $aDstDiagHex, $aDstDiagDec)    ; timezone east coast = -300
+	GetLocalTime($hTestSummary, $aEastCoast)
+	SendModifiedTzUim($hTestSummary, -480, 1, 1, $aDstDiagHex, $aDstDiagDec)    ; timezone west coast = -480
+	GetLocalTime($hTestSummary, $aWestCoast)
+	If Number($aEastCoast[0]) <> Number($aWestCoast[0]) + 3 Then
+		$bPass = False
+		$sPassFail = "Fail"
+	EndIf
+	GUICtrlSetData($hTestSummary, "East coast hours: " & $aEastCoast[0] & " West coast hours: " & $aWestCoast[0])
+	GUICtrlSetData($hTestSummary, "Timezone test = " & $sPassFail)
+	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-008', $bPass)
+	Return $bPass
+EndFunc   ;==>DST_regress_001_009
+
+; Purpose:  To send the entry/exit times in a UIM.
+; $iEntryTime - DST entry time related to the current time.
+; $iExitTime - DST exit time related to the current time.
+; Note: Entry/Exit times in seconds, '-' before, '+' after current time.
+Func SendEntryExitUim($hTestSummary, $iEntryTime, $iExitTime, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	; Get DST data from Diagnostics A screen.
+	GetDstData($hTestSummary, $aDstDiagHex, $aDstDiagDec)
+	$aDstDiagDec[2] = $aDstDiagDec[1] + $iEntryTime
+	$aDstDiagHex[2] = CommaSeparatedBytes(Hex($aDstDiagDec[2]), 4)
+	$aDstDiagDec[3] = $aDstDiagDec[1] + $iExitTime
+	$aDstDiagHex[3] = CommaSeparatedBytes(Hex($aDstDiagDec[3]), 4)
+	SendDstUim($hTestSummary, $aDstDiagHex)
+EndFunc   ;==>SendEntryExitUim
+
+
+; Purpose:  To send the TZ, DST_enable, and TZ_defined in a UIM.
+; $iTZ - Timezone, in minutes (-480 for Pacific).
+; $iDST_enabled - 0 for not enabled, 1 for enabled.
+; $iTZ_defined - 0 for not defined, 1 for defined.
+; Note: Other values in aDstDiagHex and aDstDiagDec are left unchanged.
+Func SendModifiedTzUim($hTestSummary, $iTZ, $iDST_enabled, $iTZ_defined, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	; TZ_field (2 bytes) = dst Enable (E) + tz Defined (D) + reserved (xxx) + timezone minutes (T) = EDxx xTT TTTT TTTT
+	$sTZ = $iTZ
+	If $iDST_enabled = 0 Then    ; Turn off daylight_savings_enable, bit 15
+		$iTZ = BitXOR($iTZ, 32768)
+	EndIf
+	If $iTZ_defined = 0 Then    ; Turn off time_zone_defined, bit 14
+		$iTZ = BitXOR($iTZ, 16384)
+	EndIf
+	$aDstDiagHex[4] = CommaSeparatedBytes(Hex($iTZ, 4), 2)
+	GUICtrlSetData($hTestSummary, "DST_enabled=" & $iDST_enabled & ", TZ_defined=" & $iTZ_defined & ", time_zone=" & $sTZ & " => " & $aDstDiagHex[4])
+	SendDstUim($hTestSummary, $aDstDiagHex)
+EndFunc   ;==>SendModifiedTzUim
+
+
+; Purpose:  To check if the box is in DST.
+; $aDstDiagHex - Array to be filled by GetDstData.
+; $aDstDiagDec - Array to be filled by GetDstData.
+; $iState - Test condition : 0=noDst, 1=inDst
+; Returns pass/fail based on $iState
+Func CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, $iState)
+	Local $bPass = False
+	Local $sPassFail = "Fail"
+	Local $aSysTime = ["", "", ""]    ; Hours Minutes Secs
+	Sleep(5000)                ; Wait 5 seconds and get system time
+	GetLocalTime($hTestSummary, $aSysTime)
+	GetDstData($hTestSummary, $aDstDiagHex, $aDstDiagDec)
+	$sTime = $aSysTime[0] & ":" & $aSysTime[1] & ":" & $aSysTime[2]
+	If $aDstDiagDec[0] = $iState Then
+		$bPass = True                ; It should be in DST, if not then fail
+		$sPassFail = "Pass"
+	EndIf
+	GUICtrlSetData($hTestSummary, "System time = " & $sTime & ", State = " & $aDstDiagDec[0] & ", " & $sPassFail & @CRLF)
+	Return $bPass
+EndFunc   ;==>CheckIfInDst
+
+; Purpose:  Get Diagnostics A data for DST
+; This fills in an a Hex array of comma-separated bytes.
+Func GetDstData($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
+	MakeRmtCmdDrip("diag:A", 1000)        ; Get Diag A data .
+	RunDripTest("cmd")
+	Local $sDstEntry = FindNthStringInFile("DST_Entry", "cmd", 1)
+	Local $sDstExit = FindNthStringInFile("DST_Exit", "cmd", 1)
+	Local $sGpsSecs = FindNthStringInFile("Secs", "cmd", 1)
+	Local $sInDst = FindNthStringInFile("DST_state", "cmd", 1)
+	Local $sUA = FindNthStringInFile("UA", "cmd", 2)
+	Local $sTZ = FindNthStringInFile("TimeZone", "cmd", 1)
+	Local $iDstEntry = Dec(StringReplace($sDstEntry, "0x", ""))
+	Local $iDstExit = Dec(StringReplace($sDstExit, "0x", ""))
+	Local $iGpsSecs = Dec(StringReplace($sGpsSecs, "0x", ""))
+	Local $iTZ = Number($sTZ)
+	$sUA = Hex($sUA, 10)       ; 10 character hex representation of decimal value
+	$sTZ = Hex($iTZ, 4)
+
+	; DST Diag Array Decimal values : state, gps, entry, exit
+	$aDstDiagDec[0] = $sInDst
+	$aDstDiagDec[1] = $iGpsSecs
+	$aDstDiagDec[2] = $iDstEntry
+	$aDstDiagDec[3] = $iDstExit
+	$aDstDiagDec[4] = $iTZ
+
+	; DST Diag Array : UA, gps, entry, exit
+	$aDstDiagHex[0] = CommaSeparatedBytes($sUA, 5)         ; UA is 5 bytes
+	$aDstDiagHex[1] = CommaSeparatedBytes($sGpsSecs, 4)    ; System time is 4 bytes
+	$aDstDiagHex[2] = CommaSeparatedBytes($sDstEntry, 4)  ; System time is 4 bytes
+	$aDstDiagHex[3] = CommaSeparatedBytes($sDstExit, 4)    ; System time is 4 bytes
+	$aDstDiagHex[4] = CommaSeparatedBytes($sTZ, 2)        ; Timezone is 2 bytes
+EndFunc   ;==>GetDstData
+
+
+; Purpose:  Get the current local time.
+; Note: Passes back array by reference of the system time.
+; ast Time gives something like:
+; Local Time : Mon May 10 14:33:36 2021
+Func GetLocalTime($hTestSummary, ByRef $aSysTime)
+	MakeAstTtl("ast Time", 5)
+	RunAstTtl()
+	$aSysTime[0] = FindNthStringInFile("Local", "ast", 5)
+	$aSysTime[1] = FindNthStringInFile("Local", "ast", 6)
+	$aSysTime[2] = FindNthStringInFile("Local", "ast", 7)
+EndFunc   ;==>GetLocalTime
+
+
+; Purpose:  Send a UIM with specified DST entry/exit times.
+; $aDstDiagHex[]  Diagnostics Array : UA, gps, entry, exit
+Func SendDstUim($hTestSummary, $aDstDiagHex)
+	; Create a UIM.  Example:
+	; "msp:9d,10,2a,00,1D,59,51,d2,00,69,00,13,00,00,00,40,40,00,00,1f,af,c6,20,4d,77,4f,76,4e,b2,65,f7,02,10,40,7f,fd,00,00,00,ff,fc,c0,ae,3d,1a,55,55,55"
+	; Pacific timezone = 60 minutes * 8 hours = -480
+	; TZ_field (2 bytes) = dst Enable (E) + tz Defined (D) + reserved (xxx) + timezone minutes (T) = EDxx xTT TTTT TTTT
+	; -480 = 0xfe20 -> filter 11 bits, 110 0010 0000 -> plus dst Enable (E) and tz Defined (D), EDxx x110 0010 0000  (x should be 1, reserved)
+	; fe,20, => 1111 1110 0010 0000
+	; c6,20, => 1100 0110 0010 0000
+	Local $sTZ_field = "c6,20,"
+	Local $sUimMsg = "msp:9d,10,2a," & _
+			$aDstDiagHex[0] & _
+			"00,69,00,13,00,00,00,40,40,00,00,1f,af," & _
+			$aDstDiagHex[4] & _
+			$aDstDiagHex[2] & $aDstDiagHex[3] & _
+			"02,10,40,7f,fd,00,00,00,ff,fc"
+	Local $aUimCmd[] = ["wait:1000; " & $sUimMsg]
+	MakeCmdDrip($aUimCmd)
+	RunDripTest("cmd")
+EndFunc   ;==>SendDstUim
+
 
 ; Purpose: Reboot the box.  The VCT_ID and Number of Channels should not change.
 ; This tests the following
