@@ -87,11 +87,11 @@ EndFunc   ;==>RunDstTests
 Func DST_regress_001_001($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $bPass = True
 	; Configure so Entry time is in the past and Exit time is in the future.
-	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST ")
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST")
 	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
 	; Exit time is in the near future and the Entry time is in that far future
-	GUICtrlSetData($hTestSummary, "Test A - X-Exit----Entry : X=DST ")
+	GUICtrlSetData($hTestSummary, "Test A - X-Exit----Entry : X=DST")
 	SendEntryExitUim($hTestSummary, 60 * 60 * 24 * 20, 60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
 	SavePassFailTestResult('DSR SI&T.System Control.DST & Related Settings:001-001', $bPass)
@@ -117,7 +117,7 @@ EndFunc   ;==>DST_regress_001_002
 Func DST_regress_001_003($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $bPass = True
 	; Configure so Entry time is in the far future and Exit time is in the near future.
-	GUICtrlSetData($hTestSummary, "Test A - X-Exit----Entry : X=DST  ")
+	GUICtrlSetData($hTestSummary, "Test A - X-Exit----Entry : X=DST   ")
 	SendEntryExitUim($hTestSummary, 60 * 60 * 24 * 20, 20, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
 	; Allow the unit to transition to STD time (across Exit time).
@@ -132,7 +132,7 @@ EndFunc   ;==>DST_regress_001_003
 Func DST_regress_001_004($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $bPass = True
 	; Configure so Entry time is in the near future and Exit time is in the far future.
-	GUICtrlSetData($hTestSummary, "Test D - X-Entry----Exit : X=DST  ")
+	GUICtrlSetData($hTestSummary, "Test D - X-Entry----Exit : X=DST   ")
 	SendEntryExitUim($hTestSummary, 20, 60 * 60 * 24 * 20, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
 	; Allow the unit to cross into the DST Entry time.
@@ -147,7 +147,7 @@ EndFunc   ;==>DST_regress_001_004
 Func DST_regress_001_005($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $bPass = True
 	; Configure so Entry time is in the near future and Exit time is in the far future.
-	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST   ")
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST    ")
 	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 20, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
 	; Entry time is in the past and the Exit time is in the future
@@ -162,7 +162,7 @@ EndFunc   ;==>DST_regress_001_005
 Func DST_regress_001_006($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $bPass = True
 	; Configure so Entry time is in the near future and Exit time is in the far future.
-	GUICtrlSetData($hTestSummary, "Test E - Exit--X--Entry  : X=STD   ")
+	GUICtrlSetData($hTestSummary, "Test E - Exit--X--Entry  : X=STD     ")
 	SendEntryExitUim($hTestSummary, 60 * 60 * 24 * 2, -60 * 60 * 24 * 20, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
 	;  Set the SAC condition such that the DST flag is Unchecked.
@@ -196,7 +196,7 @@ EndFunc   ;==>DST_regress_001_007
 Func DST_regress_001_008($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $bPass = True
 	; Configure so Entry time is in the near future and Exit time is in the far future.
-	GUICtrlSetData($hTestSummary, "Test E - Exit--X--Entry  : X=STD")
+	GUICtrlSetData($hTestSummary, "Test E - Exit--X--Entry  : X=STD         ")
 	SendEntryExitUim($hTestSummary, 20, -60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 0) And $bPass
 	; Entry time is in the future by 20 secs and the Exit time is in the past.
@@ -214,7 +214,7 @@ Func DST_regress_001_009($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $aEastCoast = ["", "", ""]    ; Hours Minutes Secs
 	Local $aWestCoast = ["", "", ""]    ; Hours Minutes Secs
 	; Configure so Entry time is in the past and Exit time is in the future.
-	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST ")
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST         ")
 	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
 	; At the SAC, set the postal code to east coast (19131).

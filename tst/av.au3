@@ -60,6 +60,8 @@ Func RunVideoAspectOverride($hTestSummary)
 
 	If $sVctId = "4380" Then        ; Use channel 482 - This channel is 1080i.
 		ChanChangeDrip("rmt:DIGIT4", "rmt:DIGIT8", "rmt:DIGIT2")
+	ElseIf $sVctId = "8111" Then
+		ChanChangeDrip("rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6")
 	EndIf
 	; User value, Resultant value, Test Requirement
 	Local $aUserVsActual[3][3] = [ _
@@ -191,6 +193,11 @@ Func RunSdAspectRatio($hTestSummary)
 
 	If $sVctId = "4380" Then        ; Use channel 130 - This channel is 480i.
 		ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT3", "rmt:DIGIT0")
+	ElseIf $sVctId = "8111" Then
+		ChanChangeDrip("rmt:DIGIT2", "rmt:DIGIT3", "rmt:DIGIT0")
+	Else
+		GUICtrlSetData($hTestSummary, "Test not run.  Need VCT_ID 4380 or 8111")
+		Return
 	EndIf
 
 	; make the 'ast vi' command with 3 second timeout for Video Stats

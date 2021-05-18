@@ -1,8 +1,8 @@
 ; Purpose: TeraTerm Macro for flashing the box.
 ; Note: This makes use of Shaw's package_loader command.
 ; Modify the mount_command as needed.
-mount_command = "mount 10.73.76.57:/extra/nfs/mgi1788/regressiontest /mnt/nfs "
-;mount_command = "mount 10.73.76.57:/extra/nfs/mgi1788/dsr8xx /mnt/nfs "
+;mount_command = "mount 10.73.76.57:/extra/nfs/mgi1788/regressiontest /mnt/nfs "
+mount_command = "mount 10.73.76.57:/extra/nfs/mgi1788/dsr8xx /mnt/nfs "
 package_DSR800 = "package_loader /mnt/nfs/packages/package_DSR800.bin"
 package_DSR830 = "package_loader /mnt/nfs/packages/package_DSR830.bin"
 

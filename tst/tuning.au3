@@ -39,6 +39,9 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 		; For VCT_ID of 4380, start at channel 964.  Use 216 for CSS channel testing.
 		Local $aChanNumTune[] = ["rmt:DIGIT9", "rmt:DIGIT6", "rmt:DIGIT0"]
 		Local $aChanNumCss[] = ["rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6"]
+	ElseIf $sVctId = "8111" Then
+		Local $aChanNumTune[] = ["rmt:DIGIT9", "rmt:DIGIT6", "rmt:DIGIT5"]
+		Local $aChanNumCss[] = ["rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6"]
 	Else
 		Local $aChanNumTune[] = ["rmt:DIGIT9", "rmt:DIGIT6", "rmt:DIGIT0"]
 		Local $aChanNumCss[] = ["rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6"]

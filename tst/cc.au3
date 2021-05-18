@@ -23,6 +23,8 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 	RunDripTest("cmd")        ; EXIT key twice to get out of any GUI screens
 	If $sVctId = "4380" Then
 		ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT2", "rmt:DIGIT1")
+	ElseIf $sVctId = "8111" Then
+		ChanChangeDrip("rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6")
 	EndIf
 
 	TurnCaptionsOn()

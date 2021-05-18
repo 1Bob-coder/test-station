@@ -47,6 +47,8 @@ Func RunDVRTest($TestSummary, $DVR_pf)
 
 	If $sVctId = "4380" Then        ; Use channel 121
 		ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT2", "rmt:DIGIT1")
+	ElseIf $sVctId = "8111" Then
+		ChanChangeDrip("rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6")
 	EndIf
 
 	Sleep(20000)          ; Wait 20 seconds before starting the LOD test
@@ -149,6 +151,8 @@ Func RunDualDvrTest($TestSummary, $DVR_pf)
 
 	If $sVctId = "4380" Then            ; Use channel 121
 		ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT2", "rmt:DIGIT1")
+	ElseIf $sVctId = "8111" Then
+		ChanChangeDrip("rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6")
 	EndIf
 
 	GUICtrlSetData($TestSummary, "Record the current program, RECORD, RIGHT, ENTER" & @CRLF)
