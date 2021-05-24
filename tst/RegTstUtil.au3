@@ -424,7 +424,9 @@ Func FindNthStringInFile($sWhichString, $sWhichTest, $iWhichOne)
 						_ArrayAdd($aNewArray, $sItem)
 					EndIf
 				Next
-				$sNextWord = $aNewArray[$iWhichOne]
+				If UBound($aNewArray) >= $iWhichOne Then
+					$sNextWord = $aNewArray[$iWhichOne]
+				EndIf
 			Else
 				ConsoleWrite("No split")
 			EndIf

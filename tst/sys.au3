@@ -210,6 +210,7 @@ EndFunc   ;==>DST_regress_001_008
 ; 3	DSR SI&T.System Control.DST & Related Settings:001-009	DSR time tracks timezone changes
 Func DST_regress_001_009($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $bPass = True
+	Local $iHourCrossover = 0
 	Local $sPassFail = "Pass"
 	Local $aEastCoast = ["", "", ""]    ; Hours Minutes Secs
 	Local $aWestCoast = ["", "", ""]    ; Hours Minutes Secs
@@ -221,10 +222,20 @@ Func DST_regress_001_009($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	GUICtrlSetData($hTestSummary, "Set timezone to east coast.")
 	Local $iTZ = $aDstDiagDec[4]    ; save off old value.
 	SendModifiedTzUim($hTestSummary, -300, 1, 1, $aDstDiagHex, $aDstDiagDec)    ; timezone east coast = -300
+	Sleep(5000)
 	GetLocalTime($hTestSummary, $aEastCoast)
+	$sTime = $aEastCoast[0] & ":" & $aEastCoast[1] & ":" & $aEastCoast[2]
+	GUICtrlSetData($hTestSummary, "East coast time = " & $sTime)
 	SendModifiedTzUim($hTestSummary, -480, 1, 1, $aDstDiagHex, $aDstDiagDec)    ; timezone west coast = -480
+	Sleep(5000)
 	GetLocalTime($hTestSummary, $aWestCoast)
-	If Number($aEastCoast[0]) <> Number($aWestCoast[0]) + 3 Then
+	$sTime = $aWestCoast[0] & ":" & $aWestCoast[1] & ":" & $aWestCoast[2]
+	GUICtrlSetData($hTestSummary, "West coast time = " & $sTime)
+	If Number($aEastCoast[2]) > Number($aWestCoast[2]) Then
+		$iHourCrossover = 1
+	EndIf
+
+	If Number($aEastCoast[0]) <> Number($aWestCoast[0]) + 3 + $iHourCrossover Then
 		$bPass = False
 		$sPassFail = "Fail"
 	EndIf
@@ -264,7 +275,7 @@ Func SendModifiedTzUim($hTestSummary, $iTZ, $iDST_enabled, $iTZ_defined, ByRef $
 		$iTZ = BitXOR($iTZ, 16384)
 	EndIf
 	$aDstDiagHex[4] = CommaSeparatedBytes(Hex($iTZ, 4), 2)
-	GUICtrlSetData($hTestSummary, "DST_enabled=" & $iDST_enabled & ", TZ_defined=" & $iTZ_defined & ", time_zone=" & $sTZ & " => " & $aDstDiagHex[4])
+	;GUICtrlSetData($hTestSummary, "DST_enabled=" & $iDST_enabled & ", TZ_defined=" & $iTZ_defined & ", time_zone=" & $sTZ & " => " & $aDstDiagHex[4])
 	SendDstUim($hTestSummary, $aDstDiagHex)
 EndFunc   ;==>SendModifiedTzUim
 
