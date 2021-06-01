@@ -147,7 +147,7 @@ EndFunc   ;==>DST_regress_001_004
 Func DST_regress_001_005($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $bPass = True
 	; Configure so Entry time is in the near future and Exit time is in the far future.
-	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST    ")
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST ")
 	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 20, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
 	; Entry time is in the past and the Exit time is in the future
@@ -178,7 +178,7 @@ EndFunc   ;==>DST_regress_001_006
 Func DST_regress_001_007($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $bPass = True
 	; Configure so Entry time is in the near future and Exit time is in the far future.
-	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST    ")
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST  ")
 	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 60 * 60 * 24 * 20, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
 	;  Set the SAC condition such that the DST flag is Unchecked.
@@ -215,7 +215,7 @@ Func DST_regress_001_009($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	Local $aEastCoast = ["", "", ""]    ; Hours Minutes Secs
 	Local $aWestCoast = ["", "", ""]    ; Hours Minutes Secs
 	; Configure so Entry time is in the past and Exit time is in the future.
-	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST         ")
+	GUICtrlSetData($hTestSummary, "Test B - Entry--X--Exit : X=DST   ")
 	SendEntryExitUim($hTestSummary, -60 * 60 * 24 * 2, 60 * 60 * 24 * 2, $aDstDiagHex, $aDstDiagDec)
 	$bPass = CheckIfInDst($hTestSummary, $aDstDiagHex, $aDstDiagDec, 1) And $bPass
 	; At the SAC, set the postal code to east coast (19131).
@@ -231,7 +231,7 @@ Func DST_regress_001_009($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	GetLocalTime($hTestSummary, $aWestCoast)
 	$sTime = $aWestCoast[0] & ":" & $aWestCoast[1] & ":" & $aWestCoast[2]
 	GUICtrlSetData($hTestSummary, "West coast time = " & $sTime)
-	If Number($aEastCoast[2]) > Number($aWestCoast[2]) Then
+	If Number($aEastCoast[1]) > Number($aWestCoast[1]) Then
 		$iHourCrossover = 1
 	EndIf
 

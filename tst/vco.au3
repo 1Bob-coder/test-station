@@ -243,7 +243,7 @@ Func VCO_regress_001_002($hTestSummary, $VCO_pf, $aVcoParams)
 		ChanChangeDrip("rmt:DIGIT" & StringMid($sFrom, 1, 1), _
 				"rmt:DIGIT" & StringMid($sFrom, 2, 1), _
 				"rmt:DIGIT" & StringMid($sFrom, 3, 1))
-		Sleep(10000)        ; Sleep for 10 seconds.
+		Sleep(15000)        ; Sleep for 15 seconds.
 		MakeCmdVCO($sFrom, 0, "20,", "38000", "40,19," & $sXYZ, True, $aVcoParams)
 		GUICtrlSetData($hTestSummary, "Immediate Circle started on different tuner, should VCO" & @CRLF)
 		$bPass = RunAndTestForVideoStart($hTestSummary, "Alternate tuner", True) And $bPass
@@ -514,6 +514,7 @@ EndFunc   ;==>VCO_regress_TrickPlays
 Func VCO_regress_Record($hTestSummary, $VCO_pf, ByRef $aVcoParams)
 	Local $bPass = True
 	Local $bPassTemp = True
+	Sleep(10000)	; Sleep for 10 seconds
 	Local $sFrom = $aVcoParams[$eFromChan]
 	If $sBoxType = "DSR800" Then
 		GUICtrlSetData($hTestSummary, "Box is DSR800.  LOD tests not run.")
