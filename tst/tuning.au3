@@ -34,25 +34,12 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 		$iNumChannels = 0          ; Channel change across all channels
 	EndIf
 
-	; For VCT_ID of 4380, start at channel 964.  Use 216 for CSS channel testing.
-	If $sVctId = "4380" Then
-		; For VCT_ID of 4380, start at channel 964.  Use 216 for CSS channel testing.
-		Local $aChanNumTune[] = ["rmt:DIGIT9", "rmt:DIGIT6", "rmt:DIGIT0"]
-		Local $aChanNumCss[] = ["rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6"]
-	ElseIf $sVctId = "8111" Then
-		Local $aChanNumTune[] = ["rmt:DIGIT9", "rmt:DIGIT6", "rmt:DIGIT5"]
-		Local $aChanNumCss[] = ["rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6"]
-	Else
-		Local $aChanNumTune[] = ["rmt:DIGIT9", "rmt:DIGIT6", "rmt:DIGIT0"]
-		Local $aChanNumCss[] = ["rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6"]
-	EndIf
-
 	; Find the average channel change speed.
-	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $aChanNumCss, "Tune", "TuneTestResults.txt")
+	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $sHdChan, "Tune", "TuneTestResults.txt")
 	ComputeAvgChanSpeed($hTestSummary)
 
 	; Perform the channel change test across multiple channels with various a/v parameters.
-	$bPass = PerformChannelChanges($hTestSummary, 5, $aChanNumTune, "Tune2", "TuneTestResults2.txt")
+	;$bPass = PerformChannelChanges($hTestSummary, 5, $aChanNumTune, "Tune2", "TuneTestResults2.txt")
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:001-010", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-001", $bPass)
 	SavePassFailTestResult("DSR SI&T.Tuning.Acquisition:003-005", $bPass)
@@ -79,7 +66,7 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 			GUICtrlSetData($hTestSummary, "Turn on CSS Auto mode, and do channel change test" & @CRLF)
 			PickCssAuto()       ; Turn on "CSS Auto" mode.
 			$aSlotsBeforeReboot = GetCssSlots($hTestSummary, "Slots Auto Mode are: ")
-			$bPassFail = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Auto", "")
+			$bPassFail = PerformChannelChanges($hTestSummary, 5, $sHdChan, "CSS Auto", "")
 			SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-001", $bPassFail)
 			SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-002", $bPassFail)
 			SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:003-001", $bPassFail)
@@ -94,7 +81,7 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 			GUICtrlSetData($hTestSummary, "Turn on CSS Refresh, and do channel change test." & @CRLF)
 			PickCssRefresh()    ; Choose "CSS Refresh" mode
 			$aSlotsBeforeReboot = GetCssSlots($hTestSummary, "Slots After CSS Refresh are: ")
-			$bPass = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Refresh", "") And $bPass
+			$bPass = PerformChannelChanges($hTestSummary, 5, $sHdChan, "CSS Refresh", "") And $bPass
 			; Reboot the box.  Then check if CSS configuration was retained.
 			If $sBoxType == "DSR800" Then
 				GUICtrlSetData($hTestSummary, "Reboot box and test for same slots: " & $aSlotsBeforeReboot[0] & @CRLF)
@@ -118,7 +105,7 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 				EndIf
 				If $bPassFail Then
 					GUICtrlSetData($hTestSummary, "Slots remained the same after reboot.  BoxType = " & $sBoxType & @CRLF)
-					$bPassFail = PerformChannelChanges($hTestSummary, 5, $aChanNumCss, "CSS Reboot", "")
+					$bPassFail = PerformChannelChanges($hTestSummary, 5, $sHdChan, "CSS Reboot", "")
 				Else
 					GUICtrlSetData($hTestSummary, "Failed on CSS Reboot Test - Slots are different.  BoxType = " & $sBoxType & @CRLF)
 				EndIf

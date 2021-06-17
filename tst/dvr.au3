@@ -45,11 +45,7 @@ Func RunDVRTest($TestSummary, $DVR_pf)
 	RunDripTest("cmd")
 	RunDripTest("cmd")
 
-	If $sVctId = "4380" Then        ; Use channel 121
-		ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT2", "rmt:DIGIT1")
-	ElseIf $sVctId = "8111" Then
-		ChanChangeDrip("rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6")
-	EndIf
+	ChanChange($sHdChan)
 
 	Sleep(20000)          ; Wait 20 seconds before starting the LOD test
 	$bPass = RunTrickPlays($TestSummary, $DVR_pf, "LOD: ") And $bPass
@@ -149,11 +145,7 @@ EndFunc   ;==>RunTrickPlays
 Func RunDualDvrTest($TestSummary, $DVR_pf)
 	GUICtrlSetData($TestSummary, "Run Dual Record Test")
 
-	If $sVctId = "4380" Then            ; Use channel 121
-		ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT2", "rmt:DIGIT1")
-	ElseIf $sVctId = "8111" Then
-		ChanChangeDrip("rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6")
-	EndIf
+	ChanChange($sHdChan)
 
 	GUICtrlSetData($TestSummary, "Record the current program, RECORD, RIGHT, ENTER" & @CRLF)
 	Local $aStartRecord[] = [ _
@@ -164,12 +156,9 @@ Func RunDualDvrTest($TestSummary, $DVR_pf)
 	MakeCmdDrip($aStartRecord)
 	RunDripTest("cmd")
 
-	If $sVctId = "4380" Then            ; Use channel 131
-		ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT3", "rmt:DIGIT1")
-	Else
-		MakeRmtCmdDrip("rmt:CHAN_UP", 1000)
-		RunDripTest("cmd")
-	EndIf
+	MakeRmtCmdDrip("rmt:CHAN_UP", 3000)
+	RunDripTest("cmd")
+	RunDripTest("cmd")
 
 	GUICtrlSetData($TestSummary, "Record another program, RECORD, RIGHT, ENTER" & @CRLF)
 	Local $aStartRecord[] = [ _

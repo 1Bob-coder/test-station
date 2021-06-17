@@ -222,13 +222,17 @@ Func DST_regress_001_009($hTestSummary, ByRef $aDstDiagHex, ByRef $aDstDiagDec)
 	GUICtrlSetData($hTestSummary, "Set timezone to east coast.")
 	Local $iTZ = $aDstDiagDec[4]    ; save off old value.
 	SendModifiedTzUim($hTestSummary, -300, 1, 1, $aDstDiagHex, $aDstDiagDec)    ; timezone east coast = -300
-	Sleep(5000)
+	Sleep(3000)
 	GetLocalTime($hTestSummary, $aEastCoast)
+	; Copy ast.log to eastcoast.log
+	FileCopy($sLogDir & "ast.log", "eastcoast.log")
 	$sTime = $aEastCoast[0] & ":" & $aEastCoast[1] & ":" & $aEastCoast[2]
 	GUICtrlSetData($hTestSummary, "East coast time = " & $sTime)
 	SendModifiedTzUim($hTestSummary, -480, 1, 1, $aDstDiagHex, $aDstDiagDec)    ; timezone west coast = -480
 	Sleep(5000)
 	GetLocalTime($hTestSummary, $aWestCoast)
+	; Copy ast.log to westcoast.log
+	FileCopy($sLogDir & "ast.log", "westcoast.log")
 	$sTime = $aWestCoast[0] & ":" & $aWestCoast[1] & ":" & $aWestCoast[2]
 	GUICtrlSetData($hTestSummary, "West coast time = " & $sTime)
 	If Number($aEastCoast[1]) > Number($aWestCoast[1]) Then
@@ -340,11 +344,11 @@ EndFunc   ;==>GetDstData
 ; ast Time gives something like:
 ; Local Time : Mon May 10 14:33:36 2021
 Func GetLocalTime($hTestSummary, ByRef $aSysTime)
-	MakeAstTtl("ast Time", 5)
+	MakeAstTtl("ast time", 5)
 	RunAstTtl()
-	$aSysTime[0] = FindNthStringInFile("Local", "ast", 5)
-	$aSysTime[1] = FindNthStringInFile("Local", "ast", 6)
-	$aSysTime[2] = FindNthStringInFile("Local", "ast", 7)
+	$aSysTime[0] = FindNthStringInFile("Local Time", "ast", 4)
+	$aSysTime[1] = FindNthStringInFile("Local Time", "ast", 5)
+	$aSysTime[2] = FindNthStringInFile("Local Time", "ast", 6)
 EndFunc   ;==>GetLocalTime
 
 

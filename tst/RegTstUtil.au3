@@ -44,6 +44,11 @@ Global $sSITSpreadsheetResults = ""
 Global $sVctId = ""
 Global $aTestArray
 Global $aTuneResults[1][8] = [["--", "--", "--", "--", "--", "--", "--", "--"]]
+Global $sSdChan = "299"
+Global $sHdChan = "121"
+Global $sVcoFromChan = "132"
+Global $sVcoToChan = "135"
+Global $sSubscribedChan = "963"
 
 ; Purpose:  To get the list of com ports on the PC and set the GUI box.
 Func UpdateComPortList($hComPort)
@@ -138,11 +143,38 @@ EndFunc   ;==>FindBoxVer
 ; Purpose:  Gets the VCT_ID.  Useful for VCO and SD channel tests based on the VCT_ID.
 ; Found on Diag A, line 5, column 3, e.g.,  VCT_ID = 4380
 Func GetVctId()
+	Local $sNumChans
 	If $sIpAddress == "" Or $sBindAddr == "" Then
 		ConsoleWrite("IP Address = " & $sIpAddress & ", Bind Address = " & $sBindAddr & @CRLF)
 	Else
 		$sVctId = GetDiagData("A,5,3", "VCT_ID")
 		ConsoleWrite("Diag A VCT_ID = " & $sVctId & @CRLF)
+		$sNumChans = GetDiagData("A,5,2", "NumChannels =")
+	EndIf
+	If $sVctId = "8111" And $sNumChans = "24" Then
+		$sSdChan = "701"
+		$sHdChan = "801"
+		$sVcoFromChan = "802"
+		$sVcoToChan = "299"
+	ElseIf $sVctId = "8111" Then
+		$sSdChan = "285"
+		$sHdChan = "196"
+		$sVcoFromChan = "132"
+		$sVcoToChan = "261"
+	ElseIf $sVctId = "4380" Then
+		$sSdChan = "285"
+		$sHdChan = "482"
+		$sVcoFromChan = "125"
+		$sVcoToChan = "252"
+	ElseIf $sVctId = "4188" Then
+		$sSdChan = "299"
+		$sHdChan = "066"
+		$sVcoFromChan = "066"
+		$sVcoToChan = "166"
+	ElseIf $sVctId = "" Then
+		ConsoleWrite("IpAddress = " & $sIpAddress & ", BindAddress = " & $sBindAddr & @CRLF)
+	Else
+		MsgBox($MB_SYSTEMMODAL, "VCT_ID " & $sVctId & " is not used for testing.", "Must be 811, 4380, or 4188.")
 	EndIf
 EndFunc   ;==>GetVctId
 
@@ -170,7 +202,7 @@ Func GetStringInFile($sWhichString, $sWhichTest, $iOffset, $iLength)
 	Local $sRetString = ""
 	Local $sRead = FileRead($sLogFile)
 	If @error Then
-		ConsoleWrite("FindStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
+		ConsoleWrite("GetStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
 	Else
 		Local $iPosition = StringInStr($sRead, $sWhichString)
 		$sRetString = StringMid($sRead, $iPosition + $iOffset, $iLength)
@@ -293,12 +325,11 @@ Func RunDripTest($sWhichTest)
 	Else
 		Local $sLogFile = $sLogDir & $sWhichTest & ".log"
 		FileDelete($sLogFile)
+		Sleep(500)
 		Local $sTestFile = $sDripScripts & $sWhichTest & ".drip"
 		Local $sTestCommand = $sPython & $sPyDrip & " /b " & $sBindAddr & " /i " & $sIpAddress & _
 				" /f " & $sTestFile & " /o " & $sLogFile
-		;FileDelete($sLogFile)
 		RunWait($sTestCommand, "", @SW_HIDE)    ; Run the test (minimized).
-		;RunWait($sTestCommand, "")				; Run the test (show Python box).
 	EndIf
 EndFunc   ;==>RunDripTest
 
@@ -359,11 +390,11 @@ EndFunc   ;==>FindStringInFile
 Func FindAllStringsInFile($sWhichString, $sWhichTest, $iOffset, $iArray = 0)
 	Local $iPosition = 1, $sChop = " ", $sNextWord = "", $aSplit = [], $lStrings = ""
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
-	Local $sRead = FileRead($sLogFile)
 	Local $aStrings[0]
+	Local $sRead = FileRead($sLogFile)
 
 	If @error Then
-		ConsoleWrite("FindStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
+		ConsoleWrite("FindAllStringsInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
 	Else
 		; Loop through sRead searching for all sWhichString
 		While $iPosition
@@ -410,7 +441,7 @@ Func FindNthStringInFile($sWhichString, $sWhichTest, $iWhichOne)
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
 	Local $sRead = FileRead($sLogFile)
 	If @error Then
-		ConsoleWrite("FindNextStringInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
+		ConsoleWrite("FindNthStringInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
 	Else
 		$iPosition = StringInStr($sRead, $sWhichString)
 		If $iPosition Then
@@ -448,7 +479,7 @@ Func FindNthPositionInFile($sWhichString, $sWhichTest, $iNumChars)
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
 	Local $sRead = FileRead($sLogFile)
 	If @error Then
-		ConsoleWrite("FindNextStringInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
+		ConsoleWrite("FindNthPositionInFile FileRead error " & @error & "," & $sLogFile & @CRLF)
 	Else
 		$iPosition = StringInStr($sRead, $sWhichString)
 		If $iPosition Then
@@ -478,7 +509,7 @@ Func FindStringAfterStrings($aStrings, $sWhichTest)
 	Local $sLogFile = $sLogDir & $sWhichTest & ".log"
 	Local $sRead = FileRead($sLogFile)
 	If @error Then
-		ConsoleWrite("FindStringInFile FileRead error " & @error & ",  " & $sLogFile & @CRLF)
+		ConsoleWrite("FindStringAfterStrings FileRead error " & @error & ",  " & $sLogFile & @CRLF)
 	Else
 		$iNumStrings = UBound($aStrings)
 		For $ii = 0 To $iNumStrings - 1 Step 1
@@ -598,15 +629,22 @@ Func MakeCmdDrip($aDripCmd)
 	;ConsoleWrite($sCmdDrip & " was written" & @CRLF)
 EndFunc   ;==>MakeCmdDrip
 
+; Purpose:  Channel change to the given channel number string.
+; sChanTo - 3 digit channel number
+Func ChanChange($sChanTo)
+	ChanChangeDrip("rmt:DIGIT" & StringMid($sChanTo, 1, 1), _
+			"rmt:DIGIT" & StringMid($sChanTo, 2, 1), _
+			"rmt:DIGIT" & StringMid($sChanTo, 3, 1))
+EndFunc   ;==>ChanChange
 
-; Channel change to a particular channel.
+; Purpose: Channel change to a particular channel.
 ; sKey - The three key commands, e.g. 'rmt:DIGIT0' for '0'
 Func ChanChangeDrip($sKey1, $sKey2, $sKey3)
 	$hFilehandle = FileOpen($sCmdDrip, $FO_OVERWRITE)  ; Open and delete any existing content
 	If FileExists($sCmdDrip) Then
-		FileWrite($hFilehandle, "wait:500; " & $sKey1 & @CRLF)
-		FileWrite($hFilehandle, "wait:500; " & $sKey2 & @CRLF)
-		FileWrite($hFilehandle, "wait:500; " & $sKey3 & @CRLF)
+		FileWrite($hFilehandle, "wait:1000; " & $sKey1 & @CRLF)
+		FileWrite($hFilehandle, "wait:1000; " & $sKey2 & @CRLF)
+		FileWrite($hFilehandle, "wait:1000; " & $sKey3 & @CRLF)
 		FileWrite($hFilehandle, "wait:6000; sea:all" & @CRLF)  ; Wait 6 seconds for chan change to be done
 		FileClose($hFilehandle)
 		RunDripTest("cmd")
@@ -624,6 +662,7 @@ EndFunc   ;==>ChanChangeDrip
 Func CollectSerialLogs($sWhichTest, $bShow)
 	Local $sWhichLog = $sLogDir & $sWhichTest & ".log" ; log file
 	FileDelete($sWhichLog)
+	Sleep(500)
 	If $bShow Then
 		Run($sTeraTerm & " /C=" & $sComPort & " /W=" & $sWhichTest & " /L=" & $sWhichLog)
 	Else
@@ -678,7 +717,7 @@ EndFunc   ;==>ShowProgressWindow
 
 ; Purpose:  Channel change across multiple channels and gather the data.
 ; iNumChans = 0 for all channels, otherwise number of channels
-; aChanNum - Channel Number, in array format to make Drip script.
+; sStartChannel - Starting channel.
 ; sTitle - Test Title
 ; sFilename - Save data to this file, blank if not to save.
 ; Note: All channels are MPEG4, Ac3, 8PSK, 20.5 MBPS Symbol Rate, 1.92 code rate
@@ -687,7 +726,7 @@ EndFunc   ;==>ShowProgressWindow
 ; 	Nexus Aspect Ratio            : 4x3(1.3) derived with Sar x:y:(x*w/y*h)=10:11:1.33333  --> or 16x9 (1.7)
 ; 	Freq from 995250000* to 1435250000* (all frequency descriptors)
 ;   Channel Change speed: from "STOP VIDEO DECODING" to "VIDEO_COMPONENT_START_SUCCESS"
-Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFilename)
+Func PerformChannelChanges($hTestSummary, $iNumChans, $sStartChannel, $sTitle, $sFilename)
 	Local $bPass = True
 	Local $sChanNum = ""
 	Local $sSecs = ""
@@ -716,7 +755,8 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 	RunDripTest("cmd")
 	RunDripTest("cmd")
 
-	ChanChangeDrip($aChanNum[0], $aChanNum[1], $aChanNum[2])
+	;ChanChangeDrip($aChanNum[0], $aChanNum[1], $aChanNum[2])
+	ChanChange($sStartChannel)
 	MakeRmtCmdDrip("rmt:CHAN_UP", 8000)        ; Chan Up, collect logs for 8 seconds
 
 	For $ii = 1 To $sNumChans
@@ -779,6 +819,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $aChanNum, $sTitle, $sFile
 		EndIf
 		Sleep(500)  ; Sleep for .5 second
 		FileDelete($sLogDir & $sChanNum & ".log")
+		Sleep(500)  ; Sleep for .5 second
 		FileCopy($sLogDir & "cmd.log", $sLogDir & $sChanNum & ".log")
 	Next
 	If $sFilename <> "" Then
@@ -802,11 +843,11 @@ Func GetHDs()
 	; sea fm, ses 1, do a channel change.
 	; Search for hard drive, e.g., "getLocationID:HDD: WDE5TY5K"
 	Local $aFmChanChange[] = [ _
-			"wait:500; sea:fm", _
-			"wait:500; ses:1", _
-			"wait:500; rmt:CHAN_UP", _
-			"wait:4000; ses:3", _
-			"wait:500; sea:all"]
+			"wait:1000; sea:fm", _
+			"wait:1000; ses:1", _
+			"wait:1000; rmt:CHAN_UP", _
+			"wait:5000; ses:3", _
+			"wait:1000; sea:all"]
 	MakeCmdDrip($aFmChanChange)
 	; Collect serial log data.
 	CollectSerialLogs("GetHDs", False) ; Collect serial log

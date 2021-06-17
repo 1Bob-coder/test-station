@@ -51,18 +51,14 @@ EndFunc   ;==>RunAVPresentationTest
 ; 3	DSR SI&T.A/V Presentation.Video:001-012	4:3 Stretch mode order
 Func RunVideoAspectOverride($hTestSummary)
 	Local $bPass
-	Local $sVctId = GetDiagData("A,5,3", "VCT_ID")
 
 	; Press EXIT twice to get out of any screens.
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
 	RunDripTest("cmd")
 	RunDripTest("cmd")
 
-	If $sVctId = "4380" Then        ; Use channel 482 - This channel is 1080i.
-		ChanChangeDrip("rmt:DIGIT4", "rmt:DIGIT8", "rmt:DIGIT2")
-	ElseIf $sVctId = "8111" Then
-		ChanChangeDrip("rmt:DIGIT2", "rmt:DIGIT1", "rmt:DIGIT6")
-	EndIf
+	ChanChange($sHdChan)        ; Use a 1080i channel
+
 	; User value, Resultant value, Test Requirement
 	Local $aUserVsActual[3][3] = [ _
 			["6", "FORCE_STRETCH", ""], _
@@ -189,16 +185,9 @@ Func RunSdAspectRatio($hTestSummary)
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
 	RunDripTest("cmd")
 	RunDripTest("cmd")
-	Local $sVctId = GetDiagData("A,5,3", "VCT_ID")
+	;Local $sVctId = GetDiagData("A,5,3", "VCT_ID")
 
-	If $sVctId = "4380" Then        ; Use channel 130 - This channel is 480i.
-		ChanChangeDrip("rmt:DIGIT1", "rmt:DIGIT3", "rmt:DIGIT0")
-	ElseIf $sVctId = "8111" Then
-		ChanChangeDrip("rmt:DIGIT2", "rmt:DIGIT3", "rmt:DIGIT0")
-	Else
-		GUICtrlSetData($hTestSummary, "Test not run.  Need VCT_ID 4380 or 8111")
-		Return
-	EndIf
+	ChanChange($sSdChan)    ; Use a 480i channel
 
 	; make the 'ast vi' command with 3 second timeout for Video Stats
 	MakeAstTtl("ast vi", 5)
@@ -402,11 +391,13 @@ Func RunDripAstSerialTest($aUserVsActual, $sTestTitle, $sDebugSearch, $sStatsSea
 		$iIndex = _ArraySearch($aUserVsActual, $sValueUser)
 		If @error Or $sValueActual <> $aUserVsActual[$iIndex][1] Then
 			GUICtrlSetData($hTestSummary, $sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Fail" & @CRLF)
+			ConsoleWrite($sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Fail" & @CRLF)
 			ConsoleWrite("Search in serial.log : " & $sDebugSearch & @CRLF)
 			ConsoleWrite("Search in ast.log : " & $sStatsSearch & @CRLF)
 			ConsoleWrite("error = " & @error & ", iIndex = " & $iIndex & @CRLF)
 			$bPass = False
 		Else
+			ConsoleWrite($sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Pass" & @CRLF)
 			GUICtrlSetData($hTestSummary, $sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Pass" & @CRLF)
 		EndIf
 	Next
