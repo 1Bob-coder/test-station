@@ -203,6 +203,14 @@ Func RunDualDvrTest($TestSummary, $DVR_pf)
 	Sleep(20000)     ; Wait 20 seconds
 	$bPass = RunTrickPlays($TestSummary, $DVR_pf, "DVR Playback: ") And $bPass
 
+	; Play back last recording.
+	GUICtrlSetData($TestSummary, "Stop Playback" & @CRLF)
+	Local $aStopPlayback[] = [ _
+			"wait:4000; rmt:STOP", _
+			"wait:3000; rmt;EXIT"]
+	MakeCmdDrip($aStopPlayback)
+	RunDripTest("cmd")
+
 	SavePassFailTestResult("DSR SI&T.DVR.Dual Record Feature:001-001", $bPass)
 	SavePassFailTestResult("DSR SI&T.DVR.Dual Record Feature:001-002", $bPass)
 	SavePassFailTestResult("DSR SI&T.DVR.Dual Record Feature:001-003", $bPass)

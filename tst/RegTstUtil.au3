@@ -163,7 +163,7 @@ Func GetVctId()
 		$sVcoToChan = "261"
 	ElseIf $sVctId = "4380" Then
 		$sSdChan = "285"
-		$sHdChan = "482"
+		$sHdChan = "435"
 		$sVcoFromChan = "125"
 		$sVcoToChan = "252"
 	ElseIf $sVctId = "4188" Then
@@ -811,7 +811,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $sStartChannel, $sTitle, $
 		MakeAstTtl("ast chan " & $sChanNum, 5)         ; Get the chan stats and the frequency.
 		RunAstTtl()
 		$sFreq = FindNthStringInFile("Frequency", "ast", 24) ; Skips to the 24 string and returns it.
-		GUICtrlSetData($hTestSummary, $ii & $sTitle & " Chan " & $sChanNum & " " & $sLocked & " " & $iTotalTime & " secs " & $sVideoSource & " " & _
+		GUICtrlSetData($hTestSummary, $ii & " " & $sTitle & " Chan " & $sChanNum & " " & $sLocked & " " & $iTotalTime & " secs " & $sVideoSource & " " & _
 				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & $sPassFail & @CRLF)
 		Local $vRow[1][8] = [[$sChanNum, $sLocked, $sFreq, $iTotalTime, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
 		If $sFilename <> "" Then

@@ -663,8 +663,10 @@ Func RunAndTestForVideoStart($hTestSummary, $sTestType, $bShouldVco)
 			($iStringInFile And Not $bShouldVco) Then
 		$bPass = False
 		GUICtrlSetData($hTestSummary, " - Failed " & $sTestType & @CRLF)
+		ConsoleWrite(" - Failed " & $sTestType & @CRLF)
 	Else
 		GUICtrlSetData($hTestSummary, " - Passed " & $sTestType & @CRLF)
+		ConsoleWrite(" - Passed " & $sTestType & @CRLF)
 	EndIf
 	Return $bPass
 EndFunc   ;==>RunAndTestForVideoStart
