@@ -17,7 +17,7 @@
 
 Func RunFingerTest($TestSummary, $Fingerprint_pf)
 	Local $bPass = True, $bPassFail = True
-	GUICtrlSetData($TestSummary, "==> Fingerprint Test Started")
+	DisplayLineOfText($TestSummary, "==> Fingerprint Test Started")
 	PF_Box("Running", $COLOR_BLUE, $Fingerprint_pf)
 
 	; Exit out of any screens and channel change up two times and down two times.
@@ -30,7 +30,7 @@ Func RunFingerTest($TestSummary, $Fingerprint_pf)
 			"wait:3000; rmt:CHAN_DOWN"]
 	MakeCmdDrip($aStartFresh)
 	RunDripTest("cmd")
-	GUICtrlSetData($TestSummary, "Wait 5 seconds and then send fingerprint." & @CRLF)
+	DisplayLineOfText($TestSummary, "Wait 5 seconds and then send fingerprint.")
 
 	Sleep(5000)        ; Wait 5 seconds and then send the fingerprint.
 	$bPassFail = SendFingerprint($TestSummary, $Fingerprint_pf, "Fingerprint (Live)")
@@ -55,7 +55,7 @@ Func RunFingerTest($TestSummary, $Fingerprint_pf)
 	$bPass = $bPass And $bPassFail
 	$bPass = RunTestCriteria("cmd", "ALL VIDEO OUTPUTS: ENABLED", "Non-standby mode", $TestSummary, $Fingerprint_pf) And $bPass
 
-	GUICtrlSetData($TestSummary, "<== Fingerprint Test Done")
+	DisplayLineOfText($TestSummary, "<== Fingerprint Test Done")
 	If $bPass Then
 		PF_Box("Pass", $COLOR_GREEN, $Fingerprint_pf)
 	Else
@@ -82,7 +82,7 @@ EndFunc   ;==>SendFingerprint
 Func DvrFingerprintTests($TestSummary, $Fingerprint_pf)
 	Local $bPass = True, $bPassFail = True
 	; Test fingerprint does not get recorded.
-	GUICtrlSetData($TestSummary, "Skip back and check if fingerprint was recorded." & @CRLF)
+	DisplayLineOfText($TestSummary, "Skip back and check if fingerprint was recorded." )
 	Local $aSkipBack[] = [ _
 			"wait:1000; rmt:STOP", _
 			"wait:2000; rmt:SKIP_BACK", _
@@ -94,9 +94,9 @@ Func DvrFingerprintTests($TestSummary, $Fingerprint_pf)
 	RunDripTest("cmd")
 	$bPassFail = Not FindStringInFile("displayUA", "cmd")
 	If $bPassFail Then
-		GUICtrlSetData($TestSummary, "Fingerprint not recorded - Pass" & @CRLF)
+		DisplayLineOfText($TestSummary, "Fingerprint not recorded - Pass" )
 	Else
-		GUICtrlSetData($TestSummary, "Fingerprint was recorded - Fail" & @CRLF)
+		DisplayLineOfText($TestSummary, "Fingerprint was recorded - Fail" )
 	EndIf
 	SavePassFailTestResult("DSR SI&T.DRM.Fingerprint:001-010", $bPassFail)
 	SavePassFailTestResult("DSR SI&T.DRM.Fingerprint:001-011", $bPassFail)

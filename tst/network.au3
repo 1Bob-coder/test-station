@@ -37,38 +37,38 @@ Func RunNetworkingTest($hTestSummary, $hNetworking_pf)
 			$bIsConnected = IsWiFiConnected($hTestSummary, "Test_" & $ii & " Before - ")
 			If $bIsConnected Then
 				; Toggle off
-				GUICtrlSetData($hTestSummary, "Test_" & $ii & " Turn off WiFi" & @CRLF)
+				DisplayLineOfText($hTestSummary, "Test_" & $ii & " Turn off WiFi")
 				MakeRmtCmdDrip("rmt:GREEN", 1000)
 				RunDripTest("cmd")
 				$bIsConnected = IsWiFiConnected($hTestSummary, "Test_" & $ii & " After - ")
 				If $bIsConnected Then
-					GUICtrlSetData($hTestSummary, "Fail - WiFi did not toggle off." & @CRLF)
+					DisplayLineOfText($hTestSummary, "Fail - WiFi did not toggle off.")
 				EndIf
 				$bPass = $bPass And Not $bIsConnected
 			Else
 				; Toggle on
-				GUICtrlSetData($hTestSummary, "Test_" & $ii & " Turn on WiFi" & @CRLF)
+				DisplayLineOfText($hTestSummary, "Test_" & $ii & " Turn on WiFi")
 				MakeRmtCmdDrip("rmt:SELECT", 1000)
 				RunDripTest("cmd")
 				Sleep(20000) ; sleep for 20 seconds
 				RunDripTest("cmd")
 				$bIsConnected = IsWiFiConnected($hTestSummary, "Test_" & $ii & " After - ")
 				If Not $bIsConnected Then
-					GUICtrlSetData($hTestSummary, "Fail - WiFi did not toggle on." & @CRLF)
+					DisplayLineOfText($hTestSummary, "Fail - WiFi did not toggle on.")
 				EndIf
 				$bPass = $bPass And $bIsConnected
 			EndIf
 		Next
 	Else
 		$bPass = False
-		GUICtrlSetData($hTestSummary, "No Wireless Capability - Failure" & @CRLF)
+		DisplayLineOfText($hTestSummary, "No Wireless Capability - Failure")
 	EndIf
 
 	SavePassFailTestResult("DSR SI&T.Networking.WiFi:001-001", $bPass)
 	SavePassFailTestResult("DSR SI&T.Networking.WiFi:001-002", $bPass)
 	SavePassFailTestResult("DSR SI&T.Networking.WiFi:001-003", $bPass)
 
-	GUICtrlSetData($hTestSummary, "<== Networking Test Done")
+	DisplayLineOfText($hTestSummary, "<== Networking Test Done")
 	DisplayPassFail($bPass, $hNetworking_pf)
 EndFunc   ;==>RunNetworkingTest
 
@@ -83,9 +83,9 @@ Func IsWiFiConnected($hTestSummary, $sTitle)
 	RunAstTtl()
 	$sNextString = FindStringAfterStrings($aStrings, "ast")
 	If $sNextString == "" Then
-		GUICtrlSetData($hTestSummary, $sTitle & "WiFi is not connected" & @CRLF)
+		DisplayLineOfText($hTestSummary, $sTitle & "WiFi is not connected")
 	Else
-		GUICtrlSetData($hTestSummary, $sTitle & "WiFi is connected, IP = " & $sNextString & @CRLF)
+		DisplayLineOfText($hTestSummary, $sTitle & "WiFi is connected, IP = " & $sNextString)
 		$bConnected = True
 	EndIf
 	Return $bConnected

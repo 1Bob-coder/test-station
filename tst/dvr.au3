@@ -8,19 +8,19 @@ $bHasExternalHD = True
 
 Func RunDVRTest($TestSummary, $DVR_pf)
 	Local $bPass = True
-	GUICtrlSetData($TestSummary, "==> DVR Test Started")
+	DisplayLineOfText($TestSummary, "==> DVR Test Started")
 	PF_Box("Running", $COLOR_BLUE, $DVR_pf)
 
 	If $sBoxType = "DSR800" Then
-		GUICtrlSetData($TestSummary, "BoxType is DSR800.  No tests run." & @CRLF)
-		GUICtrlSetData($TestSummary, "<== DVR Test Done")
+		DisplayLineOfText($TestSummary, "BoxType is DSR800.  No tests run.")
+		DisplayLineOfText($TestSummary, "<== DVR Test Done")
 		PF_Box("NA", $COLOR_BLUE, $DVR_pf)
 		Return
 	EndIf
 
 	Local $aHDs = GetHDs()
 	$iArraySize = UBound($aHDs)
-	GUICtrlSetData($TestSummary, "Number of HDs = " & $iArraySize - 1 & @CRLF)
+	DisplayLineOfText($TestSummary, "Number of HDs = " & $iArraySize - 1)
 	If $iArraySize > 2 Then
 		$bHasExternalHD = True
 	Else
@@ -28,7 +28,7 @@ Func RunDVRTest($TestSummary, $DVR_pf)
 	EndIf
 
 	For $i = 1 To $iArraySize - 1
-		GUICtrlSetData($TestSummary, "HD = " & $aHDs[$i] & @CRLF)
+		DisplayLineOfText($TestSummary, "HD = " & $aHDs[$i] )
 	Next
 
 	CollectSerialLogs("DvrSerial", False)    ; Start collection of serial log file (just in case it reboots)
@@ -55,7 +55,7 @@ Func RunDVRTest($TestSummary, $DVR_pf)
 	; - Trick Play on playback of recording.
 	$bPass = RunDualDvrTest($TestSummary, $DVR_pf) And $bPass
 
-	GUICtrlSetData($TestSummary, "<== DVR Test Done")
+	DisplayLineOfText($TestSummary, "<== DVR Test Done")
 
 	WinKill("COM" & $sComPort)                            ; End collection of serial log file
 
@@ -143,11 +143,11 @@ EndFunc   ;==>RunTrickPlays
 ; 2 DSR SI&T.DVR.eMSD:007-005 LOD trickplay;
 ; 3 DSR SI&T.DVR.eMSD:007-006 LOD record;
 Func RunDualDvrTest($TestSummary, $DVR_pf)
-	GUICtrlSetData($TestSummary, "Run Dual Record Test")
+	DisplayLineOfText($TestSummary, "Run Dual Record Test")
 
 	ChanChange($sHdChan)
 
-	GUICtrlSetData($TestSummary, "Record the current program, RECORD, RIGHT, ENTER" & @CRLF)
+	DisplayLineOfText($TestSummary, "Record the current program, RECORD, RIGHT, ENTER")
 	Local $aStartRecord[] = [ _
 			"wait:1000; rmt:STOP", _
 			"wait:5000; rmt:RECORD", _
@@ -160,7 +160,7 @@ Func RunDualDvrTest($TestSummary, $DVR_pf)
 	RunDripTest("cmd")
 	RunDripTest("cmd")
 
-	GUICtrlSetData($TestSummary, "Record another program, RECORD, RIGHT, ENTER" & @CRLF)
+	DisplayLineOfText($TestSummary, "Record another program, RECORD, RIGHT, ENTER")
 	Local $aStartRecord[] = [ _
 			"wait:1000; rmt:STOP", _
 			"wait:5000; rmt:RECORD", _
@@ -175,7 +175,7 @@ Func RunDualDvrTest($TestSummary, $DVR_pf)
 	Local $bPass = RunTrickPlays($TestSummary, $DVR_pf, "LOD w/ dual rec: ")
 
 	; Stop both recordings.
-	GUICtrlSetData($TestSummary, "Stop both recordings" & @CRLF)
+	DisplayLineOfText($TestSummary, "Stop both recordings")
 	Local $aStopRecord[] = [ _
 			"wait:4000; rmt:INTERACTIVE", _
 			"wait:2000; rmt:ARROW_RIGHT", _
@@ -204,7 +204,7 @@ Func RunDualDvrTest($TestSummary, $DVR_pf)
 	$bPass = RunTrickPlays($TestSummary, $DVR_pf, "DVR Playback: ") And $bPass
 
 	; Play back last recording.
-	GUICtrlSetData($TestSummary, "Stop Playback" & @CRLF)
+	DisplayLineOfText($TestSummary, "Stop Playback" )
 	Local $aStopPlayback[] = [ _
 			"wait:4000; rmt:STOP", _
 			"wait:3000; rmt;EXIT"]

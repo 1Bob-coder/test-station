@@ -20,14 +20,14 @@
 Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 	Local $bPass = True, $bPassFail = True, $iNumChannels = 25
 	PF_Box("Running", $COLOR_BLUE, $hTuning_pf)
-	GUICtrlSetData($hTestSummary, "==> Tuning Test Started" & @CRLF)
+	DisplayLineOfText($hTestSummary, "==> Tuning Test Started")
 
 	; Check if CSS configured
 	$bIsCss = IsThisCssUnit($hTestSummary)
 	If $bIsCss Then
-		GUICtrlSetData($hTestSummary, "This is a CSS Unit" & @CRLF)
+		DisplayLineOfText($hTestSummary, "This is a CSS Unit")
 	Else
-		GUICtrlSetData($hTestSummary, "This is an ODU, non-CSS, unit" & @CRLF)
+		DisplayLineOfText($hTestSummary, "This is an ODU, non-CSS, unit")
 	EndIf
 
 	If $bLongTest Then
@@ -55,15 +55,15 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 	; Reboot.  Check if UB slots are the same.  Check with channel changes.
 	$bIsCss = IsThisCssUnit($hTestSummary)
 	If $bSkipCss Then
-		GUICtrlSetData($hTestSummary, "Skip CSS Tests" & @CRLF)
+		DisplayLineOfText($hTestSummary, "Skip CSS Tests" & @CRLF )
 	Else
 		If $bIsCss Then
-			GUICtrlSetData($hTestSummary, "Perform CSS Tests" & @CRLF)
+			DisplayLineOfText($hTestSummary, "Perform CSS Tests" & @CRLF )
 			$aSlotsBeforeReboot = GetCssSlots($hTestSummary, "Slots currently are: ")
 			BringUpCssScreen()
-			GUICtrlSetData($hTestSummary, "Turn off CSS, Standard ODU mode" & @CRLF)
+			DisplayLineOfText($hTestSummary, "Turn off CSS, Standard ODU mode" & @CRLF )
 			PickNoCss()            ; Turn off CSS
-			GUICtrlSetData($hTestSummary, "Turn on CSS Auto mode, and do channel change test" & @CRLF)
+			DisplayLineOfText($hTestSummary, "Turn on CSS Auto mode, and do channel change test" & @CRLF )
 			PickCssAuto()       ; Turn on "CSS Auto" mode.
 			$aSlotsBeforeReboot = GetCssSlots($hTestSummary, "Slots Auto Mode are: ")
 			$bPassFail = PerformChannelChanges($hTestSummary, 5, $sHdChan, "CSS Auto", "")
@@ -78,20 +78,20 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 			EndIf
 
 			BringUpCssScreen()
-			GUICtrlSetData($hTestSummary, "Turn on CSS Refresh, and do channel change test." & @CRLF)
+			DisplayLineOfText($hTestSummary, "Turn on CSS Refresh, and do channel change test." & @CRLF )
 			PickCssRefresh()    ; Choose "CSS Refresh" mode
 			$aSlotsBeforeReboot = GetCssSlots($hTestSummary, "Slots After CSS Refresh are: ")
 			$bPass = PerformChannelChanges($hTestSummary, 5, $sHdChan, "CSS Refresh", "") And $bPass
 			; Reboot the box.  Then check if CSS configuration was retained.
 			If $sBoxType == "DSR800" Then
-				GUICtrlSetData($hTestSummary, "Reboot box and test for same slots: " & $aSlotsBeforeReboot[0] & @CRLF)
+				DisplayLineOfText($hTestSummary, "Reboot box and test for same slots: " & $aSlotsBeforeReboot[0] & @CRLF )
 			Else
-				GUICtrlSetData($hTestSummary, "Reboot box and test for same slots: " & $aSlotsBeforeReboot[0] & ", " & $aSlotsBeforeReboot[1] & @CRLF)
+				DisplayLineOfText($hTestSummary, "Reboot box and test for same slots: " & $aSlotsBeforeReboot[0] & ", " & $aSlotsBeforeReboot[1] & @CRLF )
 			EndIf
 			RebootBox()
 			$bIsCss = IsThisCssUnit($hTestSummary)
 			If $bIsCss Then
-				GUICtrlSetData($hTestSummary, "Box rebooted.  This is a CSS Unit." & @CRLF)
+				DisplayLineOfText($hTestSummary, "Box rebooted.  This is a CSS Unit." & @CRLF )
 				$aSlotsAfterReboot = GetCssSlots($hTestSummary, "Slots after reboot are: ")
 				$bPassFail = False
 				If $sBoxType == "DSR800" Then
@@ -104,14 +104,14 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 					EndIf
 				EndIf
 				If $bPassFail Then
-					GUICtrlSetData($hTestSummary, "Slots remained the same after reboot.  BoxType = " & $sBoxType & @CRLF)
+					DisplayLineOfText($hTestSummary, "Slots remained the same after reboot.  BoxType = " & $sBoxType & @CRLF )
 					$bPassFail = PerformChannelChanges($hTestSummary, 5, $sHdChan, "CSS Reboot", "")
 				Else
-					GUICtrlSetData($hTestSummary, "Failed on CSS Reboot Test - Slots are different.  BoxType = " & $sBoxType & @CRLF)
+					DisplayLineOfText($hTestSummary, "Failed on CSS Reboot Test - Slots are different.  BoxType = " & $sBoxType & @CRLF )
 				EndIf
 			Else
 				$bPassFail = False
-				GUICtrlSetData($hTestSummary, "Failed on CSS Reboot - No slots detected.  BoxType = " & $sBoxType & @CRLF)
+				DisplayLineOfText($hTestSummary, "Failed on CSS Reboot - No slots detected.  BoxType = " & $sBoxType & @CRLF )
 			EndIf
 			SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-017", $bPassFail)
 			SavePassFailTestResult("DSR SI&T.Tuning.Channel Stacking Switch CSS:001-018", $bPassFail)
@@ -121,7 +121,7 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 	EndIf
 
 	DisplayPassFail($bPass, $hTuning_pf)
-	GUICtrlSetData($hTestSummary, "<== Tuning Test Done")
+	DisplayLineOfText($hTestSummary, "<== Tuning Test Done" )
 EndFunc   ;==>RunTuningTest
 
 
@@ -143,22 +143,22 @@ Func ComputeAvgChanSpeed($hTestSummary)
 					$iSecDiffNum = $iSecDiffNum + 1
 				EndIf
 			Else
-				GUICtrlSetData($hTestSummary, "Channel " & $aTuneResults[$ii + 1][0] & " did not get authorized.  Skipped" & @CRLF)
+				DisplayLineOfText($hTestSummary, "Channel " & $aTuneResults[$ii + 1][0] & " did not get authorized.  Skipped" & @CRLF )
 			EndIf
 		EndIf
 	Next
 	If $iSecSameNum > 0 Then
-		GUICtrlSetData($hTestSummary, "Channel Change Speed Test: Same Transponders " & $iSecSame & "/" & $iSecSameNum & " Avg:" & $iSecSame / $iSecSameNum & @CRLF)
+		DisplayLineOfText($hTestSummary, "Channel Change Speed Test: Same Transponders " & $iSecSame & "/" & $iSecSameNum & " Avg:" & $iSecSame / $iSecSameNum & @CRLF )
 		SaveTestResult("DSR SI&T.System Control.Service Selection:003-001", $iSecSame / $iSecSameNum)
 	Else
-		GUICtrlSetData($hTestSummary, "Channel Change Speed Test: Same Transponders - Not enough data" & @CRLF)
+		DisplayLineOfText($hTestSummary, "Channel Change Speed Test: Same Transponders - Not enough data" & @CRLF )
 		SaveTestResult("DSR SI&T.System Control.Service Selection:003-001", "NA")
 	EndIf
 	If $iSecDiffNum > 0 Then
-		GUICtrlSetData($hTestSummary, "Channel Change Speed Test: Different Transponders " & $iSecDiff & "/" & $iSecDiffNum & " Avg:" & $iSecDiff / $iSecDiffNum & @CRLF)
+		DisplayLineOfText($hTestSummary, "Channel Change Speed Test: Different Transponders " & $iSecDiff & "/" & $iSecDiffNum & " Avg:" & $iSecDiff / $iSecDiffNum & @CRLF )
 		SaveTestResult("DSR SI&T.System Control.Service Selection:003-002", $iSecDiff / $iSecDiffNum)
 	Else
-		GUICtrlSetData($hTestSummary, "Channel Change Speed Test: Different Transponders  - Not enough data" & @CRLF)
+		DisplayLineOfText($hTestSummary, "Channel Change Speed Test: Different Transponders  - Not enough data" & @CRLF )
 		SaveTestResult("DSR SI&T.System Control.Service Selection:003-002", "NA")
 	EndIf
 EndFunc   ;==>ComputeAvgChanSpeed
@@ -195,13 +195,13 @@ Func GetCssSlots($hTestSummary, $sTitle)
 		$aSlots = GetUbSlots($hTestSummary)
 		$iNumSlots = UBound($aSlots)
 		If $iNumSlots == 1 Then
-			GUICtrlSetData($hTestSummary, $sTitle & $aSlots[0] & @CRLF)
+			DisplayLineOfText($hTestSummary, $sTitle & $aSlots[0] & @CRLF )
 		ElseIf $iNumSlots == 2 Then
-			GUICtrlSetData($hTestSummary, $sTitle & $aSlots[0] & ", " & $aSlots[1] & @CRLF)
+			DisplayLineOfText($hTestSummary, $sTitle & $aSlots[0] & ", " & $aSlots[1] & @CRLF )
 		EndIf
 		Return $aSlots
 	Else
-		GUICtrlSetData($hTestSummary, $sTitle & " No slots - Non CSS Unit" & @CRLF)
+		DisplayLineOfText($hTestSummary, $sTitle & " No slots - Non CSS Unit" & @CRLF )
 	EndIf
 	Return $aSlots
 EndFunc   ;==>GetCssSlots

@@ -16,8 +16,8 @@
 Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 	Local $bPassFail = True
 	PF_Box("Running", $COLOR_BLUE, $AV_Presentation_pf)
-	GUICtrlSetData($hTestSummary, "==> AV Test Started")
-	GUICtrlSetData($hTestSummary, "Test Type : User Setting / Actual Setting => Result")
+	DisplayLineOfText($hTestSummary, "==> AV Test Started")
+	DisplayLineOfText($hTestSummary, "Test Type : User Setting / Actual Setting => Result")
 
 	$bPassFail = RunVideoAspectOverride($hTestSummary) And $bPassFail
 	$bPassFail = RunVideoOutputMode($hTestSummary) And $bPassFail
@@ -41,7 +41,7 @@ Func RunAVPresentationTest($hTestSummary, $AV_Presentation_pf)
 	Else
 		PF_Box("Fail", $COLOR_RED, $AV_Presentation_pf)
 	EndIf
-	GUICtrlSetData($hTestSummary, "<== AV Test Done" & @CRLF)
+	DisplayLineOfText($hTestSummary, "<== AV Test Done")
 EndFunc   ;==>RunAVPresentationTest
 
 
@@ -166,10 +166,10 @@ Func RunVideoOutput($aDripCmd, $sTestString, $hTestSummary)
 	ConsoleWrite("Video Output Display Format: " & $sValue & @CRLF)
 	Local $iResult = StringCompare($sValue, $sTestString)
 	If $iResult <> 0 Then
-		GUICtrlSetData($hTestSummary, "Nexus Display Format: " & $sValue & " - Fail" & @CRLF)
+		DisplayLineOfText($hTestSummary, "Nexus Display Format: " & $sValue & " - Fail")
 		$bPassFail = False
 	Else
-		GUICtrlSetData($hTestSummary, "Nexus Display Format: " & $sValue & " - Pass" & @CRLF)
+		DisplayLineOfText($hTestSummary, "Nexus Display Format: " & $sValue & " - Pass")
 	EndIf
 	Return ($bPassFail)
 EndFunc   ;==>RunVideoOutput
@@ -390,7 +390,7 @@ Func RunDripAstSerialTest($aUserVsActual, $sTestTitle, $sDebugSearch, $sStatsSea
 
 		$iIndex = _ArraySearch($aUserVsActual, $sValueUser)
 		If @error Or $sValueActual <> $aUserVsActual[$iIndex][1] Then
-			GUICtrlSetData($hTestSummary, $sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Fail" & @CRLF)
+			DisplayLineOfText($hTestSummary, $sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Fail")
 			ConsoleWrite($sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Fail" & @CRLF)
 			ConsoleWrite("Search in serial.log : " & $sDebugSearch & @CRLF)
 			ConsoleWrite("Search in ast.log : " & $sStatsSearch & @CRLF)
@@ -398,7 +398,7 @@ Func RunDripAstSerialTest($aUserVsActual, $sTestTitle, $sDebugSearch, $sStatsSea
 			$bPass = False
 		Else
 			ConsoleWrite($sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Pass" & @CRLF)
-			GUICtrlSetData($hTestSummary, $sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Pass" & @CRLF)
+			DisplayLineOfText($hTestSummary, $sSubtestTitle & $sValueUser & " / " & $sValueActual & " => Pass")
 		EndIf
 	Next
 

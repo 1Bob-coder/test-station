@@ -393,7 +393,7 @@ Func RunRebootTest($hTestSummary)
 	; Get Diagnostics
 	Local $sNumChans1 = GetDiagData("A,5,2", "NumChannels")
 	Local $sVct1 = GetDiagData("A,5,3", "VCT_ID")
-	GUICtrlSetData($hTestSummary, "Before Reboot: Num Channels = " & $sNumChans1 & ", VCT_ID = " & $sVct1 & @CRLF)
+	DisplayLineOfText($hTestSummary, "Before Reboot: Num Channels = " & $sNumChans1 & ", VCT_ID = " & $sVct1)
 
 	; Reboot the box.
 	RebootBox()
@@ -401,12 +401,12 @@ Func RunRebootTest($hTestSummary)
 	; Get Diagnostics
 	Local $sNumChans2 = GetDiagData("A,5,2", "NumChannels")
 	Local $sVct2 = GetDiagData("A,5,3", "VCT_ID")
-	GUICtrlSetData($hTestSummary, "After Reboot: Num Channels = " & $sNumChans2 & ", VCT_ID = " & $sVct2 & @CRLF)
+	DisplayLineOfText($hTestSummary, "After Reboot: Num Channels = " & $sNumChans2 & ", VCT_ID = " & $sVct2)
 
 	If $sNumChans1 == $sNumChans2 And $sVct1 == $sVct2 Then
-		GUICtrlSetData($hTestSummary, "Reboot Test - Pass")
+		DisplayLineOfText($hTestSummary, "Reboot Test - Pass")
 	Else
-		GUICtrlSetData($hTestSummary, "Reboot Test - Fail")
+		DisplayLineOfText($hTestSummary, "Reboot Test - Fail")
 		$bPass = False
 	EndIf
 	SavePassFailTestResult('"DSR SI&T.System Control.Power Up, Down, Reset:005-004"', $bPass)
@@ -473,7 +473,7 @@ Func RunPrivStreamMsgTest($hTestSummary)
 			$sPassFail = ""
 			$sHeading = "Info Only - "
 		EndIf
-		GUICtrlSetData($hTestSummary, $sHeading & $aSfStats[$ii][0] & " " & $aSfStats[$ii][3] & ": " & $aSfStats[$ii][1] & " / " & $aSfStats[$ii][2] & $sPassFail & @CRLF)
+		DisplayLineOfText($hTestSummary, $sHeading & $aSfStats[$ii][0] & " " & $aSfStats[$ii][3] & ": " & $aSfStats[$ii][1] & " / " & $aSfStats[$ii][2] & $sPassFail)
 	Next
 	SavePassFailTestResult('DSR SI&T.System Control.PrivMessg:001-001', $bPass)
 

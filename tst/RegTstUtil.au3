@@ -237,6 +237,12 @@ Func DisplayPassFail($bPass, $hWhichBox_pf)
 	EndIf
 EndFunc   ;==>DisplayPassFail
 
+; Purpose:  Display text in the Test Summary window, highlight it and scroll down.
+; sLineOfText - Text to display
+Func DisplayLineOfText($hTestSummary, $sLineOfText)
+	GUICtrlSetData($hTestSummary, $sLineOfText & @CRLF)
+	GUICtrlSetData($hTestSummary, $sLineOfText & @CRLF)
+EndFunc
 
 ; Purpose:  This will run a Drip script and test the log file for a certain word.
 ;           First, check if the test should be run.
@@ -748,7 +754,7 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $sStartChannel, $sTitle, $
 	EndIf
 
 	$iNumMinutes = $sNumChans * 12 / 60        ; About 12 seconds per channel change.
-	GUICtrlSetData($hTestSummary, $sTitle & " - Channel Change Test on " & $sNumChans & " channels (approximately " & Round($iNumMinutes, 1) & " minutes)" & @CRLF)
+	DisplayLineOfText($hTestSummary, $sTitle & " - Channel Change Test on " & $sNumChans & " channels (approximately " & Round($iNumMinutes, 1) & " minutes)")
 
 	; Press EXIT twice to get out of any screens.
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
@@ -811,8 +817,8 @@ Func PerformChannelChanges($hTestSummary, $iNumChans, $sStartChannel, $sTitle, $
 		MakeAstTtl("ast chan " & $sChanNum, 5)         ; Get the chan stats and the frequency.
 		RunAstTtl()
 		$sFreq = FindNthStringInFile("Frequency", "ast", 24) ; Skips to the 24 string and returns it.
-		GUICtrlSetData($hTestSummary, $ii & " " & $sTitle & " Chan " & $sChanNum & " " & $sLocked & " " & $iTotalTime & " secs " & $sVideoSource & " " & _
-				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & $sPassFail & @CRLF)
+		DisplayLineOfText($hTestSummary, $ii & " " & $sTitle & " Chan " & $sChanNum & " " & $sLocked & " " & $iTotalTime & " secs " & $sVideoSource & " " & _
+				$sAspectRatio & " " & $sAuthState & " " & $sAuthWhy & $sPassFail)
 		Local $vRow[1][8] = [[$sChanNum, $sLocked, $sFreq, $iTotalTime, $sVideoSource, $sAspectRatio, $sAuthState, $sAuthWhy]]
 		If $sFilename <> "" Then
 			_ArrayAdd($aTuneResults, $vRow)

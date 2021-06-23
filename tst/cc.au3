@@ -17,7 +17,7 @@
 ; 3	DSR SI&T.Closed Caption.DVR:004-001	"Render closed captions during playback of Recorded content, at Normal Speed."
 Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 	PF_Box("Running...", $COLOR_BLUE, $ClosedCaptions_pf)
-	GUICtrlSetData($TestSummary, "Closed Captions Test Started")
+	DisplayLineOfText($TestSummary, "Closed Captions Test Started")
 	MakeRmtCmdDrip("rmt:EXIT", 1000)
 	RunDripTest("cmd")
 	RunDripTest("cmd")        ; EXIT key twice to get out of any GUI screens
@@ -35,7 +35,7 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 
 	; Do the Playback test.  Record the current program.
 	; Press RECORD, RIGHT_ARROW, ENTER, wait 10 seconds, then stop the recording.
-	GUICtrlSetData($TestSummary, "cc - Record the current program, RECORD, RIGHT, ENTER" & @CRLF)
+	DisplayLineOfText($TestSummary, "cc - Record the current program, RECORD, RIGHT, ENTER")
 	Local $aStartRecord[] = [ _
 			"wait:1000; rmt:STOP", _
 			"wait:5000; rmt:RECORD", _
@@ -46,7 +46,7 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 	Sleep(10000)
 
 	; Stop the recording.
-	GUICtrlSetData($TestSummary, "cc - Stop recording. INTERACTIVE, R E R E E DOWN E EXIT" & @CRLF)
+	DisplayLineOfText($TestSummary, "cc - Stop recording. INTERACTIVE, R E R E E DOWN E EXIT")
 
 	Local $aStopRecord[] = [ _
 			"wait:4000; rmt:INTERACTIVE", _
@@ -85,7 +85,7 @@ Func RunClosedCaptionTest($TestSummary, $ClosedCaptions_pf)
 		PF_Box("Fail", $COLOR_RED, $ClosedCaptions_pf)
 	EndIf
 
-	GUICtrlSetData($TestSummary, "Closed Captions Test Done")
+	DisplayLineOfText($TestSummary, "Closed Captions Test Done")
 EndFunc   ;==>RunClosedCaptionTest
 
 ; Purpose:  Turns on Closed Captions.
@@ -124,10 +124,10 @@ Func CcCounterTest($sTestName, $TestSummary)
 	If $sCcCounter1 <> $sCcCounter2 Then
 		; Counter changed. Test passed.
 		$bPass = True
-		GUICtrlSetData($TestSummary, $sTestName & ": Passed")
+		DisplayLineOfText($TestSummary, $sTestName & ": Passed")
 		;_ArrayAdd($aTestResults, "Closed Caption.608_708:001-001|Passed|Render CEA708 CC on its NTSC output, SCTE21 Syntax, 608 CC_type 00 and 708 CC_type 11")
 	Else
-		GUICtrlSetData($TestSummary, $sTestName & ": Failed.  Check if captions are on this channel")
+		DisplayLineOfText($TestSummary, $sTestName & ": Failed.  Check if captions are on this channel")
 		;_ArrayAdd($aTestResults, "001-001|Closed Caption.608_708:001-001|Failed|Render CEA708 CC on its NTSC output, SCTE21 Syntax, 608 CC_type 00 and 708 CC_type 11")
 	EndIf
 	Return $bPass

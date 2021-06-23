@@ -190,7 +190,7 @@ While 1
 			Else
 				GUICtrlSetData($hTestSummary, "")    ; Clear out Test Summary window
 				Local $timestamp = @HOUR & ":" & @MIN & ":" & @SEC
-				GUICtrlSetData($hTestSummary, "-- Regression Test Begin -- " & _NowTime() & @CRLF)
+				DisplayLineOfText($hTestSummary, "-- Regression Test Begin -- " & _NowTime() )
 
 				If _IsChecked($hAV_Presentation) Then
 					RunAVPresentationTest($hTestSummary, $hAV_Presentation_pf)
@@ -249,7 +249,7 @@ While 1
 				_FileWriteFromArray($sSITSpreadsheetResults, $aTestArray, Default, Default, ";")
 				_FileWriteToLine($sSITSpreadsheetResults, 1, "sep=;", False)
 				; ShellExecute($sSITSpreadsheetResults)
-				GUICtrlSetData($hTestSummary, "-- Regression Test End -- " & _NowTime() & @CRLF)
+				DisplayLineOfText($hTestSummary, "-- Regression Test End -- " & _NowTime())
 			EndIf
 
 		Case $GUI_EVENT_CLOSE
