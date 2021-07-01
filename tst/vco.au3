@@ -224,7 +224,7 @@ Func VCO_regress_001_002($hTestSummary, $VCO_pf, $aVcoParams)
 	Local $bPass = True
 	Local $sFrom = $aVcoParams[$eFromChan]
 	Local $sXYZ = $aVcoParams[$eXYZ]
-	Local $sVctId = $aVcoParams[$eVCT_ID]
+	;Local $sVctId = $aVcoParams[$eVCT_ID]
 	If $sBoxType = "DSR800" Then
 		DisplayLineOfText($hTestSummary, "This is a single tuner box, DSR800, skip test 001-002")
 	Else

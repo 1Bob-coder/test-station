@@ -363,9 +363,12 @@ Func SendDstUim($hTestSummary, $aDstDiagHex)
 	; fe,20, => 1111 1110 0010 0000
 	; c6,20, => 1100 0110 0010 0000
 	Local $sTZ_field = "c6,20,"
+	Local $sVctIdHex = Hex($sVctId)
+	$sVctIdHex = CommaSeparatedBytes($sVctIdHex, 2)
 	Local $sUimMsg = "msp:9d,10,2a," & _
 			$aDstDiagHex[0] & _
-			"00,69,00,13,00,00,00,40,40,00,00,1f,af," & _
+			"00,69,00,13,00,00,00,40,40,00,00," & _
+			$sVctIdHex & _
 			$aDstDiagHex[4] & _
 			$aDstDiagHex[2] & $aDstDiagHex[3] & _
 			"02,10,40,7f,fd,00,00,00,ff,fc"

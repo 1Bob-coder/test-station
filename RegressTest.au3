@@ -87,8 +87,8 @@ GUISetState(@SW_SHOW)
 
 HotKeySet("!x", "HandleHotKey") ; Alt-x
 
-UpdateComPortList($hComPort)
-UpdateBindingList($hBindAddr)
+UpdateComPortList($hComPort, False)
+UpdateBindingList($hBindAddr, False)
 
 
 While 1
@@ -99,7 +99,7 @@ While 1
 			DisplayTestSummary()
 
 		Case $hUpdateComPorts
-			UpdateComPortList($hComPort)
+			UpdateComPortList($hComPort, True)
 
 		Case $hFlashBox
 			FlashBoxWithCode($hBoxVersion)
@@ -114,11 +114,13 @@ While 1
 			FindBoxIPAddress($hBoxIPAddress)        ; IP Address used by DRIP
 			FindBoxVer($hBoxVersion)
 			GetVctId()
+			FileWriteLine($sSavedConfig, "sComPort " & $sComPort)
 
 		Case $hBindAddr                            ; Binding address used by DRIP, needed for BoxVersion
 			$sBindAddr = GUICtrlRead($hBindAddr)
 			$sBindAddr = StringReplace($sBindAddr, " ", "")
 			$sBindAddr = StringReplace($sBindAddr, @CRLF, "")  ; Save the binding address
+			FileWriteLine($sSavedConfig, "sBindAddr " & $sBindAddr)
 			FindBoxVer($hBoxVersion)
 			GetVctId()
 

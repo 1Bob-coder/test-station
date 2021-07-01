@@ -32,6 +32,7 @@ $sFlashTTL = $sTtlDir & "flash.ttl"            ; flash.ttl file for flashing cod
 $sAstLog = $sLogDir & "ast.log"               ; log file for the ast command
 $sCmdDrip = $sDripScripts & "cmd.drip"      ; Drip file for running a command
 $sCmdLog = $sLogDir & "cmd.log"               ; Drip cmd log file
+$sSavedConfig = $sLogDir & "SavedConfig.log"    ; For saving previous com port and binding address settings
 $sPyDrip = $sDripClientDir & "DripClient.py"               ; Python DRIP Client program
 $sWinDrip = $sDripClientDir & "DRIP_client_5.5.exe"      ; Windows DRIP Client program
 
@@ -51,24 +52,49 @@ Global $sVcoToChan = "135"
 Global $sSubscribedChan = "963"
 
 ; Purpose:  To get the list of com ports on the PC and set the GUI box.
-Func UpdateComPortList($hComPort)
+; bForceUpdate - FALSE to use previously saved values, TRUE to force an update to the values.
+Func UpdateComPortList($hComPort, $bForceUpdate)
 	; Get List of ComPorts
-	RunWait(@ComSpec & " /c " & "mode > com_ports.log", "", @SW_HIDE)
-	FileCopy("com_ports.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
-	$lComPorts = FindAllStringsInFile("Status for device COM", "com_ports", -4)
-	FileDelete("com_ports.log")
-	GUICtrlSetData($hComPort, "|Com Port|" & $lComPorts, "Com Port")
+	If $bForceUpdate Then
+		RunWait(@ComSpec & " /c " & "mode > com_ports.log", "", @SW_HIDE)
+		FileCopy("com_ports.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
+		ConsoleWrite("Force Update is true.  Save new values in com_ports.log" & @CRLF)
+		$lComPorts = FindAllStringsInFile("Status for device COM", "com_ports", -4)
+		FileDelete("com_ports.log")
+		GUICtrlSetData($hComPort, "|Com Port|" & $lComPorts, "COM4")
+	Else
+		ConsoleWrite("Force Update is false.  Use old values in com_ports.log." & @CRLF)
+		$lComPorts = FindAllStringsInFile("Status for device COM", "com_ports", -4)
+		$sComPort = FindNextStringInFile("sComPort", "SavedConfig")
+		ConsoleWrite("Saved sComPort = " & $sComPort & @CRLF)
+		GUICtrlSetData($hComPort, "|Com Port|" & $lComPorts, "COM" & $sComPort)
+		FindBoxIPAddress($hBoxIPAddress)                    ; IP Address used by DRIP
+		FindBoxVer($hBoxVersion)
+		GetVctId()
+	EndIf
 EndFunc   ;==>UpdateComPortList
 
 
 ; Purpose: To get the list of NIC cards on the PC for choosing the binding address for DRIP.
-Func UpdateBindingList($hBindAddr)
+; bForceUpdate - FALSE to use previously saved values, TRUE to force an update to the values.
+Func UpdateBindingList($hBindAddr, $bForceUpdate)
 	; Get List of IP Addresses for binding.
-	RunWait(@ComSpec & " /c " & "ipconfig > ip_addr.log", "", @SW_HIDE)
-	FileCopy("ip_addr.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
-	$lIpAddr = FindAllStringsInFile("IPv4 Address. . . . . . . . . . . :", "ip_addr", 0)
-	FileDelete("ip_addr.log")
-	GUICtrlSetData($hBindAddr, "|Binding Address|" & $lIpAddr, "Binding Address")
+	If $bForceUpdate Then
+		RunWait(@ComSpec & " /c " & "ipconfig > ip_addr.log", "", @SW_HIDE)
+		FileCopy("ip_addr.log", $sLogDir, $FC_OVERWRITE + $FC_CREATEPATH)
+		ConsoleWrite("Force Update is true.  Save new values in ip_addr.log" & @CRLF)
+		$lIpAddr = FindAllStringsInFile("IPv4 Address. . . . . . . . . . . :", "ip_addr", 0)
+		FileDelete("ip_addr.log")
+		GUICtrlSetData($hBindAddr, "|Binding Address|" & $lIpAddr, "Binding Address")
+	Else
+		ConsoleWrite("Force Update is false.  Use old values in ip_addr.log." & @CRLF)
+		$lIpAddr = FindAllStringsInFile("IPv4 Address. . . . . . . . . . . :", "ip_addr", 0)
+		$sBindAddr = FindNextStringInFile("sBindAddr", "SavedConfig")
+		ConsoleWrite("sBindAddr = " & $sBindAddr & @CRLF)
+		GUICtrlSetData($hBindAddr, "|Binding Address|" & $lIpAddr, $sBindAddr)
+		FindBoxVer($hBoxVersion)
+		GetVctId()
+	EndIf
 EndFunc   ;==>UpdateBindingList
 
 ;Purpose:  To handle hotkeys.
@@ -156,14 +182,9 @@ Func GetVctId()
 		$sHdChan = "801"
 		$sVcoFromChan = "802"
 		$sVcoToChan = "299"
-	ElseIf $sVctId = "8111" Then
-		$sSdChan = "285"
-		$sHdChan = "196"
-		$sVcoFromChan = "132"
-		$sVcoToChan = "261"
 	ElseIf $sVctId = "4380" Then
 		$sSdChan = "285"
-		$sHdChan = "435"
+		$sHdChan = "425"
 		$sVcoFromChan = "125"
 		$sVcoToChan = "252"
 	ElseIf $sVctId = "4188" Then
@@ -174,7 +195,7 @@ Func GetVctId()
 	ElseIf $sVctId = "" Then
 		ConsoleWrite("IpAddress = " & $sIpAddress & ", BindAddress = " & $sBindAddr & @CRLF)
 	Else
-		MsgBox($MB_SYSTEMMODAL, "VCT_ID " & $sVctId & " is not used for testing.", "Must be 811, 4380, or 4188.")
+		MsgBox($MB_SYSTEMMODAL, "VCT_ID " & $sVctId & " is not used for testing.", "Must be 8111 (SI&T 24 chan), 4380, or 4188.")
 	EndIf
 EndFunc   ;==>GetVctId
 
@@ -242,7 +263,7 @@ EndFunc   ;==>DisplayPassFail
 Func DisplayLineOfText($hTestSummary, $sLineOfText)
 	GUICtrlSetData($hTestSummary, $sLineOfText & @CRLF)
 	GUICtrlSetData($hTestSummary, $sLineOfText & @CRLF)
-EndFunc
+EndFunc   ;==>DisplayLineOfText
 
 ; Purpose:  This will run a Drip script and test the log file for a certain word.
 ;           First, check if the test should be run.
