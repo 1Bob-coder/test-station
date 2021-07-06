@@ -35,7 +35,7 @@ Func RunTuningTest($hTestSummary, $hTuning_pf, $bLongTest, $bSkipCss)
 	EndIf
 
 	; Find the average channel change speed.
-	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $sHdChan, "Tune", "TuneTestResults.txt")
+	$bPass = PerformChannelChanges($hTestSummary, $iNumChannels, $sChanScan, "Tune", "TuneTestResults.txt")
 	ComputeAvgChanSpeed($hTestSummary)
 
 	; Perform the channel change test across multiple channels with various a/v parameters.

@@ -47,6 +47,7 @@ Global $aTestArray
 Global $aTuneResults[1][8] = [["--", "--", "--", "--", "--", "--", "--", "--"]]
 Global $sSdChan = "299"
 Global $sHdChan = "121"
+Global $sChanScan = "352"
 Global $sVcoFromChan = "132"
 Global $sVcoToChan = "135"
 Global $sSubscribedChan = "963"
@@ -180,16 +181,19 @@ Func GetVctId()
 	If $sVctId = "8111" And $sNumChans = "24" Then
 		$sSdChan = "701"
 		$sHdChan = "801"
+		$sChanScan = $sHdChan
 		$sVcoFromChan = "802"
 		$sVcoToChan = "299"
 	ElseIf $sVctId = "4380" Then
 		$sSdChan = "285"
 		$sHdChan = "425"
+		$sChanScan = "302"
 		$sVcoFromChan = "125"
 		$sVcoToChan = "252"
 	ElseIf $sVctId = "4188" Then
 		$sSdChan = "299"
 		$sHdChan = "066"
+		$sChanScan = $sHdChan
 		$sVcoFromChan = "066"
 		$sVcoToChan = "166"
 	ElseIf $sVctId = "" Then
